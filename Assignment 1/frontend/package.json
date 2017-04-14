@@ -1,0 +1,30 @@
+{
+  "name": "fit3077-assignment-2",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/jest": "^19.2.2",
+    "@types/node": "^7.0.12",
+    "@types/react": "^15.0.21",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-redux": "^4.4.38",
+    "@types/react-router-dom": "^4.0.3",
+    "@types/redux": "^3.6.0",
+    "@types/socket.io-client": "^1.4.29",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^5.0.3",
+    "react-router-dom": "^4.0.0",
+    "redux": "^3.6.0",
+    "socket.io-client": "^1.7.3"
+  },
+  "devDependencies": {
+    "react-scripts-ts": "1.1.8"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  }
+}
