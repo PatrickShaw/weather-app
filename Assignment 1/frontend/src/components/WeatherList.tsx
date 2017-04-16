@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {WeatherItem} from './WeatherItem';
-import {WeatherDataItem} from '../model/WeatherDataItem';
+import {WeatherLocationData} from '../../../shared/model/index';
 interface WeatherListProps {
-    weatherData: Array<WeatherDataItem>;
+    weatherData: Array<WeatherLocationData>;
 }
 class WeatherList extends React.Component<WeatherListProps, void> {
     constructor() {

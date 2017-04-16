@@ -3,10 +3,10 @@ import * as Redux from 'redux';
 import * as ReactRouter from 'react-router';
 import {connect} from 'react-redux';
 import {WeatherList} from '../components/WeatherList';
-import {WeatherDataItem} from '../model/WeatherDataItem';
+import {WeatherLocationData} from '../../../shared/model/index';
 import {AppState} from '../model/AppState';
 interface StateProps {
-    weatherData: Array<WeatherDataItem>;
+    weatherData: Array<WeatherLocationData>;
 }
 interface DispatchProps {
 

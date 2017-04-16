@@ -1,7 +1,7 @@
-import {WeatherDataItem} from './WeatherDataItem';
+import {WeatherLocationData} from '../../../shared/model/index';
 class AppState {
-    weatherData: Array<WeatherDataItem>;
-    constructor(weatherData: Array<WeatherDataItem>) {
+    weatherData: Array<WeatherLocationData>;
+    constructor(weatherData: Array<WeatherLocationData>) {
         this.weatherData = weatherData;
     }
 }

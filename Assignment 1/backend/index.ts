@@ -1,7 +1,7 @@
 const SocketIo = require('socket.io');
 const Soap = require('soap-as-promised');
 const url = 'http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl';
-const io = SocketIo.listen(1337);
+const ioServer = SocketIo.listen(1337);
 Soap.createClient(url)
 .then(function(weatherService) {
     setInterval(() => pollWeatherData(weatherService), 5000);
@@ -11,7 +11,6 @@ function pollWeatherData(weatherService) {
     .then(function (locationsResponse) {
       let locations: Array<string> = locationsResponse.return;
       console.log(locations);
-      let weatherData = [];
       let locationWeatherPromises: Array<Promise<Array<string>>> = [];
       locations.forEach(function (location: string) {
         locationWeatherPromises.push(

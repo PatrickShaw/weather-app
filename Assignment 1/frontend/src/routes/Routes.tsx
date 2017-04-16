@@ -14,7 +14,7 @@ class Routes extends React.Component<RoutesProps, void> {
             <Provider store={this.props.store}>
                 <BrowserRouter>
                     <div>
-                        <Route exact path="/" component={HomePage}/>
+                        <Route exact={true} path="/" component={HomePage}/>
                         <Route path="/weather" component={WeatherPage}/>
                     </div>
                 </BrowserRouter>

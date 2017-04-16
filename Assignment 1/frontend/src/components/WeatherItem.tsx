@@ -1,13 +1,13 @@
 import * as React from 'react';
-import {WeatherDataItem} from '../model/WeatherDataItem';
+import {WeatherLocationData} from '../../../shared/model/index';
 import {ListItem} from './ListItem';
 interface WeatherItemProps {
-    weather: WeatherDataItem;
+    weather: WeatherLocationData;
 }
 class WeatherItem extends React.Component<WeatherItemProps, void> {
   render() {
     return (
-      <ListItem title={this.props.weather.location} subtitle={this.props.weather.rainfall}/>
+      <ListItem title={this.props.weather.location} subtitle={this.props.weather.rainfallData.rainfall}/>
     );
   }
 }
