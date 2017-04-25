@@ -7,7 +7,7 @@ new Builder()
     melbourneWeatherClient.addOnWeatherRetrievedListener(
       new class implements OnWeatherRetrievedListener {
         onWeatherRetrieved(weatherLocationDataList: Array<WeatherLocationData>) {
-          console.log(weatherLocationDataList);
+          console .log(weatherLocationDataList);
         }
       }
     );

@@ -9,5 +9,5 @@ import {Routes} from './routes/Routes';
 const store: Redux.Store<AppState | undefined> = createStore(AppReducer);
 ReactDOM.render(
   <Routes store={store}/>,
-  document.getElementById('root')
+  document.getElementById('root') as HTMLElement
 );

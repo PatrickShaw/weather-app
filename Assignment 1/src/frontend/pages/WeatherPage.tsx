@@ -11,7 +11,7 @@ interface StateProps {
 interface DispatchProps {
 
 }
-type WeatherPageProps = StateProps & DispatchProps & ReactRouter.RouteComponentProps<any>;
+type WeatherPageProps = StateProps & DispatchProps & ReactRouter.RouteComponentProps<{}>;
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   render() {
     return (

@@ -1,20 +1,42 @@
 const {CheckerPlugin} = require('awesome-typescript-loader');
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
-const WebpackShellPlugin = require('webpack-shell-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const fs = require('fs');
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const getClientEnvironment = require('./env');
+const publicPath = '/';
+const publicUrl = '';
+const env = getClientEnvironment(publicUrl);
+var appDirectory = fs.realpathSync(process.cwd());
+function resolveApp(relativePath) {
+  return path.resolve(appDirectory, relativePath);
+}
+var nodePaths = (process.env.NODE_PATH || '')
+  .split(process.platform === 'win32' ? ';' : ':')
+  .filter(Boolean)
+  .filter(folder => !path.isAbsolute(folder))
+  .map(resolveApp);
 module.exports = {
     output: {
         path: path.resolve(path.join('.', "build")),
-        filename: 'frontend-compiled-debug.js'
+        filename: 'frontend-compiled-debug.js',
+        publicPath: publicPath
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+        alias: {
+          'react-native': 'react-native-web'
+        }
     },
     bail: true,
-    target: "node",
     name: "Frontend Server",
-    entry: './src/frontend/index.tsx',
-    externals: [nodeExternals()],
+    entry: [
+      './src/frontend/index.tsx',
+      require.resolve('react-dev-utils/webpackHotDevClient')
+    ],
     devtool: 'cheap-module-source-map',
     module: {
         rules: [
@@ -24,19 +46,7 @@ module.exports = {
                 use: [
                     {
                         loader: 'tslint-loader'
-                    }
-                ]
-            },
-            {
-                test: /\.(ts|tsx)$/,
-                use: [
-                    {   
-                        loader: 'awesome-typescript-loader',
-                        options: {
-                            useBabel: true,
-                            useCache: true
-                        }
-                    }
+                      }
                 ]
             },
             {
@@ -60,6 +70,19 @@ module.exports = {
                 name: 'static/media/[name].[hash:8].[ext]'
               }
             },
+            {
+                test: /\.(ts|tsx)$/,
+                use: [
+                    {   
+                        loader: 'awesome-typescript-loader',
+                        options: {
+                            configFileName: 'tsconfig.frontend.json',
+                            useBabel: true,
+                            useCache: true
+                        }
+                    }
+                ]
+            },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
@@ -67,18 +90,25 @@ module.exports = {
             // in development "style" loader enables hot editing of CSS.
             {
               test: /\.css$/,
-              loader: 'style!css?importLoaders=1!postcss'
+              use: [
+                {
+                  loader: 'style-loader'
+                },
+                {
+                  loader: 'css-loader'
+                }
+              ]
             },
             // JSON is not enabled by default in Webpack but both Node and Browserify
             // allow it implicitly so we also enable it.
             {
               test: /\.json$/,
-              loader: 'json'
+              loader: 'json-loader'
             },
             // "file" loader for svg
             {
               test: /\.svg$/,
-              loader: 'file',
+              loader: 'file-loader',
               query: {
                 name: 'static/media/[name].[hash:8].[ext]'
               }
@@ -86,12 +116,26 @@ module.exports = {
         ]
     },
     plugins: [
-        new CheckerPlugin()
+        new CheckerPlugin(),
+        new InterpolateHtmlPlugin(env.raw),
+        new HtmlWebpackPlugin({
+          inject: true,
+          template: './public/index.html',
+        }),
+        new webpack.DefinePlugin(env.stringified),
+        new webpack.HotModuleReplacementPlugin(),
+        new CaseSensitivePathsPlugin(),
+        new WatchMissingNodeModulesPlugin('./node_modules')
     ],
     stats: {
         colors: true,
         modules: true,
         reasons: true,
         errorDetails: true
+    },
+    node: {
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
     }
 }
