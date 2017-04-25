@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "build/dist",
+    "outDir": "build",
     "module": "commonjs",
-    "target": "es5",
-    "lib": ["es6", "dom"],
+    "target": "es6",
+    "lib":["es6", "dom"],
+    "moduleResolution": "node",
     "sourceMap": true,
     "allowJs": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "rootDir": ".",
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -17,16 +16,13 @@
     "noUnusedLocals": true,
     "experimentalDecorators": true
   },
+  "files": [],
   "exclude": [
     "node_modules",
     "build",
     "scripts",
     "acceptance-tests",
     "webpack",
-    "jest",
-    "src/setupTests.ts"
-  ],
-  "types": [
-    "typePatches"
+    "jest"
   ]
 }
