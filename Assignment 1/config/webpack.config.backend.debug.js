@@ -8,7 +8,7 @@ module.exports = {
         filename: 'backend-compiled-debug.js'
     },
     resolve: {
-        extensions: ['.ts', 'tsx', '.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     bail: true,
     target: "node",
