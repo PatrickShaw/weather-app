@@ -72,88 +72,100 @@
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-const Soap = __webpack_require__(6);
-const index_1 = __webpack_require__(5);
+var Soap = __webpack_require__(6);
+var index_1 = __webpack_require__(5);
 /**
- * Creates a   client, designed for the MelbourneWeatherApi.
+ * Creates a client, designed for the MelbourneWeatherApi.
  */
-class MelbourneWeatherClient {
-    constructor(melbourneWeatherSoapClient) {
+var MelbourneWeatherClient = (function () {
+    function MelbourneWeatherClient(melbourneWeatherSoapClient) {
         this.weatherService = melbourneWeatherSoapClient;
         this.onWeatherPollCompleteListeners = [];
         this.onLocationsPollCompleteListeners = [];
     }
-    addOnWeatherRetrievedListener(addedListener) {
+    MelbourneWeatherClient.prototype.addOnWeatherRetrievedListener = function (addedListener) {
         this.onWeatherPollCompleteListeners.push(addedListener);
-    }
-    removeOnWeatherRetrievedListener(removedListener) {
-        this.onWeatherPollCompleteListeners.filter(listener => {
+    };
+    MelbourneWeatherClient.prototype.removeOnWeatherRetrievedListener = function (removedListener) {
+        this.onWeatherPollCompleteListeners.filter(function (listener) {
             return listener !== removedListener;
         });
-    }
-    addOnLocationsRetrievedListener(addedListener) {
+    };
+    MelbourneWeatherClient.prototype.addOnLocationsRetrievedListener = function (addedListener) {
         this.onLocationsPollCompleteListeners.push(addedListener);
-    }
-    removeOnLocationsRetrievedListener(removedListener) {
-        this.onLocationsPollCompleteListeners.filter(listener => {
+    };
+    MelbourneWeatherClient.prototype.removeOnLocationsRetrievedListener = function (removedListener) {
+        this.onLocationsPollCompleteListeners.filter(function (listener) {
             return listener !== removedListener;
         });
-    }
-    retrieveLocations() {
-        this.weatherService.getLocations(null).then(locationsResponse => {
-            let locations = locationsResponse.return;
-            this.onLocationsPollCompleteListeners.forEach(onLocationsPollCompleteListener => {
+    };
+    MelbourneWeatherClient.prototype.retrieveLocations = function () {
+        var _this = this;
+        this.weatherService.getLocations(null)
+            .then(function (locationsResponse) {
+            var locations = locationsResponse.return;
+            _this.onLocationsPollCompleteListeners.forEach(function (onLocationsPollCompleteListener) {
                 onLocationsPollCompleteListener.onLocationsRetrieved(locations);
             });
         });
-    }
-    retrieveWeatherData(locations) {
-        let weatherLocationDataList = [];
-        let weatherPromises = [];
-        locations.forEach(location => {
-            let temperatureData;
-            let rainfallData;
-            const temperatureRequestPromise = this.weatherService.getRainfall({ parameters: location }).then(temperatureResponse => {
-                let temperatureStrings = temperatureResponse.return;
+    };
+    MelbourneWeatherClient.prototype.retrieveWeatherData = function (locations) {
+        var _this = this;
+        var weatherLocationDataList = [];
+        var weatherPromises = [];
+        locations.forEach(function (location) {
+            var temperatureData;
+            var rainfallData;
+            var temperatureRequestPromise = _this.weatherService.getRainfall({ parameters: location })
+                .then(function (temperatureResponse) {
+                var temperatureStrings = temperatureResponse.return;
                 temperatureData = new index_1.TemperatureData(temperatureStrings[0], temperatureStrings[1]);
             });
-            const rainfallRequestPromise = this.weatherService.getTemperature({ parameters: location }).then(rainfallResponse => {
-                let rainfallStrings = rainfallResponse.return;
+            var rainfallRequestPromise = _this.weatherService.getTemperature({ parameters: location })
+                .then(function (rainfallResponse) {
+                var rainfallStrings = rainfallResponse.return;
                 rainfallData = new index_1.RainfallData(rainfallStrings[0], rainfallStrings[1]);
             });
-            let compileWeatherLocationDataPromises = [temperatureRequestPromise, rainfallRequestPromise];
-            Promise.all(compileWeatherLocationDataPromises).then(responses => {
-                let weatherData = new index_1.WeatherLocationData(location, rainfallData, temperatureData);
+            var compileWeatherLocationDataPromises = [temperatureRequestPromise, rainfallRequestPromise];
+            Promise.all(compileWeatherLocationDataPromises)
+                .then(function (responses) {
+                var weatherData = new index_1.WeatherLocationData(location, rainfallData, temperatureData);
                 weatherLocationDataList.push(weatherData);
             });
             weatherPromises.push(rainfallRequestPromise);
             weatherPromises.push(temperatureRequestPromise);
         });
-        Promise.all(weatherPromises).then(responses => {
-            this.onWeatherPollCompleteListeners.forEach(onWeatherPollCompleteListener => {
+        Promise.all(weatherPromises).then(function (responses) {
+            _this.onWeatherPollCompleteListeners.forEach(function (onWeatherPollCompleteListener) {
                 onWeatherPollCompleteListener.onWeatherRetrieved(weatherLocationDataList);
             });
         });
-    }
-}
+    };
+    return MelbourneWeatherClient;
+}());
 exports.MelbourneWeatherClient = MelbourneWeatherClient;
 // TODO: There are a lot of optional settings we can set in this builder
-class Builder {
-    build() {
-        return new Promise((resolve, reject) => {
-            Soap.createClient('http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl').then(weatherService => {
-                let melbourneWeatherClient = new MelbourneWeatherClient(weatherService);
+var Builder = (function () {
+    function Builder() {
+    }
+    Builder.prototype.build = function () {
+        return new Promise(function (resolve, reject) {
+            Soap.createClient('http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl')
+                .then(function (weatherService) {
+                var melbourneWeatherClient = new MelbourneWeatherClient(weatherService);
                 resolve(melbourneWeatherClient);
-            }).catch(error => {
+            })
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-}
+    };
+    return Builder;
+}());
 exports.Builder = Builder;
 exports.default = MelbourneWeatherClient;
+
 
 /***/ }),
 /* 1 */
@@ -161,25 +173,31 @@ exports.default = MelbourneWeatherClient;
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-const MelbourneWeatherClient_1 = __webpack_require__(0);
-new MelbourneWeatherClient_1.Builder().build().then(melbourneWeatherClient => {
-    melbourneWeatherClient.addOnWeatherRetrievedListener(new class {
-        onWeatherRetrieved(weatherLocationDataList) {
+var MelbourneWeatherClient_1 = __webpack_require__(0);
+new MelbourneWeatherClient_1.Builder()
+    .build()
+    .then(function (melbourneWeatherClient) {
+    melbourneWeatherClient.addOnWeatherRetrievedListener(new (function () {
+        function class_1() {
+        }
+        class_1.prototype.onWeatherRetrieved = function (weatherLocationDataList) {
             console.log(weatherLocationDataList);
+        };
+        return class_1;
+    }()));
+    melbourneWeatherClient.addOnLocationsRetrievedListener(new (function () {
+        function class_2() {
         }
-    }());
-    melbourneWeatherClient.addOnLocationsRetrievedListener(new class {
-        onLocationsRetrieved(locations) {
+        class_2.prototype.onLocationsRetrieved = function (locations) {
             console.log(locations);
-            setInterval(() => {
-                melbourneWeatherClient.retrieveWeatherData(locations);
-            }, 5000);
-        }
-    }());
+            setInterval(function () { melbourneWeatherClient.retrieveWeatherData(locations); }, 5000);
+        };
+        return class_2;
+    }()));
     melbourneWeatherClient.retrieveLocations();
 });
+
 
 /***/ }),
 /* 2 */
@@ -187,16 +205,17 @@ new MelbourneWeatherClient_1.Builder().build().then(melbourneWeatherClient => {
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-class RainfallData {
-    constructor(rainfall, timestamp) {
+var RainfallData = (function () {
+    function RainfallData(rainfall, timestamp) {
         this.rainfall = rainfall;
         this.timestamp = timestamp;
     }
-}
+    return RainfallData;
+}());
 exports.RainfallData = RainfallData;
 exports.default = RainfallData;
+
 
 /***/ }),
 /* 3 */
@@ -204,16 +223,17 @@ exports.default = RainfallData;
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-class TemperatureData {
-    constructor(temperature, timestamp) {
+var TemperatureData = (function () {
+    function TemperatureData(temperature, timestamp) {
         this.temperature = temperature;
         this.timestamp = timestamp;
     }
-}
+    return TemperatureData;
+}());
 exports.TemperatureData = TemperatureData;
 exports.default = TemperatureData;
+
 
 /***/ }),
 /* 4 */
@@ -221,17 +241,18 @@ exports.default = TemperatureData;
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-class WeatherLocationData {
-    constructor(location, rainfallData, temperatureData) {
+var WeatherLocationData = (function () {
+    function WeatherLocationData(location, rainfallData, temperatureData) {
         this.location = location;
         this.rainfallData = rainfallData;
         this.temperatureData = temperatureData;
     }
-}
+    return WeatherLocationData;
+}());
 exports.WeatherLocationData = WeatherLocationData;
 exports.default = WeatherLocationData;
+
 
 /***/ }),
 /* 5 */
@@ -239,14 +260,14 @@ exports.default = WeatherLocationData;
 
 "use strict";
 
-
 Object.defineProperty(exports, "__esModule", { value: true });
-const TemperatureData_1 = __webpack_require__(3);
+var TemperatureData_1 = __webpack_require__(3);
 exports.TemperatureData = TemperatureData_1.TemperatureData;
-const RainfallData_1 = __webpack_require__(2);
+var RainfallData_1 = __webpack_require__(2);
 exports.RainfallData = RainfallData_1.RainfallData;
-const WeatherLocationData_1 = __webpack_require__(4);
+var WeatherLocationData_1 = __webpack_require__(4);
 exports.WeatherLocationData = WeatherLocationData_1.WeatherLocationData;
+
 
 /***/ }),
 /* 6 */
