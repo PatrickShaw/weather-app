@@ -1,0 +1,19 @@
+{
+  "name": "melbourne-weather-model",
+  "version": "0.0.1",
+  "description": "Classes associated with the Monash Melbourne weather service",
+  "main": "index.ts",
+  "contributors": [
+    {
+      "name": "Patrick Shaw",
+      "email": "psha67@student.monash.edu",
+      "url": ""
+    },
+    {
+      "name": "David Lei",
+      "email": "dlei7@student.monash.edu",
+      "url": ""
+    }
+  ],
+  "license": "LGPL-3.0"
+}
