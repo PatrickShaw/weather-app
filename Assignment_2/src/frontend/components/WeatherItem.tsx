@@ -10,7 +10,7 @@ class WeatherItem extends React.Component<WeatherItemProps, void> {
   }
   render() {
     return (
-      <GenericListItem title={this.props.weather.location} subtitle={this.props.weather.rainfallData.rainfall}/>
+      <GenericListItem title={this.props.weather.location}/>
     );
   }
 }
