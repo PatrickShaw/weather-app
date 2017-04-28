@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {WeatherList} from '../components/WeatherList';
 import {WeatherLocationData} from '../../model/index';
 import {AppState} from '../model/AppState';
-import {ActionBar} from '../components/ActionBar';
+import {ActionBar} from '../components/AppBar';
 import {MonitoringList} from '../components/MonitoringList';
 import './WeatherPage.scss';
 interface StateProps {
@@ -23,9 +23,11 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
         </div>
         <aside className="sidebar">
+          <header><h1 className="txt-subheading title-section">Locations</h1></header>
           <WeatherList weatherData={this.props.weatherData}/>
         </aside>
         <main className="monitoring-container">
+          <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
           <MonitoringList weatherDataList={this.props.weatherData}/>
         </main>
       </div>

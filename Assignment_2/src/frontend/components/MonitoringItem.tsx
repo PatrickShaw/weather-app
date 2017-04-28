@@ -6,9 +6,9 @@ interface MonitoringItemProps {
 class MonitoringItem extends React.Component<MonitoringItemProps, void> {
   render() {
     return (
-      <section>
-        <h1>Hello</h1>
-        <h2>Weather</h2>
+      <section className="pad-item-list">
+        <h1 className="txt-body-2">Hello</h1>
+        <h2 className="txt-body-1">Weather</h2>
       </section>
     );
   }

@@ -9,9 +9,9 @@ class GenericListItem extends React.Component<ListItemProps, void> {
     }
     render() {
         return (
-            <section>
-                <h1>{this.props.title}</h1>
-                <h2>{this.props.subtitle}</h2>
+            <section className="pad-item-list">
+                <h1 className="txt-body-2">{this.props.title}</h1>
+                <h2 className="txt-body-1">{this.props.subtitle}</h2>
             </section>
         );
     }

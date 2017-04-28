@@ -9,6 +9,16 @@
   font-weight: $txt-weight-body-2;
   font-size: $txt-size-body-2;
 }
+.txt-title {
+  font-family: Roboto;
+  font-weight: $txt-weight-title;
+  font-size: $txt-size-title;
+}
+.txt-subheading {
+  font-family: Roboto;
+  font-weight: $txt-weight-subheading;
+  font-size: $txt-size-subheading;
+}
 .txt-display-1 {
   font-family: Roboto;
   font-weight: $txt-weight-display-1;
@@ -48,19 +58,19 @@
   font-size: $txt-size-app-bar-title;
   font-weight: $txt-weight-app-bar-title;
 }
-.txt-app-bar-title dark {
+.txt-app-bar-title.dark {
   color: $txt-color-app-bar-title-dark;
 }
-.txt-app-bar-title light {
+.txt-app-bar-title.light {
   color: $txt-color-app-bar-title-light;
 }
 .txt-app-bar-subtitle {
   font-size: $txt-size-app-bar-subtitle;
   font-weight: $txt-weight-app-bar-subtitle;
 }
-.txt-app-bar-subtitle dark {
+.txt-app-bar-subtitle.dark {
   color: $txt-color-app-bar-subtitle-dark;
 }
-.txt-app-bar-subtitle light {
+.txt-app-bar-subtitle.light {
   color: $txt-color-app-bar-subtitle-light;
 }

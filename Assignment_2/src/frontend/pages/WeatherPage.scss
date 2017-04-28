@@ -1,3 +1,4 @@
+@import "../theme/full-lambda-dimens";
 .weather-page {
  display: flex; 
  flex-direction: row;
@@ -13,3 +14,8 @@
 .page-heading {
   width: 100%;
 } 
+.title-section {
+  padding-left: $layout-padding-lg;
+  padding-right: $layout-padding-lg;
+  padding-top: $layout-padding-lg;
+}
