@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {WeatherItem} from './WeatherItem';
+import {LocationItem} from './LocationItem';
 import {WeatherLocationData} from '../../model/index';
 interface WeatherListProps {
-    weatherData: Array<WeatherLocationData>;
+    locations: string[];
 }
 class WeatherList extends React.Component<WeatherListProps, void> {
     constructor() {
@@ -13,8 +13,8 @@ class WeatherList extends React.Component<WeatherListProps, void> {
         return (
             <section>
                 {
-                    this.props.weatherData.map((weather, weatherIndex) => {
-                        return <WeatherItem key={weatherIndex} weather={weather}/>;
+                    this.props.locations.map((location, locationIndex) => {
+                        return <LocationItem key={locationIndex} location={location}/>;
                     })
                 }
             </section>

@@ -8,13 +8,12 @@ import {AppState} from '../model/AppState';
 import {ActionBar} from '../components/AppBar';
 import {MonitoringList} from '../components/MonitoringList';
 import './WeatherPage.scss';
+import { TemperatureData } from '../../model/TemperatureData';
+import { RainfallData } from '../../model/RainfallData';
 interface StateProps {
-    weatherData: Array<WeatherLocationData>;
+    appState: AppState;
 }
-interface DispatchProps {
-
-}
-type WeatherPageProps = StateProps & DispatchProps & ReactRouter.RouteComponentProps<{}>;
+type WeatherPageProps = StateProps & ReactRouter.RouteComponentProps<{}>;
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   render() {
     return (
@@ -37,16 +36,30 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
     );
   }
 }
-function mapStateToProps(state: AppState, ownProps: WeatherPageProps): StateProps {
-  return {
-    weatherData: state.weatherData
-  };
+class WeatherPageContainer extends React.Component<void, StateProps> {
+  constructor() {
+    super();
+    const initialState: AppState = new AppState([
+        new WeatherLocationData(
+          'Frankston',
+          new RainfallData('10', '10/06/2016'), 
+          new TemperatureData('14', '10/06/2017')),
+
+        new WeatherLocationData(
+          'Clayton', 
+          new RainfallData('12', '10/06/2016'), 
+          new TemperatureData('13', '10/06/2017'))
+    ]); 
+    this.setState({appState: initialState});
+    // Trigger io.sockets.on('connection')
+    const io: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
+    io.on('update_weather_location_data', function(weatherLocationDataList: Array<WeatherLocationData>) {
+        console.log('Recieved weather location data');
+        console.log(weatherLocationDataList); 
+    });
+  }
 }
-function mapDispatchToProps(dispatch: Redux.Dispatch<DispatchProps>, ownProps: WeatherPageProps): DispatchProps {
-  return {
-    
-  };
-}
-const ConnectedWeatherPage = connect(mapStateToProps, mapDispatchToProps)(WeatherPage);
-export {ConnectedWeatherPage as WeatherPage};
-export default ConnectedWeatherPage;
+
+
+export {WeatherPage};
+export default WeatherPage;

@@ -8,12 +8,6 @@ console.log('~~~ Backend started ~~~');
 var io = SocketIo.listen(8080); // Listen to port 8080 on backend (frontend --> send msg --> 8080).
 
 io.sockets.on('connection', function(socket: SocketIO.Server) {  // Session started
-  console.log('Session connection success');
-
-  // Test socket connection from front end.
-  socket.on('msg_from_front_end', function(msg: String) {
-    console.log('Front end message: ' + msg);
-  });
 
 });
 
