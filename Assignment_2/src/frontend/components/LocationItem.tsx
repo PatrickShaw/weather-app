@@ -1,18 +1,17 @@
 import * as React from 'react';
-import {WeatherLocationData} from '../../model/index';
-import {ListItem} from './ListItem';
+import {GenericListItem} from './GenericListItem';
 interface LocationItemProps {
     location: string;
 }
-class WeatherItem extends React.Component<LocationItemProps, void> {
+class LocationItem extends React.Component<LocationItemProps, void> {
   constructor() {
     super();
   }
   render() {
     return (
-      <ListItem title={this.props.location} subtitle={this.props.weather.rainfallData.rainfall}/>
+      <GenericListItem title={this.props.location}/>
     );
   }
 }
-export {WeatherItem};
-export default WeatherItem;
+export {LocationItem};
+export default LocationItem;

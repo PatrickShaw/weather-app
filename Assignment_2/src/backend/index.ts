@@ -2,8 +2,6 @@ import { Builder, OnWeatherRetrievedListener, OnLocationsRetrievedListener } fro
 import { WeatherLocationData } from '../model/index';
 import * as SocketIo from 'socket.io';
 
-console.log('~~~ Backend started ~~~');
-
 // Setup web sockets.
 var io = SocketIo.listen(8080); // Listen to port 8080 on backend (frontend --> send msg --> 8080).
 
@@ -35,7 +33,7 @@ new Builder()
           // TODO: Fix so data populated once a session is connectecd.
           melbourneWeatherClient.retrieveWeatherData(locations); // Get weather data at time 0.
           // Note: setInterval() doesn't get data at time 0.
-          setInterval(() => {melbourneWeatherClient.retrieveWeatherData(locations); }, 300000);  
+          setInterval(() => {melbourneWeatherClient.retrieveWeatherData(locations); }, 5000);  
         }
       }
     );

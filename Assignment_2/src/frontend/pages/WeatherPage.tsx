@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as Redux from 'redux';
 import * as ReactRouter from 'react-router';
-import {connect} from 'react-redux';
-import {WeatherList} from '../components/WeatherList';
+import * as SocketIo from 'socket.io-client';
+import {LocationList} from '../components/LocationList';
 import {WeatherLocationData} from '../../model/index';
 import {AppState} from '../model/AppState';
 import {ActionBar} from '../components/AppBar';
@@ -13,7 +12,7 @@ import { RainfallData } from '../../model/RainfallData';
 interface StateProps {
     appState: AppState;
 }
-type WeatherPageProps = StateProps & ReactRouter.RouteComponentProps<{}>;
+type WeatherPageProps = StateProps;
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   render() {
     return (
@@ -23,11 +22,11 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         </div>
         <aside className="sidebar">
           <header><h1 className="txt-subheading title-section">Locations</h1></header>
-          <WeatherList weatherData={this.props.weatherData}/>
+          <LocationList locations={['Rawr', 'This', 'Is', 'A', 'Test']}/>
         </aside>
         <main className="monitoring-container">
           <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
-          <MonitoringList weatherDataList={this.props.weatherData}/>
+          <MonitoringList weatherDataList={this.props.appState.weatherData}/>
         </main>
         <footer className="page-footer">
           <p className="copyright">Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
@@ -36,7 +35,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
     );
   }
 }
-class WeatherPageContainer extends React.Component<void, StateProps> {
+class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, StateProps> {
   constructor() {
     super();
     const initialState: AppState = new AppState([
@@ -50,16 +49,23 @@ class WeatherPageContainer extends React.Component<void, StateProps> {
           new RainfallData('12', '10/06/2016'), 
           new TemperatureData('13', '10/06/2017'))
     ]); 
-    this.setState({appState: initialState});
+    this.state = {appState: initialState};
+  }
+  componentDidMount() {
     // Trigger io.sockets.on('connection')
     const io: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
+    const that: WeatherPageContainer = this;
     io.on('update_weather_location_data', function(weatherLocationDataList: Array<WeatherLocationData>) {
         console.log('Recieved weather location data');
         console.log(weatherLocationDataList); 
+        that.setState({appState: new AppState(weatherLocationDataList)});
     });
+  }
+  render() {
+    return <WeatherPage appState={this.state.appState}/>;
   }
 }
 
 
-export {WeatherPage};
-export default WeatherPage;
+export {WeatherPageContainer as WeatherPage};
+export default WeatherPageContainer;

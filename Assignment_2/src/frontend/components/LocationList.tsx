@@ -1,10 +1,9 @@
 import * as React from 'react';
 import {LocationItem} from './LocationItem';
-import {WeatherLocationData} from '../../model/index';
-interface WeatherListProps {
+interface LocationListProps {
     locations: string[];
 }
-class WeatherList extends React.Component<WeatherListProps, void> {
+class LocationList extends React.Component<LocationListProps, void> {
     constructor() {
         super();
     }
@@ -21,5 +20,5 @@ class WeatherList extends React.Component<WeatherListProps, void> {
         );
     }
 }
-export {WeatherList};
-export default WeatherList;
+export {LocationList};
+export default LocationList;
