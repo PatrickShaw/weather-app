@@ -3,41 +3,24 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const fs = require('fs');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const getClientEnvironment = require('./env');
+const paths = require('./paths');
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
-var appDirectory = fs.realpathSync(process.cwd());
-function resolveApp(relativePath) {
-  return path.resolve(appDirectory, relativePath);
-}
-var nodePaths = (process.env.NODE_PATH || '')
-  .split(process.platform === 'win32' ? ';' : ':')
-  .filter(Boolean)
-  .filter(folder => !path.isAbsolute(folder))
-  .map(resolveApp);
+console.log(paths);
 module.exports = {
     output: {
-        path: path.resolve(path.join('.', "build")),
-        filename: 'frontend-compiled-debug.js',
-        publicPath: publicPath
+        path: paths.appBuild,
+        filename: 'bundle.js'
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-        alias: {
-          'react-native': 'react-native-web'
-        }
-    },
-    bail: true,
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+    },  
     name: "Frontend Server",
-    entry: [
-      './src/frontend/index.tsx',
-      require.resolve('react-dev-utils/webpackHotDevClient')
-    ],
-    devtool: 'cheap-module-source-map',
+    entry: paths.appIndexJs,
+    devtool: 'source-map',
     module: {
         rules: [
             {
@@ -46,7 +29,7 @@ module.exports = {
                 use: [
                     {
                         loader: 'tslint-loader'
-                      }
+                    }
                 ]
             },
             {
@@ -58,8 +41,8 @@ module.exports = {
                 // get properly excluded by /\.(js|jsx)$/ because of the query string.
                 // Webpack 2 fixes this, but for now we include this hack.
                 // https://github.com/facebookincubator/create-react-app/issues/1713
-                /\.(js|jsx)(\?.*)?$/,
-                /\.(ts|tsx)(\?.*)?$/,
+                /\.(js|jsx)$/,
+                /\.(ts|tsx)$/,
                 /\.css$/,
                 /\.json$/,
                 /\.svg$/
@@ -76,9 +59,7 @@ module.exports = {
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            configFileName: 'tsconfig.frontend.json',
-                            useBabel: true,
-                            useCache: true
+                            configFileName: 'tsconfig.frontend.json'
                         }
                     }
                 ]
@@ -117,15 +98,12 @@ module.exports = {
     },
     plugins: [
         new CheckerPlugin(),
-        new InterpolateHtmlPlugin(env.raw),
         new HtmlWebpackPlugin({
-          inject: true,
-          template: './public/index.html',
+          inject: 'body',
+          template: paths.appHtml
         }),
-        new webpack.DefinePlugin(env.stringified),
         new webpack.HotModuleReplacementPlugin(),
-        new CaseSensitivePathsPlugin(),
-        new WatchMissingNodeModulesPlugin('./node_modules')
+        new CaseSensitivePathsPlugin()
     ],
     stats: {
         colors: true,

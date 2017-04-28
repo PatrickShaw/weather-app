@@ -13,8 +13,8 @@ class WeatherList extends React.Component<WeatherListProps, void> {
         return (
             <section>
                 {
-                    this.props.weatherData.map((weather) => {
-                        return <WeatherItem weather={weather}/>;
+                    this.props.weatherData.map((weather, weatherIndex) => {
+                        return <WeatherItem key={weatherIndex} weather={weather}/>;
                     })
                 }
             </section>

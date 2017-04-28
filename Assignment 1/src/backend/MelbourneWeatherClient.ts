@@ -18,7 +18,7 @@ interface MelbourneWeatherServiceStub {
   getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any>;
 }
 /**
- * Creates a   client, designed for the MelbourneWeatherApi.
+ * Creates a client, designed for the MelbourneWeatherApi.
  */
 class MelbourneWeatherClient {
   weatherService: MelbourneWeatherServiceStub;

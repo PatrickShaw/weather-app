@@ -15,7 +15,7 @@ module.exports = {
     name: "Backend Server",
     entry: './src/backend/index.ts',
     externals: [nodeExternals()],
-    devtool: 'cheap-module-source-map',
+    devtool: 'source-map',
     module: {
         rules: [
             {
@@ -33,8 +33,7 @@ module.exports = {
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            useBabel: true,
-                            useCache: true
+                            configFileName: 'tsconfig.backend.json'
                         }
                     }
                 ]
