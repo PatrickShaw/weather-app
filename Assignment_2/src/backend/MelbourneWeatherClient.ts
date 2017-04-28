@@ -1,5 +1,7 @@
 import * as Soap from 'soap-as-promised';
 import {WeatherLocationData, RainfallData, TemperatureData} from '../model/index';
+import * as chalk from 'chalk';
+
 interface RainfallRequestData {
   parameters: string;
 }
@@ -81,8 +83,8 @@ class MelbourneWeatherClient {
           rainfallData = new RainfallData(rainfallStrings[0], rainfallStrings[1]);
         })
         .catch((error) => {
-          console.log(error.message);
-          console.log(error.stack);
+          console.log(chalk.red(error.message));
+          console.log(chalk.red(error.stack));
         });
 
       let compileWeatherLocationDataPromises: Array<Promise<any>> = [temperatureRequestPromise, rainfallRequestPromise];
@@ -92,8 +94,8 @@ class MelbourneWeatherClient {
         let weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
         weatherLocationDataList.push(weatherData);
       }).catch((error) => {
-        console.log(error.message);
-        console.log(error.stack);
+        console.log(chalk.red(error.message));
+        console.log(chalk.red(error.stack));
       });
       // Wait for all promises before sending list.
       weatherPromises.push(rainfallRequestPromise);
@@ -105,8 +107,8 @@ class MelbourneWeatherClient {
         onWeatherPollCompleteListener.onWeatherRetrieved(weatherLocationDataList);
       });
     }).catch((error) => {
-      console.log(error.message);
-      console.log(error.stack);
+      console.log(chalk.red(error.message));
+      console.log(chalk.red(error.stack));
     });
   } 
 }
@@ -120,6 +122,8 @@ class Builder {
         resolve(melbourneWeatherClient);
       })
       .catch((error) => {
+        console.log(chalk.red(error.message));
+        console.log(chalk.red(error.stack));
         reject(error);
       });
     });
