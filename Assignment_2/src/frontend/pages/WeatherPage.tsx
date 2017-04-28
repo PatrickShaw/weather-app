@@ -19,7 +19,9 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   render() {
     return (
       <div className="weather-page">
-        <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
+        <div className="page-heading">
+          <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
+        </div>
         <aside className="sidebar">
           <WeatherList weatherData={this.props.weatherData}/>
         </aside>

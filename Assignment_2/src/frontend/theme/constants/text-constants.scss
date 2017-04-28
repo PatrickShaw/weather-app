@@ -1,0 +1,84 @@
+/* Contains text related SASS constants */
+@import "screen-width-constants";
+@font-face {
+    font-family: Roboto, sans-serif;
+    src: uurl('https://fonts.googleapis.com/css?family=Roboto');
+}
+/* Generic text colors */
+// Dark
+$txt-color-primary-dark:   rgba(0,0,0,0.87);
+$txt-color-secondary-dark: rgba(0,0,0,0.54);
+$txt-color-tertiary-dark:  rgba(0,0,0,0.38);
+$txt-color-disabled-dark: $txt-color-tertiary-dark;
+$txt-color-hint-dark: $txt-color-tertiary-dark;
+// Light
+$txt-color-primary-light:   rgba(255,255,255,1.00);
+$txt-color-secondary-light: rgba(255,255,255,0.70);
+$txt-color-tertiary-light:  rgba(255,255,255,0.12);
+$txt-color-disabled-light: $txt-color-tertiary-light;
+$txt-color-hint-light: $txt-color-tertiary-light;
+/* Generic text weights */
+$txt-weight-medium: 600;
+$txt-weight-light: 300;
+$txt-weight-regular: normal;
+$txt-weight-bold: bold;
+
+/* Display 4 */
+$txt-size-display-4: 6.989em;
+$txt-weight-display-4: $txt-weight-light;
+/* Display 3 */
+$txt-size-display-3: 3.494em;
+$txt-weight-display-3: $txt-weight-regular;
+/* Display 2 */
+$txt-size-display-2: 2.808em;
+$txt-weight-display-2: $txt-weight-regular;
+/* Display 1 */
+$txt-size-display-1: 2.122em;
+$txt-weight-display-1: $txt-weight-regular;
+/* Titles */
+$txt-weight-title: $txt-weight-medium;  
+$txt-size-title: 1.248em;
+/* Subtitles */
+$txt-weight-subheading: $txt-weight-regular;
+$txt-size-subheading: 0.998em;
+/* Body 1 */
+$txt-size-body-1-mobile: 0.874em;
+$txt-size-body-1-desktop: 0.811em;
+$txt-size-body-1: $txt-size-body-1-mobile;
+@media screen and (min-width: $width-desktop) {
+  $txt-size-body-1: $txt-size-body-1-desktop;
+}
+$txt-weight-body-1: $txt-weight-regular;
+/* Body 2 */
+$txt-size-body-2-mobile: $txt-size-body-1-mobile;
+$txt-size-body-2-desktop: $txt-size-body-1-desktop;
+$txt-size-body-2: $txt-size-body-2-mobile;
+@media screen and (min-width: $width-desktop) {
+  $txt-size-body-2: $txt-size-body-2-desktop;
+}
+$txt-weight-body-2: $txt-weight-medium;
+/* Caption */
+$txt-size-caption: 0.749em;
+$txt-weight-caption: $txt-weight-regular;
+
+/* App bar */
+$txt-color-app-bar-title-light: $txt-color-primary-light;
+$txt-color-app-bar-title-dark: $txt-color-primary-dark;
+$txt-size-app-bar-title: $txt-size-title;
+$txt-weight-app-bar-title: $txt-weight-title;
+
+$txt-color-app-bar-subtitle-light: $txt-color-secondary-light;
+$txt-color-app-bar-subtitle-dark: $txt-color-secondary-dark;
+$txt-size-app-bar-subtitle: $txt-size-subheading;
+$txt-weight-app-bar-subtitle: $txt-weight-subheading;
+/* Button */
+$txt-transform-button: uppercase; // ALL CAPS
+// English
+$txt-size-button-english: 0.874em;
+$txt-weight-button-english: $txt-weight-medium;
+// Dense
+$txt-size-button-dense: 0.936em;
+$txt-weight-button-dense: $txt-weight-medium;
+// Tall
+$txt-size-button-tall: 0.936em;
+$txt-weight-button-tall: $txt-weight-bold;

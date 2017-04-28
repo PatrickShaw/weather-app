@@ -6,9 +6,9 @@ interface ActionBarProps {
 class ActionBar extends React.Component<ActionBarProps, void> {
   render() {
     return (
-      <header>
-        <h1>{this.props.title}</h1>
-        <h2>{this.props.subtitle}</h2>
+      <header className="action-bar">
+        <h1 className="txt-title-app-bar-title light">{this.props.title}</h1>
+        <h2 className="txt-title-app-bar-subtitle light">{this.props.subtitle}</h2>
       </header>
     );
   }

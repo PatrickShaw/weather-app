@@ -1,0 +1,7 @@
+@import "constants/text-constants";
+@import "classes/text-classes";
+* {
+  font-family: Roboto;
+  font-weight: $txt-weight-regular;
+  color: $txt-color-primary-dark;
+}

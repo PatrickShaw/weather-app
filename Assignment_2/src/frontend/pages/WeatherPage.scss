@@ -1,9 +1,15 @@
 .weather-page {
-  
+ display: flex; 
+ flex-direction: row;
+ flex-wrap: wrap;
 }
 .monitoring-container {
-  
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 .sidebar {
-
+  flex-basis: 300px;
 }
+.page-heading {
+  width: 100%;
+} 
