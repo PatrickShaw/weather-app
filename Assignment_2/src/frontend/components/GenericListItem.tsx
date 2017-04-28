@@ -3,7 +3,7 @@ interface ListItemProps {
     title: string;
     subtitle: string;
 }
-class ListItem extends React.Component<ListItemProps, void> {
+class GenericListItem extends React.Component<ListItemProps, void> {
     constructor() {
         super();
     }
@@ -16,5 +16,5 @@ class ListItem extends React.Component<ListItemProps, void> {
         );
     }
 }
-export {ListItem};
-export default ListItem;
+export {GenericListItem};
+export default GenericListItem;
