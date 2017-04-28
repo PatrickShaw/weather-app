@@ -3,6 +3,7 @@ interface ListItemProps {
     title: string;
     subtitle: string;
 }
+// TODO: Rename
 class ListItem extends React.Component<ListItemProps, void> {
     constructor() {
         super();

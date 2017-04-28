@@ -1,5 +1,6 @@
 import * as Soap from 'soap-as-promised';
 import {WeatherLocationData, RainfallData, TemperatureData} from '../model/index';
+
 interface RainfallRequestData {
   parameters: string;
 }
@@ -24,27 +25,33 @@ class MelbourneWeatherClient {
   weatherService: MelbourneWeatherServiceStub;
   onWeatherPollCompleteListeners: Array<OnWeatherRetrievedListener>;
   onLocationsPollCompleteListeners: Array<OnLocationsRetrievedListener>;
+
   constructor(melbourneWeatherSoapClient: MelbourneWeatherServiceStub) {
     this.weatherService = melbourneWeatherSoapClient;
     this.onWeatherPollCompleteListeners = [];
     this.onLocationsPollCompleteListeners = [];
   }
+
   addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.push(addedListener);
   }
+
   removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
   }
+
   addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.push(addedListener);
   }
+
   removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
   }
+
   retrieveLocations() {
     this.weatherService.getLocations(null)
     .then((locationsResponse) => {
@@ -56,6 +63,7 @@ class MelbourneWeatherClient {
       );
     });
   }
+
   retrieveWeatherData(locations: Array<string>) {
     let weatherLocationDataList: Array<WeatherLocationData> = [];
     let weatherPromises: Array<Promise<any>> = [];
@@ -107,5 +115,6 @@ class Builder {
     });
   }
 }
+
 export {Builder, MelbourneWeatherClient, OnWeatherRetrievedListener, OnLocationsRetrievedListener};
 export default MelbourneWeatherClient;

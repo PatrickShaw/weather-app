@@ -167,12 +167,15 @@ const MelbourneWeatherClient_1 = __webpack_require__(0);
 new MelbourneWeatherClient_1.Builder().build().then(melbourneWeatherClient => {
     melbourneWeatherClient.addOnWeatherRetrievedListener(new class {
         onWeatherRetrieved(weatherLocationDataList) {
-            console.log(weatherLocationDataList);
+            console.log('WHAT THE FUCK');
+            // console .log(weatherLocationDataList);
         }
     }());
     melbourneWeatherClient.addOnLocationsRetrievedListener(new class {
         onLocationsRetrieved(locations) {
-            console.log(locations);
+            console.log('WHAT THE FUCK LOCATIONS');
+            // console.log(locations);
+            // Does calls.
             setInterval(() => {
                 melbourneWeatherClient.retrieveWeatherData(locations);
             }, 5000);
