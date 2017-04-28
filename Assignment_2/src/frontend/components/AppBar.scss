@@ -1,0 +1,9 @@
+@import "../theme/full-lambda-colors";
+@import "../theme/full-lambda-dimens";
+.app-bar {
+  background: $color-primary;
+  padding: $app-bar-padding;
+}
+.txt-app-bar-title {
+  margin-bottom: $layout-padding-sm;
+}

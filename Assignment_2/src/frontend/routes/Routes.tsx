@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Redux from 'redux';
 import {BrowserRouter, Route} from 'react-router-dom';
 import {Provider} from 'react-redux';
+import {HomePage} from '../pages/HomePage';
 import {WeatherPage} from '../pages/WeatherPage';
 import {AppState} from '../model/AppState';
 import * as SocketIo from 'socket.io-client';
@@ -25,6 +26,7 @@ class Routes extends React.Component<RoutesProps, void> {
             <Provider store={this.props.store}>
                 <BrowserRouter>
                     <div>
+                        <Route path="/home" component={HomePage}/>
                         <Route exact={true} path="/" component={WeatherPage}/>
                     </div>
                 </BrowserRouter>
