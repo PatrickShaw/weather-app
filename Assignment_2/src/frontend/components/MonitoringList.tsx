@@ -9,8 +9,8 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
     return (
       <section>
         {
-          this.props.weatherDataList.map((weatherDataItem: WeatherLocationData) => {
-            return <MonitoringItem weatherData={weatherDataItem}/>;
+          this.props.weatherDataList.map((weatherDataItem: WeatherLocationData, weatherIndex: number) => {
+            return <MonitoringItem key={weatherIndex} weatherData={weatherDataItem}/>;
           })
         }
       </section>
