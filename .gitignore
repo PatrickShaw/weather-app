@@ -1,4 +1,4 @@
-"Assignment 1/build"
+"Assignment_2/build"
 */.awcache
 .idea
 /idea
@@ -8,4 +8,4 @@ idea
 node_modules
 */npm-debug.log
 */npm-debug.log.*
-Assignment 1/build/
+Assignment_2/build/*
