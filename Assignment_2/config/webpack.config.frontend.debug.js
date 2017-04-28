@@ -86,6 +86,12 @@ module.exports = {
                 test: /\.(scss|sass)$/,
                 use: [
                     {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader'
+                    },
+                    {
                         loader: 'sass-loader'
                     }
                 ]
