@@ -7,8 +7,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
   render() {
     return (
       <section className="pad-item-list">
-        <h1 className="txt-body-2">Hello</h1>
-        <h2 className="txt-body-1">Weather</h2>
+        <h1 className="txt-body-2">{this.props.weatherData.location}</h1>
+        <h2 className="txt-body-1">{this.props.weatherData.rainfallData.rainfall}</h2>
+        <h2 className="txt-body-1">{this.props.weatherData.temperatureData.temperature}</h2>
       </section>
     );
   }
