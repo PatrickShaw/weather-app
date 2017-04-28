@@ -1,0 +1,6 @@
+{
+  "presets": [
+    ["env", {"targets": ["> 4%", "ie 10", "safari 8"]}],
+    "react"
+  ]
+}
