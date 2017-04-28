@@ -30,6 +30,9 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
           <MonitoringList weatherDataList={this.props.weatherData}/>
         </main>
+        <footer className="page-footer">
+          <p className="copyright">Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
+        </footer>
       </div>
     );
   }

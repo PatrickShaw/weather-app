@@ -1,21 +1,38 @@
 @import "../theme/full-lambda-dimens";
+@import "../theme/full-lambda-colors";
+@import "../theme/full-lambda-text";
+$main-minimum-height: 400px;
 .weather-page {
  display: flex; 
  flex-direction: row;
  flex-wrap: wrap;
 }
 .monitoring-container {
+  min-height: $main-minimum-height;
+  background: $background-1-light;
   flex-grow: 1;
   flex-shrink: 1;
 }
 .sidebar {
+  min-height: $main-minimum-height;
+  background: $background-1-light;
   flex-basis: 300px;
 }
 .page-heading {
   width: 100%;
+  z-index: 10;
+  box-shadow: 0px 0px 6px 5px $shadow-dark;
 } 
 .title-section {
-  padding-left: $layout-padding-lg;
-  padding-right: $layout-padding-lg;
-  padding-top: $layout-padding-lg;
+  padding-left: $layout-padding-xl;
+  padding-right: $layout-padding-xl;
+  padding-top: $layout-padding-xl;
+}
+.page-footer {
+  width: 100%;
+  padding: $layout-padding-lg;
+  background: $color-dark;
+}
+.copyright {
+  color: $txt-color-secondary-light;
 }
