@@ -2,6 +2,19 @@
   "name": "fit3077-assignment-2",
   "version": "0.0.1",
   "private": true,
+  "contributors": [
+    {
+      "name": "Patrick Shaw",
+      "email": "psha67@student.monash.edu",
+      "url": "https://github.com/PatrickShaw"
+    },
+    {
+      "name": "David Lei",
+      "email": "dlei7@student.monash.edu",
+      "url": "https://github.com/darvid7"
+    }
+  ],
+  "license": "LGPL-3.0",
   "scripts": {
     "start": "concurrently --kill-others \"npm run backend-start\" \"npm run frontend-start\"",
     "frontend-start": "node scripts/frontend-start.js",

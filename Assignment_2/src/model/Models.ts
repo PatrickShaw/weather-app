@@ -1,6 +1,6 @@
-import {TemperatureData} from './TemperatureData';
 import {RainfallData} from './RainfallData';
+import {TemperatureData} from './TemperatureData';
 import {WeatherLocationData} from './WeatherLocationData';
-export {TemperatureData};
 export {RainfallData};
+export {TemperatureData};
 export {WeatherLocationData};

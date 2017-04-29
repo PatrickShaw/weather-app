@@ -1,4 +1,4 @@
-import {WeatherLocationData} from '../../model/index';
+import {WeatherLocationData} from '../../model/Models';
 class AppState {
     weatherData: Array<WeatherLocationData>;
     constructor(weatherData: Array<WeatherLocationData>) {

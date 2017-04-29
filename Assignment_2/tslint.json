@@ -1,21 +1,9 @@
 {
-  "rules": {
-    "align": [
-      true,
-      "parameters",
-      "arguments",
-      "statements"
-    ],
-    "ban": false,
-    "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
-    "curly": true,
-    "eofline": true,
-    "forin": true,
-    "indent": [ true, "spaces" ],
+  "extends": [
+    "tslint:recommended"
+  ],
+  
+
     "interface-name": [true, "never-prefix"],
     "label-position": true,
     "max-line-length": [ true, 120 ],

@@ -1,59 +1,68 @@
-import * as Soap from 'soap-as-promised';
-import {WeatherLocationData, RainfallData, TemperatureData} from '../model/index';
 import * as chalk from 'chalk';
 
-interface RainfallRequestData {
-  parameters: string;
-}
-interface TemperatureRequestData {
-  parameters: string;
-}
-interface OnWeatherRetrievedListener {
-  onWeatherRetrieved(weatherLocationDataList: Array<WeatherLocationData>);
-}
-interface OnLocationsRetrievedListener {
-  onLocationsRetrieved(locations: Array<string>);
-}
-interface MelbourneWeatherServiceStub {
-  // TODO: Maybe get rid of null?
-  getLocations(locationRequestData: null): Promise<any>;
-  getRainfall(rainfallRequestData: RainfallRequestData): Promise<any>;
-  getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any>;
-}
+// tslint:disable-next-line:max-line-length
+import { MelbourneWeatherServiceStub, OnLocationsRetrievedListener, OnWeatherRetrievedListener } from '../interface/Interfaces';
+import { RainfallData, TemperatureData, WeatherLocationData } from '../model/Models';
+
+// tslint:disable:no-console
+
 /**
- * Creates a client, designed for the MelbourneWeatherApi.
+ * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
 class MelbourneWeatherClient {
-  weatherService: MelbourneWeatherServiceStub;
-  onWeatherPollCompleteListeners: Array<OnWeatherRetrievedListener>;
-  onLocationsPollCompleteListeners: Array<OnLocationsRetrievedListener>;
+  // Instance variables.
+  private weatherService: MelbourneWeatherServiceStub;
+  private onWeatherPollCompleteListeners: OnWeatherRetrievedListener[];
+  private onLocationsPollCompleteListeners: OnLocationsRetrievedListener[];
+
+  // Default constructor.
   constructor(melbourneWeatherSoapClient: MelbourneWeatherServiceStub) {
     this.weatherService = melbourneWeatherSoapClient;
     this.onWeatherPollCompleteListeners = [];
     this.onLocationsPollCompleteListeners = [];
   }
-  addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener) {
+  
+  /**
+   * Add a listener to this.onWeatherPollCompleteListeners which is be triggered 
+   * when retrieveWeatherData() is completed.
+   * @param addedListener 
+   */
+  public addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.push(addedListener);
   }
-  removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener) {
+  
+  /**
+   * Remove a listener from this.onWeatherPollCompleteListeners.
+   * @param removedListener 
+   */
+  public removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
   }
-  addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener) {
+  
+  /**
+   * Add a listener to this.onLocationsPollCompleteListeners which is triggered when 
+   * retrieveLocations() is completed.
+   * @param addedListener 
+   */
+  public addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.push(addedListener);
   }
-  removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener) {
+  
+  public removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
   }
-  retrieveLocations() {
-    this.weatherService.getLocations(null)
-    .then((locationsResponse) => {
-      // locationsRespose is an object .return gives the data as an Array<string>
-      // object.return
-      let locations: Array<string> = locationsResponse.return;
+  
+  /**
+   * Retrieve locations from SOAP client endpoint.
+   */
+  public retrieveLocations() {
+    this.weatherService.getLocations().then((locationsResponse) => {
+      // locationsResponse is an object locationsResponse.return gives the data as an string.
+      const locations: string[] = locationsResponse.return;
       this.onLocationsPollCompleteListeners.forEach(
         (onLocationsPollCompleteListener: OnLocationsRetrievedListener) => {
           onLocationsPollCompleteListener.onLocationsRetrieved(locations);
@@ -61,9 +70,10 @@ class MelbourneWeatherClient {
       );
     });
   }
-  retrieveWeatherData(locations: Array<string>) {
-    let weatherLocationDataList: Array<WeatherLocationData> = [];
-    let weatherPromises: Array<Promise<any>> = [];
+  
+  public retrieveWeatherData(locations: string[]) {
+    const weatherLocationDataList: WeatherLocationData[] = [];
+    const weatherPromises: Array<Promise<any>> = [];
     locations.forEach((location: string) => {
       let temperatureData: TemperatureData;
       let rainfallData: RainfallData;
@@ -73,13 +83,13 @@ class MelbourneWeatherClient {
       // SOAP lib is async, .then to make sync.
       // TODO: is it meant to be parameters: location in the json.
         this.weatherService.getTemperature({parameters: location}).then((temperatureResponse) => {
-          let temperatureStrings: Array<string> = temperatureResponse.return;
+          const temperatureStrings: string[] = temperatureResponse.return;
           temperatureData = new TemperatureData(temperatureStrings[0], temperatureStrings[1]);
         });
       const rainfallRequestPromise: Promise<any> = 
         this.weatherService.getRainfall({parameters: location})
         .then((rainfallResponse) => {
-          let rainfallStrings: Array<string> = rainfallResponse.return;
+          const rainfallStrings: string[] = rainfallResponse.return;
           rainfallData = new RainfallData(rainfallStrings[0], rainfallStrings[1]);
         })
         .catch((error) => {
@@ -87,11 +97,12 @@ class MelbourneWeatherClient {
           console.log(chalk.red(error.stack));
         });
 
-      let compileWeatherLocationDataPromises: Array<Promise<any>> = [temperatureRequestPromise, rainfallRequestPromise];
+      const compileWeatherLocationDataPromises: Array<Promise<any>> = [temperatureRequestPromise, 
+        rainfallRequestPromise];
       // Promises are async and non blocking, .all() means to wait until promises resolved.
       Promise.all(compileWeatherLocationDataPromises)
       .then((responses) => {
-        let weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
+        const weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
         weatherLocationDataList.push(weatherData);
       }).catch((error) => {
         console.log(chalk.red(error.message));
@@ -112,22 +123,6 @@ class MelbourneWeatherClient {
     });
   } 
 }
-// TODO: There are a lot of optional settings we can set in this builder
-class Builder {
-  build(): Promise<MelbourneWeatherClient> {
-    return new Promise<MelbourneWeatherClient>((resolve, reject) => {
-      Soap.createClient('http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl')
-      .then((weatherService: MelbourneWeatherServiceStub) => {
-        let melbourneWeatherClient: MelbourneWeatherClient = new MelbourneWeatherClient(weatherService);
-        resolve(melbourneWeatherClient);
-      })
-      .catch((error) => {
-        console.log(chalk.red(error.message));
-        console.log(chalk.red(error.stack));
-        reject(error);
-      });
-    });
-  }
-}
-export {Builder, MelbourneWeatherClient, OnWeatherRetrievedListener, OnLocationsRetrievedListener};
+
+export {MelbourneWeatherClient};
 export default MelbourneWeatherClient;
