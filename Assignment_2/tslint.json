@@ -3,8 +3,11 @@
     "tslint:recommended"
   ],
   "rules": {
-    "no-console": [
+    "max-classes-per-file": [
       false
+    ],
+    "no-console": [
+      false 
     ],
     "ordered-imports": [
       false

@@ -1,8 +1,7 @@
 import * as Soap from 'soap-as-promised';
-import * as chalk from 'chalk';
 
 import { MelbourneWeatherClient } from './MelbourneWeatherClient';
-import { MelbourneWeatherServiceStub } from '../interface/Interfaces';
+import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
 
 // TODO: There are a lot of optional settings we can set in this builder.
 
@@ -19,9 +18,6 @@ class SoapClientBuilder {
         resolve(melbourneWeatherClient);
       })
       .catch((error) => {
-        console.log(chalk.bgRed('Error: SOAP client connection'));
-        console.log(chalk.red(error.message));
-        console.log(chalk.red(error.stack));
         reject(error);
       });
     });

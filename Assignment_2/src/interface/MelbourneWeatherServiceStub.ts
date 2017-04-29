@@ -1,10 +1,15 @@
-import RainfallRequestData from './RainfallRequestData';
-import TemperatureRequestData from './TemperatureRequestData';
+import { RainfallRequestData } from '../model/RainfallRequestData';
+import { TemperatureRequestData } from '../model/TemperatureRequestData';
 
+/**
+ * Interface for SOAP Weather client. 
+ */
 interface MelbourneWeatherServiceStub {
-  // TODO: Maybe get rid of null?
+  // Get a List of locations.
   getLocations(): Promise<any>;
+  // Get rainfallRequestData.
   getRainfall(rainfallRequestData: RainfallRequestData): Promise<any>;
+  // Get temperatureRequestData.
   getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any>;
 }
 

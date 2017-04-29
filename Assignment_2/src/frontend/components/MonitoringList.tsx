@@ -1,11 +1,14 @@
 import * as React from 'react';
-import {WeatherLocationData} from '../../model/WeatherLocationData';
+
 import {MonitoringItem} from './MonitoringItem';
+import {WeatherLocationData} from '../../model/WeatherLocationData';
+
 interface MonitoringListProps {
   weatherDataList: WeatherLocationData[];
 }
+
 class MonitoringList extends React.Component<MonitoringListProps, void> {
-  render() {
+  public render() {
     return (
       <section>
         {

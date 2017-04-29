@@ -1,9 +1,11 @@
-import {WeatherLocationData} from '../../model/Models';
+import {WeatherLocationData} from '../../model/WeatherLocationData';
+
 class AppState {
-    weatherData: Array<WeatherLocationData>;
-    constructor(weatherData: Array<WeatherLocationData>) {
+    public weatherData: WeatherLocationData[];
+    constructor(weatherData: WeatherLocationData[]) {
         this.weatherData = weatherData;
     }
 }
+
 export {AppState};
 export default {AppState};

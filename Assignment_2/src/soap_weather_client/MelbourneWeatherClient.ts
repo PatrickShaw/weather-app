@@ -1,8 +1,15 @@
 import * as chalk from 'chalk';
 
+import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
+import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
+import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
+import { RainfallData } from '../model/RainfallData';
+import { RainfallRequestData } from '../model/RainfallRequestData';
+import { TemperatureData } from '../model/TemperatureData';
+import { TemperatureRequestData } from '../model/TemperatureRequestData';
+import { WeatherLocationData } from '../model/WeatherLocationData';
+
 // tslint:disable-next-line:max-line-length
-import { MelbourneWeatherServiceStub, OnLocationsRetrievedListener, OnWeatherRetrievedListener } from '../interface/Interfaces';
-import { RainfallData, TemperatureData, WeatherLocationData } from '../model/Models';
 
 /**
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
@@ -25,7 +32,7 @@ class MelbourneWeatherClient {
    * when retrieveWeatherData() is completed.
    * @param addedListener Object that implements OnWeatherRetrievedListener.
    */
-  public addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener) {
+  public addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener): void {
     this.onWeatherPollCompleteListeners.push(addedListener);
   }
   
@@ -33,7 +40,7 @@ class MelbourneWeatherClient {
    * Remove a listener from this.onWeatherPollCompleteListeners.
    * @param removedListener Listener to remove.
    */
-  public removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener) {
+  public removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener): void {
     this.onWeatherPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
@@ -44,7 +51,7 @@ class MelbourneWeatherClient {
    * retrieveLocations() is completed.
    * @param addedListener Object that implements OnLocationsRetrievedListener.
    */
-  public addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener) {
+  public addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener): void {
     this.onLocationsPollCompleteListeners.push(addedListener);
   }
   
@@ -52,7 +59,7 @@ class MelbourneWeatherClient {
    * Remove a listener from this.onLocationsPollCompleteListeners.
    * @param removedListener Listener to remove.
    */
-  public removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener) {
+  public removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener): void {
     this.onLocationsPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
     });
@@ -61,7 +68,7 @@ class MelbourneWeatherClient {
   /**
    * Retrieve locations from SOAP client endpoint.
    */
-  public retrieveLocations() {
+  public retrieveLocations(): void {
     this.weatherService.getLocations().then((locationsResponse) => {
       // locationsResponse is an object locationsResponse.return gives the data as an string.
       const locations: string[] = locationsResponse.return;
@@ -78,7 +85,7 @@ class MelbourneWeatherClient {
    * Retrieve weather data from SOAP client endpoint based on locations.
    * @param locations Locations to get data for.
    */
-  public retrieveWeatherData(locations: string[]) {
+  public retrieveWeatherData(locations: string[]): void {
     const weatherLocationDataList: WeatherLocationData[] = [];
     const weatherPromises: Array<Promise<any>> = [];
     // For each location, get temp and rainfall data.
@@ -89,7 +96,7 @@ class MelbourneWeatherClient {
       // Note: SOAP lib is async, Promise.then to do work after async call.
 
       const temperatureRequestPromise: Promise<any> = 
-        this.weatherService.getTemperature({parameters: location})
+        this.weatherService.getTemperature(new TemperatureRequestData(location))
         .then((temperatureResponse) => {
           // temperatureResponse is an object, .return will return the data in that object as a string[].
           const temperatureStrings: string[] = temperatureResponse.return;
@@ -102,7 +109,7 @@ class MelbourneWeatherClient {
         });
 
       const rainfallRequestPromise: Promise<any> = 
-        this.weatherService.getRainfall({parameters: location})
+        this.weatherService.getRainfall(new RainfallRequestData(location))
         .then((rainfallResponse) => {
           const rainfallStrings: string[] = rainfallResponse.return;
           rainfallData = new RainfallData(rainfallStrings[0], rainfallStrings[1]);
