@@ -1,5 +1,5 @@
 import './theme/full-lambda-theme.scss';
-
+import 'reflect-metadata';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 

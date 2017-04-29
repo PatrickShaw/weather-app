@@ -1153,6 +1153,10 @@ clap@^1.0.9:
   dependencies:
     chalk "^1.1.3"
 
+class-transformer@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.1.6.tgz#1139c149311c0c84ded3c00e2a879e3479f60fa0"
+
 classnames@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
@@ -3895,6 +3899,10 @@ redux@^3.6.0:
     loose-envify "^1.1.0"
     symbol-observable "^1.0.2"
 
+reflect-metadata@^0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.10.tgz#b4f83704416acad89988c9b15635d47e03b9344a"
+
 regenerate@^1.2.1:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.3.2.tgz#d1941c67bad437e1be76433add5b385f95b19260"
@@ -4659,6 +4667,10 @@ type-is@~1.6.14:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+
+typedjson-npm@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/typedjson-npm/-/typedjson-npm-0.1.7.tgz#4ac7d5e3717a2cd54bc4adb471e4667ff169b6d3"
 
 typescript@^2.2.2:
   version "2.3.0"

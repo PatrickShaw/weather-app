@@ -16,9 +16,7 @@ class GenericListItem extends React.Component<ListItemProps, void> {
     return (
       <section className="pad-item-list">
         <h1 className={titleStyle}>{this.props.title}</h1>
-        {
-          noSubtitle ? null : <h2 className="txt-body-1">{this.props.subtitle}</h2>
-        }
+        {noSubtitle ? null : <h2 className="txt-body-1">{this.props.subtitle}</h2>}
       </section>
     );
   }

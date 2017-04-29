@@ -6,7 +6,7 @@ import {WeatherPage} from '../pages/WeatherPage';
 
 class Routes extends React.Component<{}, void> {
 
-  public render() {
+  public render(): JSX.Element {
     // Route index page '/'.
     return (
       <BrowserRouter>

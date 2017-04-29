@@ -5,13 +5,14 @@ import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedL
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { SoapClientBuilder } from '../soap_weather_client/SoapClientBuilder';
 import { WeatherLocationData } from '../model/WeatherLocationData';
-
+let melbourneWeatherLocations: string[] = [];
 // Setup web sockets.
 // Listen to port 8080, frontend connects to port 8080.
 const io: SocketIO.Server = SocketIo.listen(8080); 
 io.sockets.on('connection', (socket: SocketIO.Server): void => {  
   // Session started with frontend.
   console.log(chalk.cyan('Session started'));
+  socket.emit('locations', melbourneWeatherLocations);
 });
 
 // Make SOAP Client.
@@ -31,7 +32,7 @@ new SoapClientBuilder().build()
         // Send updated data to front end.
         const timeStamp: string = new Date().toString();
         console.log(chalk.cyan('Emit weather location data at time: ' + timeStamp));
-        io.sockets.emit('update_weather_location_data', weatherLocationDataList);
+        io.sockets.emit('weather_data', weatherLocationDataList);
       }
     }()
   );
@@ -46,6 +47,8 @@ new SoapClientBuilder().build()
        * @param locations List of strings of locations.
        */
       public onLocationsRetrieved(locations: string[]): void {
+        melbourneWeatherLocations = locations;
+        io.sockets.emit('locations', locations);
         console.log(chalk.cyan('locations :' + locations));
         const msInterval = 30000;
         // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
