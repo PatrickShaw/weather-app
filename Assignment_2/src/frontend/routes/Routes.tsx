@@ -1,8 +1,12 @@
 import * as React from 'react';
+
 import {BrowserRouter, Route} from 'react-router-dom';
+
 import {WeatherPage} from '../pages/WeatherPage';
+
 class Routes extends React.Component<{}, void> {
-    render() {
+    public render() {
+        // Route index page '/'.
         return (
             <BrowserRouter>
                 <div>
@@ -12,5 +16,6 @@ class Routes extends React.Component<{}, void> {
         );
     }
 }
+
 export {Routes};
 export default Routes;

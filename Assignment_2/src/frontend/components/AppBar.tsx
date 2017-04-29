@@ -1,11 +1,14 @@
-import * as React from 'react';
 import './AppBar.scss';
+
+import * as React from 'react';
+
 interface ActionBarProps {
   title: string;
   subtitle: string;
 }
+
 class ActionBar extends React.Component<ActionBarProps, void> {
-  render() {
+  public render() {
     return (
       <header className="app-bar">
         <h1 className="txt-app-bar-title light">{this.props.title}</h1>

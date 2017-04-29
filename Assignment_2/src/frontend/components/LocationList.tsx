@@ -1,5 +1,7 @@
 import * as React from 'react';
+
 import {LocationItem} from './LocationItem';
+
 interface LocationListProps {
     locations: string[];
 }
@@ -8,7 +10,7 @@ class LocationList extends React.Component<LocationListProps, void> {
         super();
     }
 
-    render() {
+    public render() {
         return (
             <section>
                 {
