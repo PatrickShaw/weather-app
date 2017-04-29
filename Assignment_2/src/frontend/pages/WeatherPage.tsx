@@ -74,6 +74,5 @@ class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentPro
   }
 }
 
-
 export {WeatherPageContainer as WeatherPage};
 export default WeatherPageContainer;
