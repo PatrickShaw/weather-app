@@ -71,15 +71,16 @@ new SoapClientBuilder().build()
         // TODO: Fix so data populated once a session is connected, cache it.
         // TODO: Change 5000 to 5 mins in milliseconds.
         // Note: setInterval() doesn't get data at time 0.
+        
+        melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations());
+        setInterval((): void => { 
+          melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations()); 
+        }, msInterval);  
       }
     }()
   );
   melbourneWeatherClient.retrieveLocations();
 })
-          melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations());
-            melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations()); 
-          }, msInterval);  
-          setInterval((): void => { 
 .catch((error) => {
   console.error(chalk.bgRed('Error: SOAP client connection'));
   console.error(chalk.red(error.message));
