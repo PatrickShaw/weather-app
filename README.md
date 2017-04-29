@@ -26,3 +26,7 @@ A superset of JavaScript that allows the use of static typing, interfaces and cl
 Platform built on Chrome's JavaScript engine allowing server side applications to run in JavaScript.
 
 
+### Webpack
+![Webpack](Images/webpack.svg)
+Webpack was used to tie all together and bundle the backend and frontend applications each into single JavaScript files.
+In addition, Webpack was used as a means of hot module replacement which was handy for frontend development.
