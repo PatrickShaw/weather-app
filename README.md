@@ -32,11 +32,12 @@ We used SASS over plain CSS3 simply for SASS's variable constants feature.
 A a declarative and flexible JavaScript library for building user interfaces developed by Facebook.
 
 ### Node.js
-<img src="Images/node.png" width ="200" />
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Node.js_logo_2015.svg" width ="200" />
 Node.js is a server framework built from Chrome's JavaScript V8 engine.
 It was chosen for a number of reasons.
 
 ### Babel
+<img src="https://babeljs.io/images/logo.svg" width="200"/>
 Babel essentially allows developers to transpile newer and alternative versions of JavaScript into older, more widely supported versions of JavaScript.
 We were not unsure of whether the markers' used modern browsers so Babel ensured application compatiblity with their browsers.
 
@@ -47,9 +48,11 @@ In addition, Webpack was used as a means of hot module replacement which was han
 
 ### Frameworks & libraries we decided against
 #### Redux
+<img href="https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.svg" width="200" height="200"/>
 Redux is an exellent framework for managing state in an application and works well with React.
 However, Redux has a functional programming based nature which didn't fit in with the assignment (object oriented assignment). 
 
 #### React Router
+<img href="https://cdn.worldvectorlogo.com/logos/react-router.svg" height="200"/>
 React Router allows easy management of routes/url navigation. 
 The assignment only really required a single page and browser history management was out of scope.
