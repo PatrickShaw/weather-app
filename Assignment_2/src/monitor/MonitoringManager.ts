@@ -11,13 +11,13 @@ class MonitoringManager {
   }
   public addMonitoredLocation(location: string) {
     this.monitoredLocations.add(location);
-    for (let onAddedMonitoredLocationObserver of this.onMonitoredLocationAddedObservers) {
+    for (const onAddedMonitoredLocationObserver of this.onMonitoredLocationAddedObservers) {
       onAddedMonitoredLocationObserver(location);
     }
   }
   public removeMonitoredLocation(location: string) {
     this.monitoredLocations.delete(location);
-    for (let onMonitoredLocationRemovedObserver of this.onMonitoredLocationRemovedObservers) {
+    for (const onMonitoredLocationRemovedObserver of this.onMonitoredLocationRemovedObservers) {
       onMonitoredLocationRemovedObserver(location);
     }
   }

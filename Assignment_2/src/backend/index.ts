@@ -5,13 +5,19 @@ import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedL
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { SoapClientBuilder } from '../soap_weather_client/SoapClientBuilder';
 import { WeatherLocationData } from '../model/WeatherLocationData';
+import { MonitoringSessionManager } from '../monitor/MonitoringSessionManager';
+import { MonitoringManager } from '../monitor/MonitoringManager';
 
+const sessionManager: MonitoringSessionManager = new MonitoringSessionManager();
 // Setup web sockets.
 // Listen to port 8080, frontend connects to port 8080.
 const io: SocketIO.Server = SocketIo.listen(8080); 
-io.sockets.on('connection', (socket: SocketIO.Server): void => {  
+io.sockets.on('connection', (socket: SocketIO.Client): void => {  
   // Session started with frontend.
   console.log('Session started');
+  const sessionId: string = socket.id;
+  const monitoringSession: MonitoringManager = new MonitoringManager();
+  sessionManager.addMonitoringSession(sessionId, monitoringSession);
 });
 
 // Make SOAP Client.
@@ -32,7 +38,18 @@ new SoapClientBuilder().build()
           const timeStamp: string = new Date().toString();
           console.log('Emit weather location data at time: ' + timeStamp);
           console.log(weatherLocationDataList);
-          io.sockets.emit('update_weather_location_data', weatherLocationDataList);
+          io.sockets.clients((error, clients) => {
+            for (const socket of clients) {
+              const sessionId: string = socket.id;
+              const monitoringSession: MonitoringManager = sessionManager.getMonitoringSession(sessionId);
+              const locationsToEmit: Set<string> = monitoringSession.getMonitoredLocations();
+              const weatherDataToEmit: WeatherLocationData  [] = [];
+              for (const weatherData of weatherLocationDataList) {
+                weatherDataToEmit.push(weatherData);
+              }
+              socket.emit('update_weather_location_data', weatherDataToEmit);
+            }
+          });
         }
       }()
     );
@@ -54,8 +71,10 @@ new SoapClientBuilder().build()
           // TODO: Fix so data populated once a session is connected, cache it.
           // TODO: Change 5000 to 5 mins in milliseconds.
           // Note: setInterval() doesn't get data at time 0.
-          melbourneWeatherClient.retrieveWeatherData(locations);
-          setInterval((): void => { melbourneWeatherClient.retrieveWeatherData(locations); }, msInterval);  
+          melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations());
+          setInterval((): void => { 
+            melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations()); 
+          }, msInterval);  
         } 
       }()
     );
