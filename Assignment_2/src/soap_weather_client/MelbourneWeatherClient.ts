@@ -4,8 +4,6 @@ import * as chalk from 'chalk';
 import { MelbourneWeatherServiceStub, OnLocationsRetrievedListener, OnWeatherRetrievedListener } from '../interface/Interfaces';
 import { RainfallData, TemperatureData, WeatherLocationData } from '../model/Models';
 
-// tslint:disable:no-console
-
 /**
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
@@ -25,7 +23,7 @@ class MelbourneWeatherClient {
   /**
    * Add a listener to this.onWeatherPollCompleteListeners which is be triggered 
    * when retrieveWeatherData() is completed.
-   * @param addedListener 
+   * @param addedListener Object that implements OnWeatherRetrievedListener.
    */
   public addOnWeatherRetrievedListener(addedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.push(addedListener);
@@ -33,7 +31,7 @@ class MelbourneWeatherClient {
   
   /**
    * Remove a listener from this.onWeatherPollCompleteListeners.
-   * @param removedListener 
+   * @param removedListener Listener to remove.
    */
   public removeOnWeatherRetrievedListener(removedListener: OnWeatherRetrievedListener) {
     this.onWeatherPollCompleteListeners.filter((listener) => {
@@ -44,12 +42,16 @@ class MelbourneWeatherClient {
   /**
    * Add a listener to this.onLocationsPollCompleteListeners which is triggered when 
    * retrieveLocations() is completed.
-   * @param addedListener 
+   * @param addedListener Object that implements OnLocationsRetrievedListener.
    */
   public addOnLocationsRetrievedListener(addedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.push(addedListener);
   }
   
+  /**
+   * Remove a listener from this.onLocationsPollCompleteListeners.
+   * @param removedListener Listener to remove.
+   */
   public removeOnLocationsRetrievedListener(removedListener: OnLocationsRetrievedListener) {
     this.onLocationsPollCompleteListeners.filter((listener) => {
       return listener !== removedListener;
@@ -65,27 +67,40 @@ class MelbourneWeatherClient {
       const locations: string[] = locationsResponse.return;
       this.onLocationsPollCompleteListeners.forEach(
         (onLocationsPollCompleteListener: OnLocationsRetrievedListener) => {
+          // For each listener, call onLocationsRetrieved() to retrieveWeatherData() for locations.
           onLocationsPollCompleteListener.onLocationsRetrieved(locations);
         }
       );
     });
   }
   
+  /**
+   * Retrieve weather data from SOAP client endpoint based on locations.
+   * @param locations Locations to get data for.
+   */
   public retrieveWeatherData(locations: string[]) {
     const weatherLocationDataList: WeatherLocationData[] = [];
     const weatherPromises: Array<Promise<any>> = [];
+    // For each location, get temp and rainfall data.
     locations.forEach((location: string) => {
       let temperatureData: TemperatureData;
       let rainfallData: RainfallData;
-      
-      //    var: Type: 
+
+      // Note: SOAP lib is async, Promise.then to do work after async call.
+
       const temperatureRequestPromise: Promise<any> = 
-      // SOAP lib is async, .then to make sync.
-      // TODO: is it meant to be parameters: location in the json.
-        this.weatherService.getTemperature({parameters: location}).then((temperatureResponse) => {
+        this.weatherService.getTemperature({parameters: location})
+        .then((temperatureResponse) => {
+          // temperatureResponse is an object, .return will return the data in that object as a string[].
           const temperatureStrings: string[] = temperatureResponse.return;
           temperatureData = new TemperatureData(temperatureStrings[0], temperatureStrings[1]);
+        })
+        .catch((error) => {
+          console.error(chalk.bgRed('Error: getTemperature()'));
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
         });
+
       const rainfallRequestPromise: Promise<any> = 
         this.weatherService.getRainfall({parameters: location})
         .then((rainfallResponse) => {
@@ -93,33 +108,38 @@ class MelbourneWeatherClient {
           rainfallData = new RainfallData(rainfallStrings[0], rainfallStrings[1]);
         })
         .catch((error) => {
-          console.log(chalk.red(error.message));
-          console.log(chalk.red(error.stack));
+          console.error(chalk.bgRed('Error: getRainfall()'));
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
         });
-
+      
+      // Wait for both getRainfall() and getTemperature() promises to resolve.
       const compileWeatherLocationDataPromises: Array<Promise<any>> = [temperatureRequestPromise, 
         rainfallRequestPromise];
-      // Promises are async and non blocking, .all() means to wait until promises resolved.
       Promise.all(compileWeatherLocationDataPromises)
       .then((responses) => {
+        // Create new WeatherLocationData object with rainfallData object and temperatureData object 
+        // when promises resolved.
         const weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
         weatherLocationDataList.push(weatherData);
       }).catch((error) => {
-        console.log(chalk.red(error.message));
-        console.log(chalk.red(error.stack));
+        console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
       });
-      // Wait for all promises before sending list.
+      // Add promises to ensure all promises resolve before sending off data.
       weatherPromises.push(rainfallRequestPromise);
       weatherPromises.push(temperatureRequestPromise);
     });
-    // Update listeners.
     Promise.all(weatherPromises).then((responses) => {
+      //  For each listener, send data off to frontend.
       this.onWeatherPollCompleteListeners.forEach((onWeatherPollCompleteListener) => {
         onWeatherPollCompleteListener.onWeatherRetrieved(weatherLocationDataList);
       });
     }).catch((error) => {
-      console.log(chalk.red(error.message));
-      console.log(chalk.red(error.stack));
+      console.error(chalk.bgRed('Error: onWeatherPollCompleteListener.onWeatherRetrieved()'));
+      console.error(chalk.red(error.message));
+      console.error(chalk.red(error.stack));
     });
   } 
 }

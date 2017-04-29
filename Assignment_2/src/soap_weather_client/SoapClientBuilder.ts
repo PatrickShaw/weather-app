@@ -4,9 +4,11 @@ import * as chalk from 'chalk';
 import { MelbourneWeatherClient } from './MelbourneWeatherClient';
 import { MelbourneWeatherServiceStub } from '../interface/Interfaces';
 
-// tslint:disable:no-console
+// TODO: There are a lot of optional settings we can set in this builder.
 
-// TODO: There are a lot of optional settings we can set in this builder
+/**
+ * Builds an async SOAP Client from the provided wsdl file.
+ */
 class SoapClientBuilder {
   public build(): Promise<MelbourneWeatherClient> {
     return new Promise<MelbourneWeatherClient>((resolve, reject) => {
