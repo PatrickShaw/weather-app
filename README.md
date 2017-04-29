@@ -41,7 +41,7 @@ Babel essentially allows developers to transpile newer and alternative versions 
 We were not unsure of whether the markers' used modern browsers so Babel ensured application compatiblity with their browsers.
 
 ### Webpack
-![Webpack](Images/webpack.svg)
+<img src="Images/webpack.svg" width ="200" />
 Webpack was used to tie all together and bundle the backend and frontend applications each into single JavaScript files.
 In addition, Webpack was used as a means of hot module replacement which was handy for frontend development.
 
