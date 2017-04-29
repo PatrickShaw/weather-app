@@ -5,6 +5,7 @@ import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedL
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { SoapClientBuilder } from '../soap_weather_client/SoapClientBuilder';
 import { WeatherLocationData } from '../model/WeatherLocationData';
+let melbourneWeatherLocations: string[] = [];
 import { MonitoringSessionManager } from '../monitor/MonitoringSessionManager';
 import { MonitoringManager } from '../monitor/MonitoringManager';
 
@@ -64,6 +65,8 @@ new SoapClientBuilder().build()
        * @param locations List of strings of locations.
        */
       public onLocationsRetrieved(locations: string[]): void {
+        melbourneWeatherLocations = locations;
+        io.sockets.emit('locations', locations);
         console.log(chalk.cyan('locations :' + locations));
         const msInterval = 30000;
         // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.

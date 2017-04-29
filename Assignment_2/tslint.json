@@ -1,8 +1,11 @@
 {
   "extends": [
-    "tslint:recommended"
+    "tslint:latest",
+    "tslint-react"
   ],
   "rules": {
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
     "max-classes-per-file": [
       false
     ],

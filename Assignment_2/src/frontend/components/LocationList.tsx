@@ -6,7 +6,6 @@ interface LocationListProps {
   locations: string[];
 }
 class LocationList extends React.Component<LocationListProps, void> {
-
   constructor() {
     super();
   }

@@ -1,21 +1,13 @@
+import {TimestampedData} from './TimestampedData';
 /**
  * Class that represents temperature data.
  */
-class TemperatureData {
-  private readonly temperature: string;
-  private readonly timestamp: string;
+class TemperatureData extends TimestampedData {
+  public readonly temperature: string;
 
   constructor(temperature: string, timestamp: string) {
+    super(timestamp);
     this.temperature = temperature;
-    this.timestamp = timestamp;
-  }
-
-  public getTemperature(): string {
-    return this.temperature;
-  }
-
-  public getTimestamp(): string {
-    return this.timestamp;
   }
 }
 export {TemperatureData};

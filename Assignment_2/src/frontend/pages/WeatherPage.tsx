@@ -8,15 +8,9 @@ import {ActionBar} from '../components/AppBar';
 import {AppState} from '../model/AppState';
 import {LocationList} from '../components/LocationList';
 import {MonitoringList} from '../components/MonitoringList';
-import { RainfallData } from '../../model/RainfallData';
-import { TemperatureData } from '../../model/TemperatureData';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
 
-interface StateProps {
-    appState: AppState;
-}
-
-type WeatherPageProps = StateProps;
+type WeatherPageProps = AppState;
 
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   public render(): JSX.Element {
@@ -27,11 +21,11 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         </div>
         <aside className="sidebar">
           <header><h1 className="txt-subheading title-section">Locations</h1></header>
-          <LocationList locations={['This', 'is', 'placeholder', 'text']}/>
+          <LocationList locations={this.props.locations}/>
         </aside>
         <main className="monitoring-container">
           <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
-          <MonitoringList weatherDataList={this.props.appState.weatherData}/>
+          <MonitoringList weatherDataList={this.props.weatherDataList}/>
         </main>
         <footer className="page-footer">
           <p className="copyright">Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
@@ -41,36 +35,28 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   }
 }
 
-class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, StateProps> {
+class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, AppState> {
   constructor() {
     super();
-    const initialState: AppState = new AppState([
-        new WeatherLocationData(
-          'Frankston',
-          new RainfallData('10', '10/06/2016'), 
-          new TemperatureData('14', '10/06/2017')),
-
-        new WeatherLocationData(
-          'Clayton', 
-          new RainfallData('12', '10/06/2016'), 
-          new TemperatureData('13', '10/06/2017'))
-    ]); 
-    this.state = {appState: initialState};
+    this.state = new AppState([], []);
   }
   public componentDidMount(): void {
     // Trigger io.sockets.on('connection') to http://127.0.0.1:8080.
     const io: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
     const that: WeatherPageContainer = this;
-    io.on('update_weather_location_data', (weatherLocationDataList: WeatherLocationData[]) => {
+    io.on('locations', (locations: string[]) => {
+      that.setState({ locations });
+    });
+    io.on('weather_data', (weatherDataList: WeatherLocationData[]) => {
       const timeStamp: string = new Date().toString();
       console.log('Received weather location data at time: ' + timeStamp);
-      console.log(weatherLocationDataList); 
-      that.setState({appState: new AppState(weatherLocationDataList)});
+      console.log(weatherDataList); 
+      that.setState({ weatherDataList });
     });
   }
   
   public render(): JSX.Element {
-    return <WeatherPage appState={this.state.appState}/>;
+    return <WeatherPage locations={this.state.locations} weatherDataList={this.state.weatherDataList}/>;
   }
 }
 

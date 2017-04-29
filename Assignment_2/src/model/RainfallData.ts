@@ -1,23 +1,14 @@
+import { TimestampedData } from './TimestampedData';
 /**
  * Class that represents rainfall data.
  */
-class RainfallData {
-  private readonly rainfall: string;
-  private readonly timestamp: string;
+class RainfallData extends TimestampedData {
+  public readonly rainfall: string;
 
   constructor(rainfall: string, timestamp: string) {
+    super(timestamp);
     this.rainfall = rainfall;
-    this.timestamp = timestamp;
-  }
-
-  public getRainfall(): string {
-    return this.rainfall;
-  }
-
-  public getTimestamp(): string {
-    return this.timestamp;
-  }
-  
+  }  
 }
 
 export {RainfallData};
