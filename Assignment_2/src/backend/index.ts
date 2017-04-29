@@ -48,7 +48,7 @@ new SoapClientBuilder().build()
               for (const weatherData of weatherLocationDataList) {
                 weatherDataToEmit.push(weatherData);
               }
-              socket.emit('update_weather_location_data', weatherDataToEmit);
+              socket.emit('weather_data', weatherDataToEmit);
             }
           });
         }
