@@ -6,6 +6,10 @@ class MonitoringSessionManager {
     this.monitoringSessions = new Map<string, MonitoringManager>();
     this.sessionMonitoringLocationCounts = new Map<string, number>();
   }
+  public getMonitoringSession(sessionId: string): MonitoringManager {
+    return this.monitoringSessions.get(sessionId);
+  }
+
   public addMonitoringSession(sessionId: string, monitoringSession: MonitoringManager): void {
     console.assert(
       !(sessionId in this.monitoringSessions), 
