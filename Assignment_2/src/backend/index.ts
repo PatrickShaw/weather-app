@@ -24,8 +24,8 @@ io.sockets.on('connection', (socket: SocketIO.Client): void => {
 new SoapClientBuilder().build()
 .then((melbourneWeatherClient): void => {
 
-    // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
-    melbourneWeatherClient.addOnWeatherRetrievedListener(
+  // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
+  melbourneWeatherClient.addOnWeatherRetrievedListener(
 
       new class implements OnWeatherRetrievedListener {        
         /**
@@ -54,33 +54,32 @@ new SoapClientBuilder().build()
       }()
     );
 
-    melbourneWeatherClient.addOnLocationsRetrievedListener(
-      new class implements OnLocationsRetrievedListener {
+  melbourneWeatherClient.addOnLocationsRetrievedListener(
+    new class implements OnLocationsRetrievedListener {
 
-        /**
-         * Anonymous class implements onLocationsRetrieved() method in OnLocationsRetrievedListener. 
-         * Retrieves all locations from SOAP client points.
-         * Only called once, under the assumption locations are set.
-         * @param locations List of strings of locations.
-         */
-        public onLocationsRetrieved(locations: string[]): void {
-          console.log('locations :' + locations);
-          const msInterval = 5000;
-          // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
-          // 300000 milliseconds = 5 mins.
-          // TODO: Fix so data populated once a session is connected, cache it.
-          // TODO: Change 5000 to 5 mins in milliseconds.
-          // Note: setInterval() doesn't get data at time 0.
+      /**
+       * Anonymous class implements onLocationsRetrieved() method in OnLocationsRetrievedListener.
+       * Retrieves all locations from SOAP client points.
+       * Only called once, under the assumption locations are set.
+       * @param locations List of strings of locations.
+       */
+      public onLocationsRetrieved(locations: string[]): void {
+        console.log(chalk.cyan('locations :' + locations));
+        const msInterval = 30000;
+        // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
+        // 300000 milliseconds = 5 mins.
+        // TODO: Fix so data populated once a session is connected, cache it.
+        // TODO: Change 5000 to 5 mins in milliseconds.
+        // Note: setInterval() doesn't get data at time 0.
+      }
+    }()
+  );
+  melbourneWeatherClient.retrieveLocations();
+})
           melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations());
-          setInterval((): void => { 
             melbourneWeatherClient.retrieveWeatherData(sessionManager.getMonitoredLocations()); 
           }, msInterval);  
-        } 
-      }()
-    );
-    melbourneWeatherClient.retrieveLocations();
-  }
-)
+          setInterval((): void => { 
 .catch((error) => {
   console.error(chalk.bgRed('Error: SOAP client connection'));
   console.error(chalk.red(error.message));

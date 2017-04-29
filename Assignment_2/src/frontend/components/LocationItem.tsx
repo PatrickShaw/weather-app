@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import {GenericListItem} from './GenericListItem';
+import { GenericListItem } from './GenericListItem';
 
 interface LocationItemProps {
-    location: string;
+  location: string;
 }
 
 class LocationItem extends React.Component<LocationItemProps, void> {

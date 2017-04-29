@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import {MonitoringItem} from './MonitoringItem';
-import {WeatherLocationData} from '../../model/WeatherLocationData';
+import { MonitoringItem } from './MonitoringItem';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringListProps {
   weatherDataList: WeatherLocationData[];
