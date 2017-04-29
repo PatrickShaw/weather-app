@@ -48,7 +48,7 @@ In addition, Webpack was used as a means of hot module replacement which was han
 
 ### Frameworks & libraries we decided against
 #### Redux
-<img src="https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.svg" width="200" height="200"/>
+<img src="http://javascript.tutorialhorizon.com/files/2016/06/redux-logo.png" width="200" height="200"/>
 Redux is an exellent framework for managing state in an application and works well with React.
 However, Redux has a functional programming based nature which didn't fit in with the assignment (object oriented assignment). 
 
