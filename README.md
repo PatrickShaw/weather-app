@@ -48,11 +48,11 @@ In addition, Webpack was used as a means of hot module replacement which was han
 
 ### Frameworks & libraries we decided against
 #### Redux
-<img href="https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.svg" width="200" height="200"/>
+<img src="https://raw.githubusercontent.com/reactjs/redux/master/logo/logo.svg" width="200" height="200"/>
 Redux is an exellent framework for managing state in an application and works well with React.
 However, Redux has a functional programming based nature which didn't fit in with the assignment (object oriented assignment). 
 
 #### React Router
-<img href="https://cdn.worldvectorlogo.com/logos/react-router.svg" height="200"/>
+<img src="https://cdn.worldvectorlogo.com/logos/react-router.svg" height="200"/>
 React Router allows easy management of routes/url navigation. 
 The assignment only really required a single page and browser history management was out of scope.
