@@ -4,9 +4,9 @@
 - **Student email:** psha67@student.monash.edu
 - **Student ID:** 26898187
 
-*David Lei*
-- Student email: dlei7@student.monash.edu
-- Student ID: 26029391
+**David Lei**
+- **Student email:** dlei7@student.monash.edu
+- **Student ID:** 26029391
 
 Developed using [Air BnB's JavaScript Style guide] (https://github.com/airbnb/javascript#strings) in conjunction with [Microsofts Typescript guidlines] (https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) where applicable in [Visual Studio Code] (https://code.visualstudio.com/).
 
@@ -16,9 +16,10 @@ Linters:
 - ESLint
 
 
-## Languages & Syntax choices
-### TypeScript
-<img src="Images/typescript.png" height="200" />
+## Technology Stack
+### Languages & Syntax choices
+#### TypeScript
+<img src="Images/typescript.png" width ="200" />
 A superset of JavaScript that allows the use of static typing, interfaces and classes developed by Microsoft. 
 
 ### ECMAScript 2015
