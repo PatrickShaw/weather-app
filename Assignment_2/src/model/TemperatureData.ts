@@ -1,9 +1,21 @@
+/**
+ * Class that represents temperature data.
+ */
 class TemperatureData {
-  temperature: string;
-  timestamp: string;
+  private readonly temperature: string;
+  private readonly timestamp: string;
+
   constructor(temperature: string, timestamp: string) {
     this.temperature = temperature;
     this.timestamp = timestamp;
+  }
+
+  public getTemperature(): string {
+    return this.temperature;
+  }
+
+  public getTimestamp(): string {
+    return this.timestamp;
   }
 }
 export {TemperatureData};
