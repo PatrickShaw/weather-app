@@ -5,9 +5,11 @@ import * as SocketIo from 'socket.io';
 // Setup web sockets.
 var io = SocketIo.listen(8080); // Listen to port 8080 on backend (frontend --> send msg --> 8080).
 
-io.sockets.on('connection', function(socket: SocketIO.Server) {  // Session started
-
-});
+// Make SOAP Client.
+new SoapClientBuilder().build()
+.then((melbourneWeatherClient): void => {
+    // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
+    melbourneWeatherClient.addOnWeatherRetrievedListener(
 
 new Builder()
 .build()
