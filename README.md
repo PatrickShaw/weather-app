@@ -10,11 +10,11 @@
 
 ## Languages & Syntax choices
 ### TypeScript
-<img src="Images/typescript.png" width ="200" />
+<img src="Images/typescript.png" height="200" />
 A superset of JavaScript that allows the use of static typing, interfaces and classes developed by Microsoft. 
 
 ### ECMAScript 2015
-<img src="Images/es6-js.png" width ="200" />
+<img src="Images/es6-js.png" height="200" />
 6th major release of the ECMAScript, JavaScript is based on ECMAScript (it is a dialect of ES6).
 
 ### JSX Harmony
@@ -27,27 +27,27 @@ We used SASS over plain CSS3 simply for SASS's variable constants feature.
 
 ## Frameworks & libraries we use
 ### React
-<img src="Images/react.png" width ="200" />
+<img src="Images/react.png" height="200" />
 A a declarative and flexible JavaScript library for building user interfaces developed by Facebook.
 
 ## Node.js
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Node.js_logo_2015.svg" width ="200" />
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Node.js_logo_2015.svg" height="200" />
 Node.js is a server framework built from Chrome's JavaScript V8 engine.
 It was chosen for a number of reasons.
 
 ## Babel
-<img src="https://babeljs.io/images/logo.svg" width="200"/>
+<img src="https://babeljs.io/images/logo.svg" height="200"/>
 Babel essentially allows developers to transpile newer and alternative versions of JavaScript into older, more widely supported versions of JavaScript.
 We were not unsure of whether the markers' used modern browsers so Babel ensured application compatiblity with their browsers.
 
 ## Webpack
-<img width="200" height="200" src="https://worldvectorlogo.com/logos/webpack.svg"/>
+<img src="https://worldvectorlogo.com/logos/webpack.svg" height="200"/>
 Webpack was used to tie all together and bundle the backend and frontend applications each into single JavaScript files.
 In addition, Webpack was used as a means of hot module replacement which was handy for frontend development.
 
 ## Frameworks & libraries we decided against
 ### Redux
-<img src="http://javascript.tutorialhorizon.com/files/2016/06/redux-logo.png" width="200" height="200"/>
+<img src="http://javascript.tutorialhorizon.com/files/2016/06/redux-logo.png" height="200"/>
 Redux is an exellent framework for managing state in an application and works well with React.
 However, Redux has a functional programming based nature which didn't fit in with the assignment (object oriented assignment). 
 
