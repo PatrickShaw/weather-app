@@ -11,7 +11,7 @@ import { WeatherLocationData } from '../model/WeatherLocationData';
 
 // tslint:disable-next-line:max-line-length
 
-/**
+/**a
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
 class MelbourneWeatherClient {

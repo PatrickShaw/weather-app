@@ -16,10 +16,13 @@ class SoapClientBuilder {
       .then((weatherService: MelbourneWeatherServiceStub) => {
         // weatherService has methods defined in MelbourneWeatherServiceStub.
         const melbourneWeatherClient: MelbourneWeatherClient = new MelbourneWeatherClient(weatherService);
+        // TODO: emit good.
         console.log(chalk.cyan('SOAP Client created'));
         resolve(melbourneWeatherClient);
       })
       .catch((error) => {
+        // TODO: emit bad.
+        console.log(chalk.bgRed('Could not make SOAP Client'));
         reject(error);
       });
     });

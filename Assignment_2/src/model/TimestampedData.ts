@@ -4,5 +4,6 @@ class TimestampedData {
     this.timestamp = timestamp;
   }
 }
+
 export {TimestampedData};
 export default TimestampedData;

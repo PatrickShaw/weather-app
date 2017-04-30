@@ -6,11 +6,13 @@ import {
 
 import { MonitorMetadata } from '../model/MonitorMetadata';
 
-class MonitoringSessionManager {
+// just 1.
+class SessionMonitoringManager {
   private readonly monitoringSessions: Map<string, MonitoringManager>;
   private readonly sessionMonitoringLocationCounts: Map<string, number>;
   private readonly onAddedMonitoredLocationObserver: OnAddedMonitoredLocationObserver;
   private readonly onRemovedMonitoredLocationObserver: OnRemovedMonitoredLocationObserver;
+
   constructor() {
     this.monitoringSessions = new Map<string, MonitoringManager>();
     this.sessionMonitoringLocationCounts = new Map<string, number>();
@@ -20,6 +22,7 @@ class MonitoringSessionManager {
         that.addMonitoredLocation(monitor);
       }
     }();
+
     this.onRemovedMonitoredLocationObserver = new class implements OnRemovedMonitoredLocationObserver {
       public onRemovedMonitoredLocation(monitor: MonitorMetadata): void {
         that.removeMonitoredLocation(monitor);
@@ -85,11 +88,11 @@ class MonitoringSessionManager {
     return monitoredLocations;
   }
 
-  private removeMonitoredLocation(monitor: MonitorMetadata) {
+  private removeMonitoredLocation(monitor: MonitorMetadata): void {
     this.incrementLocationCountFromMonitor(monitor, -1);
   }
 
-  private addMonitoredLocation(monitor: MonitorMetadata) {
+  private addMonitoredLocation(monitor: MonitorMetadata): void {
     if (!(monitor.location in this.sessionMonitoringLocationCounts)) {
       this.sessionMonitoringLocationCounts.set(monitor.location, 1);
     } else {

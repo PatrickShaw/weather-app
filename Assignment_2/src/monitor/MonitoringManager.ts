@@ -27,7 +27,7 @@ class MonitoringManager {
     return locationsSet;
   }
 
-  public addMonitorLocation(monitor: MonitorMetadata) {
+  public addMonitorLocation(monitor: MonitorMetadata): void {
     if (!this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.set(monitor.location, monitor);
       for (const onAddedMonitoredLocationObserver of this.onAddedMonitoredLocationObservers) {
@@ -36,7 +36,7 @@ class MonitoringManager {
     }
   }
 
-  public removeMonitoredLocation(monitor: MonitorMetadata) {
+  public removeMonitoredLocation(monitor: MonitorMetadata): void {
     if (this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.delete(monitor.location);
       for (const onRemovedMonitoredLocationObserver of this.onRemovedMonitoredLocationObservers) {

@@ -10,5 +10,6 @@ class TemperatureData extends TimestampedData {
     this.temperature = temperature;
   }
 }
+
 export {TemperatureData};
 export default TemperatureData;
