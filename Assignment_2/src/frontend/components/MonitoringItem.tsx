@@ -5,9 +5,8 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
 interface MonitoringItemProps {
   weatherData: WeatherLocationData;
 }
-
 class MonitoringItem extends React.Component<MonitoringItemProps, void> {
-  public render() {
+  public render(): JSX.Element {
     return (
       <section className="pad-item-list">
         <h1 className="txt-body-2">{this.props.weatherData.location}</h1>
