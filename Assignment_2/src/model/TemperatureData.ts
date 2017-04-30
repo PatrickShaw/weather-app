@@ -7,7 +7,12 @@ class TemperatureData extends TimestampedData {
 
   constructor(temperature: string, timestamp: string) {
     super(timestamp);
-    this.temperature = temperature;
+    
+    if (temperature === '') {
+      this.temperature = 'N/A';
+    } else {
+      this.temperature = temperature;
+    }
   }
 }
 

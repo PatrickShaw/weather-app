@@ -1,7 +1,13 @@
 class TimestampedData {
   public readonly timestamp: string;
+
   constructor(timestamp: string) {
-    this.timestamp = timestamp;
+    if (timestamp === '') {
+      // Handle no data from SOAP client.
+      this.timestamp = 'N/A';
+    } else {
+      this.timestamp = timestamp;
+    }
   }
 }
 

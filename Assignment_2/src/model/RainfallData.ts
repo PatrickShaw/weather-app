@@ -7,7 +7,13 @@ class RainfallData extends TimestampedData {
 
   constructor(rainfall: string, timestamp: string) {
     super(timestamp);
-    this.rainfall = rainfall;
+
+    if (rainfall === '') {
+      // Handle no data from SOAP client.
+      this.rainfall = 'N/A';
+    } else {
+      this.rainfall = rainfall;
+    }
   }  
 }
 
