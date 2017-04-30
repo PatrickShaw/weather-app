@@ -92,6 +92,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
+    console.log('try connect to backend');
     this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
       public onItemClicked(location: string, selected: boolean): void {
         // The backend speaks in MonitorMetadata objects, so create one.

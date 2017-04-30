@@ -8,7 +8,10 @@ interface OnRemovedMonitoredLocationObserver {
   onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
 }
 
-class MonitoringManager {
+/**
+ * Controller class to monitor which locations are required to display data for, one instance for each frontend session.
+ */
+class LocationMonitoringManager {
   private monitoredLocations: Map<string, MonitorMetadata>;
   private onAddedMonitoredLocationObservers: Set<OnAddedMonitoredLocationObserver>;
   private onRemovedMonitoredLocationObservers: Set<OnRemovedMonitoredLocationObserver>;
@@ -27,7 +30,7 @@ class MonitoringManager {
     return locationsSet;
   }
 
-  public addMonitorLocation(monitor: MonitorMetadata) {
+  public addMonitorLocation(monitor: MonitorMetadata): void {
     if (!this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.set(monitor.location, monitor);
       for (const onAddedMonitoredLocationObserver of this.onAddedMonitoredLocationObservers) {
@@ -36,7 +39,7 @@ class MonitoringManager {
     }
   }
 
-  public removeMonitoredLocation(monitor: MonitorMetadata) {
+  public removeMonitoredLocation(monitor: MonitorMetadata): void {
     if (this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.delete(monitor.location);
       for (const onRemovedMonitoredLocationObserver of this.onRemovedMonitoredLocationObservers) {
@@ -61,5 +64,5 @@ class MonitoringManager {
     this.onRemovedMonitoredLocationObservers.delete(observer);
   }
 }
-export {MonitoringManager, OnAddedMonitoredLocationObserver, OnRemovedMonitoredLocationObserver};
-export default MonitoringManager;
+export {LocationMonitoringManager, OnAddedMonitoredLocationObserver, OnRemovedMonitoredLocationObserver};
+export default LocationMonitoringManager;

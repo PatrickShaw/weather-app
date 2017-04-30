@@ -1,5 +1,7 @@
 import * as React from 'react';
+
 import {OnClickObserver} from '../observers/OnClickObserver';
+
 interface ListItemProps {
   title: string;
   subtitle?: string;
