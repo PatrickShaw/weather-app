@@ -7,10 +7,13 @@ import * as SocketIo from 'socket.io-client';
 import {ActionBar} from '../components/AppBar';
 import {AppState} from '../model/AppState';
 import {LocationList} from '../components/LocationList';
+import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
-
-type WeatherPageProps = AppState;
+import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
+interface WeatherPageProps extends AppState {
+  onLocationsListItemClicked?: OnLocationItemClickedObserver;
+}
 
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   public render(): JSX.Element {
@@ -20,8 +23,14 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
         </div>
         <aside className="sidebar">
-          <header><h1 className="txt-subheading title-section">Locations</h1></header>
-          <LocationList locations={this.props.locations}/>
+          <header>
+            <h1 className="txt-subheading title-section">Locations</h1>
+          </header>
+          <LocationList 
+            locations={this.props.locations} 
+            monitoredLocations={this.props.monitoredLocations}
+            onItemClickedObserver={this.props.onLocationsListItemClicked}
+          />
         </aside>
         <main className="monitoring-container">
           <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
@@ -36,27 +45,60 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 }
 
 class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, AppState> {
-  constructor() {
-    super();
-    this.state = new AppState([], []);
+  private onLocationsListItemClicked: OnLocationItemClickedObserver;
+  constructor(props: ReactRouter.RouteComponentProps<{}>) {
+    super(props);
+    this.state = new AppState([], [], new Set<string>());
   }
   public componentDidMount(): void {
-    // Trigger io.sockets.on('connection') to http://127.0.0.1:8080.
-    const io: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    const that: WeatherPageContainer = this;
-    io.on('locations', (locations: string[]) => {
-      that.setState({ locations });
+    // Connects to the port that the backend is listening on.
+    // Triggers io.on('connection')'s callback
+    const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
+    this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
+      public onItemClicked(location: string, selected: boolean): void {
+        // The backend speaks in MonitorMetadata objects, so create one.
+        const monitor: MonitorMetadata = new MonitorMetadata(location);
+        if (selected) {
+          // We're unselecting a location so emit to remove the monitor
+          socket.emit('remove_monitor', monitor);
+        } else {
+          // We're selecting a location so emit to add the monitor
+          socket.emit('add_monitor', monitor);
+        }
+      }
+    }();
+    socket.on('locations', (locations: string[]) => {
+      // We were given a list of locations. Let React know that we may need to re-render.
+      this.setState({ locations });
     });
-    io.on('weather_data', (weatherDataList: WeatherLocationData[]) => {
+    socket.on('monitored_locations', (monitoredLocationsList: string[]) => {
+      console.log('Retrieved new monitored locations:');
+      console.log(monitoredLocationsList);
+      // We were given a list of monitored listeners. Turn it into a Set for performance reasons and let
+      // React know that we may need to re-render.
+      const monitoredLocations: Set<string> = new Set<string>(monitoredLocationsList);
+      console.log(monitoredLocations);
+      this.setState({ monitoredLocations });
+    });
+    socket.on('replace_weather_data', (weatherDataList: WeatherLocationData[]) => {
+      // We received some fresh weather data.
+      // Tell React that we may need to re-render
       const timeStamp: string = new Date().toString();
       console.log('Received weather location data at time: ' + timeStamp);
       console.log(weatherDataList); 
-      that.setState({ weatherDataList });
+      this.setState({ weatherDataList });
     });
   }
   
   public render(): JSX.Element {
-    return <WeatherPage locations={this.state.locations} weatherDataList={this.state.weatherDataList}/>;
+    return (
+      <WeatherPage 
+        locations={this.state.locations} 
+        weatherDataList={this.state.weatherDataList}
+        monitoredLocations={this.state.monitoredLocations}
+        onLocationsListItemClicked={this.onLocationsListItemClicked}
+      />
+    );
   }
 }
 

@@ -8,7 +8,7 @@ interface ActionBarProps {
 }
 
 class ActionBar extends React.Component<ActionBarProps, void> {
-  public render() {
+  public render(): JSX.Element {
     return (
       <header className="app-bar">
         <h1 className="txt-app-bar-title light">{this.props.title}</h1>

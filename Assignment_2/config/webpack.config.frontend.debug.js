@@ -4,12 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const fs = require('fs');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const publicPath = '/';
 const publicUrl = '';
-const env = getClientEnvironment(publicUrl);
-console.log(paths);
 module.exports = {
     output: {
         path: paths.appBuild,
@@ -23,6 +20,8 @@ module.exports = {
     devtool: 'source-map',
     module: {
         rules: [
+            // TSLint gives us suggestions on how to keep the app more consistant and correct with 
+            // TypeScript standards.
             {
                 enforce: 'pre',
                 test: /\.(ts|tsx)$/,
@@ -35,12 +34,6 @@ module.exports = {
             {
               exclude: [
                 /\.html$/,
-                // We have to write /\.(js|jsx)(\?.*)?$/ rather than just /\.(js|jsx)$/
-                // because you might change the hot reloading server from the custom one
-                // to Webpack's built-in webpack-dev-server/client?/, which would not
-                // get properly excluded by /\.(js|jsx)$/ because of the query string.
-                // Webpack 2 fixes this, but for now we include this hack.
-                // https://github.com/facebookincubator/create-react-app/issues/1713
                 /\.(js|jsx)$/,
                 /\.(ts|tsx)$/,
                 /\.scss$/,
@@ -55,54 +48,69 @@ module.exports = {
                 name: 'static/media/[name].[hash:8].[ext]'
               }
             },
+            // Transpiles TypeScript and TypeScript + JSX into plain old JavaScript
+            // Babel is used to imporve compatbility with older browsers
             {
                 test: /\.(ts|tsx)$/,
                 use: [
+                    {
+                        loader: 'babel-loader'
+                    },
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            configFileName: 'tsconfig.frontend.json'
+                            configFileName: 'tsconfig.frontend.json',
+                            useBabel: true,
+                            useCache: true,
                         }
                     }
                 ]
             },
-            // "postcss" loader applies autoprefixer to our CSS.
-            // "css" loader resolves paths in CSS and adds assets as dependencies.
-            // "style" loader turns CSS into JS modules that inject <style> tags.
-            // In production, we use a plugin to extract that CSS to a file, but
-            // in development "style" loader enables hot editing of CSS.
+            // Although we don't use CSS in the app, these are loaders that will allow us to use CSS 
+            // if we ever need to. E.g. Swapping currently style sheets for a framework.
             {
               test: /\.css$/,
+              exclude: [/node_modules/],
               use: [
                 {
                   loader: 'style-loader'
                 },
                 {
-                  loader: 'css-loader'
+                  loader: 'css-loader',
+                  options: {
+                      sourceMap: true
+                  }
                 }
-              ]
+              ],
             },
+            // These are the loaders that let us use SASS 
             {
                 test: /\.(scss|sass)$/,
+                exclude: [/node_modules/],
                 use: [
                     {
                         loader: 'style-loader'
                     },
                     {
-                        loader: 'css-loader'
+                        loader: 'css-loader',
+                        options: {
+                            // sourceMap: true
+                        }
                     },
                     {
-                        loader: 'sass-loader'
+                        loader: 'sass-loader',
+                        options: {
+                            // sourceMap: true
+                        }
                     }
                 ]
             },
-            // JSON is not enabled by default in Webpack but both Node and Browserify
-            // allow it implicitly so we also enable it.
+            // JSON loader lets us use JSON files in the app (if we choose to use them)
             {
               test: /\.json$/,
               loader: 'json-loader'
             },
-            // "file" loader for svg
+            // File loader lets us use SVGs in the app (if we choose to use them)
             {
               test: /\.svg$/,
               loader: 'file-loader',

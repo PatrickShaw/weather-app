@@ -8,12 +8,16 @@ interface MonitoringListProps {
 }
 
 class MonitoringList extends React.Component<MonitoringListProps, void> {
-  public render() {
+  public render(): JSX.Element {
     return (
       <section>
         {
           this.props.weatherDataList.map((weatherDataItem: WeatherLocationData, weatherIndex: number) => {
-            return <MonitoringItem key={weatherIndex} weatherData={weatherDataItem}/>;
+            return (
+              <div key={weatherIndex} className="card">
+                <MonitoringItem weatherData={weatherDataItem}/>
+              </div>
+            );
           })
         }
       </section>
