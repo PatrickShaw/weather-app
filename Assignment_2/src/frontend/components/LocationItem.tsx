@@ -3,6 +3,7 @@ import * as React from 'react';
 import { GenericListItem } from './GenericListItem';
 import { OnClickObserver } from '../observers/OnClickObserver';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
+
 interface LocationItemProps {
   location: string;
   selected?: boolean;
@@ -17,7 +18,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     this.onClickObserver = new class implements OnClickObserver {
       public onClick(): void {
         that.onItemClicked();
-        console.log("FUCK YEAH");
+        console.log('Item Clicked');
       }
     }();
   }
@@ -32,9 +33,9 @@ class LocationItem extends React.Component<LocationItemProps, void> {
 
   private onItemClicked(): void {
     const selected: boolean | undefined = this.props.selected;
-        console.log(" no");
+    console.log('in onItemClicked');
     if (this.props.onItemClickedObserver) {
-        console.log(" YEAH");
+      console.log('has observer');
       this.props.onItemClickedObserver.onItemClicked(
         this.props.location, 
         selected ? true : false

@@ -9,8 +9,9 @@ import {AppState} from '../model/AppState';
 import {LocationList} from '../components/LocationList';
 import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
-import {WeatherLocationData} from '../../model/WeatherLocationData';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
+import {WeatherLocationData} from '../../model/WeatherLocationData';
+
 interface WeatherPageProps extends AppState {
   onLocationsListItemClicked?: OnLocationItemClickedObserver;
 }
