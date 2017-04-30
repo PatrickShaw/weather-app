@@ -9,7 +9,7 @@ import { TemperatureData } from '../model/TemperatureData';
 import { TemperatureRequestData } from '../model/TemperatureRequestData';
 import { WeatherLocationData } from '../model/WeatherLocationData';
 
-/**a
+/**
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
 class MelbourneWeatherClient {

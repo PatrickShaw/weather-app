@@ -6,7 +6,9 @@ import {
 
 import { MonitorMetadata } from '../model/MonitorMetadata';
 
-// just 1.
+/**
+ * Controller class to monitor all sessions, keeps track of LocationMonitorManager based on session ids.
+ */
 class SessionMonitoringManager {
   private readonly monitoringSessions: Map<string, LocationMonitoringManager>;
   private readonly sessionMonitoringLocationCounts: Map<string, number>;

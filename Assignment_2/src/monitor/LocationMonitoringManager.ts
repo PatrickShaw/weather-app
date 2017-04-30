@@ -7,7 +7,10 @@ interface OnAddedMonitoredLocationObserver {
 interface OnRemovedMonitoredLocationObserver {
   onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
 }
-// 1 for each frotn end
+
+/**
+ * Controller class to monitor which locations are required to display data for, one instance for each frontend session.
+ */
 class LocationMonitoringManager {
   private monitoredLocations: Map<string, MonitorMetadata>;
   private onAddedMonitoredLocationObservers: Set<OnAddedMonitoredLocationObserver>;
