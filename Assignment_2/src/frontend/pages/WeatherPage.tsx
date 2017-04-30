@@ -11,6 +11,8 @@ import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
+import {RainfallData} from '../../model/RainfallData';
+import {TemperatureData} from '../../model/TemperatureData';
 interface WeatherPageProps extends AppState {
   onLocationsListItemClicked?: OnLocationItemClickedObserver;
 }
@@ -48,7 +50,39 @@ class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentPro
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
   constructor(props: ReactRouter.RouteComponentProps<{}>) {
     super(props);
-    this.state = new AppState([], [], new Set<string>());
+    const initialWeatherData: WeatherLocationData[] = [
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      )
+    ];
+    this.state = new AppState([], initialWeatherData, new Set<string>());
   }
   public componentDidMount(): void {
     // Connects to the port that the backend is listening on.
