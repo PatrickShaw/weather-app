@@ -12,6 +12,7 @@ import { FullLambdaService } from './FullLambdaService';
 
 // Setup web sockets.
 // Listen to port 8080, frontend connects to port 8080.
+
 const io = SocketIo.listen(8080);
 
 const server = new FullLambdaService(io);

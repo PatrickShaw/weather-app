@@ -82,9 +82,10 @@ class SessionMonitoringManager {
           monitoredLocations.push(location);
         }
       } else {
-        throw new Error(`Has key ${location} but count is undefined`);
+        throw new Error(`Has key ${location} but count is ${monitoringCount}`);
       }
     }
+    monitoredLocations.sort();
     return monitoredLocations;
   }
 
