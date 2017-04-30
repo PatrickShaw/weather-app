@@ -3,8 +3,8 @@ import {RequestError} from './RequestError';
  * Class used to hold response to be sent to frontend after a request from the frontend.
  */
 class RequestResponse<T> {
-  public readonly data?: T;
-  public readonly error?: RequestError;
+  public readonly data: T;
+  public readonly error: RequestError | null;
   constructor(data: T, error: RequestError) {
     this.data = data;
     this.error = error;
