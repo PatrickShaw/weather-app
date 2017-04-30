@@ -1,22 +1,22 @@
 import {
-  MonitoringManager,
+  LocationMonitoringManager,
   OnAddedMonitoredLocationObserver,
   OnRemovedMonitoredLocationObserver,
-} from './MonitoringManager';
+} from './LocationMonitoringManager';
 
 import { MonitorMetadata } from '../model/MonitorMetadata';
 
 // just 1.
 class SessionMonitoringManager {
-  private readonly monitoringSessions: Map<string, MonitoringManager>;
+  private readonly monitoringSessions: Map<string, LocationMonitoringManager>;
   private readonly sessionMonitoringLocationCounts: Map<string, number>;
   private readonly onAddedMonitoredLocationObserver: OnAddedMonitoredLocationObserver;
   private readonly onRemovedMonitoredLocationObserver: OnRemovedMonitoredLocationObserver;
 
   constructor() {
-    this.monitoringSessions = new Map<string, MonitoringManager>();
+    this.monitoringSessions = new Map<string, LocationMonitoringManager>();
     this.sessionMonitoringLocationCounts = new Map<string, number>();
-    const that: MonitoringSessionManager = this;
+    const that: SessionMonitoringManager = this;
     this.onAddedMonitoredLocationObserver = new class implements OnAddedMonitoredLocationObserver {
       public onAddedMonitoredLocation(monitor: MonitorMetadata): void {
         that.addMonitoredLocation(monitor);
@@ -42,11 +42,11 @@ class SessionMonitoringManager {
     this.sessionMonitoringLocationCounts.set(monitoredLocation, sessionMonitoringLocationCount + amountIncremented);
   }
   
-  public getMonitoringSession(sessionId: string): MonitoringManager | undefined {
+  public getLocationMonitorManagerForSession(sessionId: string): LocationMonitoringManager | undefined {
     return this.monitoringSessions.get(sessionId);
   }
 
-  public addMonitoringSession(sessionId: string, monitoringSession: MonitoringManager): void {
+  public addMonitoringSession(sessionId: string, monitoringSession: LocationMonitoringManager): void {
     console.assert(
       !(sessionId in this.monitoringSessions), 
       `Monitoring session with session ID ${sessionId} already exists within the session manager`
@@ -59,7 +59,7 @@ class SessionMonitoringManager {
     monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
   }
   public removeMonitoringSession(sessionId: string): void {
-    const monitoringSession: MonitoringManager | undefined = this.monitoringSessions.get(sessionId);
+    const monitoringSession: LocationMonitoringManager | undefined = this.monitoringSessions.get(sessionId);
     if (monitoringSession) {
       monitoringSession.removeOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
       monitoringSession.removeOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
@@ -100,5 +100,5 @@ class SessionMonitoringManager {
     }
   }
 }
-export {MonitoringSessionManager};
-export default MonitoringSessionManager;
+export {SessionMonitoringManager};
+export default SessionMonitoringManager;

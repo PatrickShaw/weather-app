@@ -17,5 +17,6 @@ class ActionBar extends React.Component<ActionBarProps, void> {
     );
   }
 }
+
 export default ActionBar;
 export {ActionBar};

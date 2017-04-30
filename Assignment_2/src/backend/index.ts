@@ -10,12 +10,10 @@ import { FullLambdaService } from './FullLambdaService';
 // import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 // import { WeatherLocationData } from '../model/WeatherLocationData';
 
-  // Setup web sockets.
-  // Listen to port 8080, frontend connects to port 8080.
-const w = SocketIo.listen(8080);
+// Setup web sockets.
+// Listen to port 8080, frontend connects to port 8080.
+const io = SocketIo.listen(8080);
 
-const server = new FullLambdaService(w);
-console.log(chalk.bgGreen('Start Server'));
+const server = new FullLambdaService(io);
 server.run();
-
-console.log(chalk.bgMagenta('How did this happen'));
+console.log(chalk.bgGreen('Server started'));

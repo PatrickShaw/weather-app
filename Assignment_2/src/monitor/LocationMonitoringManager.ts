@@ -7,8 +7,8 @@ interface OnAddedMonitoredLocationObserver {
 interface OnRemovedMonitoredLocationObserver {
   onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
 }
-
-class MonitoringManager {
+// 1 for each frotn end
+class LocationMonitoringManager {
   private monitoredLocations: Map<string, MonitorMetadata>;
   private onAddedMonitoredLocationObservers: Set<OnAddedMonitoredLocationObserver>;
   private onRemovedMonitoredLocationObservers: Set<OnRemovedMonitoredLocationObserver>;
@@ -61,5 +61,5 @@ class MonitoringManager {
     this.onRemovedMonitoredLocationObservers.delete(observer);
   }
 }
-export {MonitoringManager, OnAddedMonitoredLocationObserver, OnRemovedMonitoredLocationObserver};
-export default MonitoringManager;
+export {LocationMonitoringManager, OnAddedMonitoredLocationObserver, OnRemovedMonitoredLocationObserver};
+export default LocationMonitoringManager;
