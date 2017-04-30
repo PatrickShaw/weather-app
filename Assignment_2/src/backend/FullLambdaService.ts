@@ -71,7 +71,7 @@ class FullLambdaService {
           const response = new RequestResponse(null, requestError);
           console.error(chalk.red(error.message));
           console.error(chalk.red(error.stack));
-          socket.emit('errors_messages', requestError);
+          socket.emit('errors_messages', response);
         }
       });
          
