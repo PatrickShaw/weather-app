@@ -7,11 +7,15 @@ $main-minimum-height: 600px;
  flex-direction: row;
  flex-wrap: wrap;
 }
+.main-content {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
 .monitoring-container {
   min-height: $main-minimum-height;
   background: $background-1-light;
   flex-grow: 1;
-  flex-shrink: 1;
 }
 .sidebar {
   min-height: $main-minimum-height;
@@ -19,6 +23,8 @@ $main-minimum-height: 600px;
   flex-basis: 300px;
   box-shadow: 0px 0px 6px 2.5px $shadow-dark;
   z-index: 9;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 .page-heading {
   width: 100%;
@@ -38,4 +44,8 @@ $main-minimum-height: 600px;
 }
 .copyright {
   color: $txt-color-secondary-light;
+}
+.monitoring-list-container {
+  margin-left: $layout-padding-xl;
+  margin-right: $layout-padding-xl;
 }

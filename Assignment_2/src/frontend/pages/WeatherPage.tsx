@@ -9,6 +9,8 @@ import {LocationList} from '../components/LocationList';
 import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
+import {RainfallData} from '../../model/RainfallData';
+import {TemperatureData} from '../../model/TemperatureData';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
 
 interface WeatherPageProps extends AppState {
@@ -22,20 +24,24 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         <div className="page-heading">
           <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
         </div>
-        <aside className="sidebar">
-          <header>
-            <h1 className="txt-subheading title-section">Locations</h1>
-          </header>
-          <LocationList 
-            locations={this.props.locations} 
-            monitoredLocations={this.props.monitoredLocations}
-            onItemClickedObserver={this.props.onLocationsListItemClicked}
-          />
-        </aside>
-        <main className="monitoring-container">
-          <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
-          <MonitoringList weatherDataList={this.props.weatherDataList}/>
-        </main>
+        <div className="main-content">
+          <aside className="sidebar">
+            <header>
+              <h1 className="txt-subheading title-section">Locations</h1>
+            </header>
+            <LocationList 
+              locations={this.props.locations} 
+              monitoredLocations={this.props.monitoredLocations}
+              onItemClickedObserver={this.props.onLocationsListItemClicked}
+            />
+          </aside>
+          <main className="monitoring-container">
+            <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
+            <div className="monitoring-list-container">
+              <MonitoringList weatherDataList={this.props.weatherDataList}/>
+            </div>
+          </main>
+        </div>
         <footer className="page-footer">
           <p className="copyright">Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
         </footer>
@@ -48,7 +54,39 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
   constructor(props: {}) {
     super(props);
-    this.state = new AppState([], [], new Set<string>());
+    const initialWeatherData: WeatherLocationData[] = [
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      ),
+      new WeatherLocationData(
+        'Location name', 
+        new RainfallData('Rainfall', 'Timestamp'), 
+        new TemperatureData('Temperature', 'Timestamp')
+      )
+    ];
+    this.state = new AppState([], initialWeatherData, new Set<string>());
   }
   public componentDidMount(): void {
     // Connects to the port that the backend is listening on.

@@ -18,7 +18,6 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     this.onClickObserver = new class implements OnClickObserver {
       public onClick(): void {
         that.onItemClicked();
-        console.log('Item Clicked');
       }
     }();
   }
@@ -33,9 +32,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
 
   private onItemClicked(): void {
     const selected: boolean | undefined = this.props.selected;
-    console.log('in onItemClicked');
     if (this.props.onItemClickedObserver) {
-      console.log('has observer');
       this.props.onItemClickedObserver.onItemClicked(
         this.props.location, 
         selected ? true : false

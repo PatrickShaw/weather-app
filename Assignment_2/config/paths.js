@@ -43,7 +43,7 @@ function ensureSlash(path, needsSlash) {
   } else {
     return path;
   }
-}
+} 
 
 function getPublicUrl(appPackageJson) {
   return envPublicUrl || require(appPackageJson).homepage;
@@ -65,7 +65,7 @@ function getServedPath(appPackageJson) {
 
 // config after eject: we're in ./config/
 module.exports = {
-  appBuild: resolveApp('build'),
+  appBuild: resolveApp('static'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveApp('src/frontend/index.tsx'),
