@@ -1,9 +1,11 @@
 import {
-  MonitoringManager, 
-  OnAddedMonitoredLocationObserver, 
-  OnRemovedMonitoredLocationObserver
+  MonitoringManager,
+  OnAddedMonitoredLocationObserver,
+  OnRemovedMonitoredLocationObserver,
 } from './MonitoringManager';
+
 import { MonitorMetadata } from '../model/MonitorMetadata';
+
 class MonitoringSessionManager {
   private readonly monitoringSessions: Map<string, MonitoringManager>;
   private readonly sessionMonitoringLocationCounts: Map<string, number>;

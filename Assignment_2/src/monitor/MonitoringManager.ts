@@ -1,10 +1,13 @@
 import { MonitorMetadata } from '../model/MonitorMetadata';
+
 interface OnAddedMonitoredLocationObserver {
   onAddedMonitoredLocation(monitor: MonitorMetadata): void;
 }
+
 interface OnRemovedMonitoredLocationObserver {
   onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
 }
+
 class MonitoringManager {
   private monitoredLocations: Map<string, MonitorMetadata>;
   private onAddedMonitoredLocationObservers: Set<OnAddedMonitoredLocationObserver>;
