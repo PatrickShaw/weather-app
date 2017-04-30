@@ -100,7 +100,7 @@ class MelbourneWeatherClient {
         .then((temperatureResponse) => {
           // temperatureResponse is an object, .return will return the data in that object as a string[].
           const temperatureStrings: string[] = temperatureResponse.return;
-          temperatureData = new TemperatureData(temperatureStrings[0], temperatureStrings[1]);
+          temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
         })
         .catch((error) => {
           console.error(chalk.bgRed('Error: getTemperature()'));
@@ -112,7 +112,7 @@ class MelbourneWeatherClient {
         this.weatherService.getRainfall(new RainfallRequestData(location))
         .then((rainfallResponse) => {
           const rainfallStrings: string[] = rainfallResponse.return;
-          rainfallData = new RainfallData(rainfallStrings[0], rainfallStrings[1]);
+          rainfallData = new RainfallData(rainfallStrings[1], rainfallStrings[0]);
         })
         .catch((error) => {
           console.error(chalk.bgRed('Error: getRainfall()'));

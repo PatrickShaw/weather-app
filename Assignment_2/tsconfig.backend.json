@@ -2,8 +2,10 @@
   "compilerOptions": {
     "outDir": "build",
     "module": "commonjs",
-    "target": "es5",
+    "target": "es6",
     "lib":["es6", "dom"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "allowJs": true,
@@ -13,8 +15,7 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "experimentalDecorators": true
+    "noUnusedLocals": true
   },
   "files": [],
   "exclude": [

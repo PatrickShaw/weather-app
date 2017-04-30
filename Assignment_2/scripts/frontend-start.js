@@ -1,5 +1,4 @@
 process.env.NODE_ENV = 'development';
-require('dotenv').config({silent: true});
 const chalk = require('chalk')
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -35,7 +34,8 @@ var server = new WebpackDevServer(
     host: host, 
     stats: {
       colors: true
-    }
+    },
+    'clientLogLevel': 'none'
   }
 );
 console.log(chalk.cyan("Hosting server..."));

@@ -1,4 +1,5 @@
 import * as Soap from 'soap-as-promised';
+import * as chalk from 'chalk';
 
 import { MelbourneWeatherClient } from './MelbourneWeatherClient';
 import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
@@ -15,6 +16,7 @@ class SoapClientBuilder {
       .then((weatherService: MelbourneWeatherServiceStub) => {
         // weatherService has methods defined in MelbourneWeatherServiceStub.
         const melbourneWeatherClient: MelbourneWeatherClient = new MelbourneWeatherClient(weatherService);
+        console.log(chalk.cyan('SOAP Client created'));
         resolve(melbourneWeatherClient);
       })
       .catch((error) => {

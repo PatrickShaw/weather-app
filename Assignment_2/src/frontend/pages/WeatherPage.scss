@@ -1,7 +1,7 @@
 @import "../theme/full-lambda-dimens";
 @import "../theme/full-lambda-colors";
 @import "../theme/full-lambda-text";
-$main-minimum-height: 400px;
+$main-minimum-height: 600px;
 .weather-page {
  display: flex; 
  flex-direction: row;
@@ -17,6 +17,8 @@ $main-minimum-height: 400px;
   min-height: $main-minimum-height;
   background: $background-1-light;
   flex-basis: 300px;
+  box-shadow: 0px 0px 6px 2.5px $shadow-dark;
+  z-index: 9;
 }
 .page-heading {
   width: 100%;
