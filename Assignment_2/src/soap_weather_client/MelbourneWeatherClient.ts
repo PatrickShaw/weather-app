@@ -86,15 +86,13 @@ class MelbourneWeatherClient {
    * @param locations Locations to get data for.
    */
   public retrieveWeatherData(locations: string[]): void {
-    const weatherLocationDataList: WeatherLocationData[] = [];
+    const weatherLocationDataList: WeatherLocationData[] = new Array<WeatherLocationData>(locations.length);
     const weatherPromises: Array<Promise<any>> = [];
     // For each location, get temp and rainfall data.
-    locations.forEach((location: string) => {
+    locations.forEach((location: string, locationIndex: number) => {
       let temperatureData: TemperatureData;
       let rainfallData: RainfallData;
-
       // Note: SOAP lib is async, Promise.then to do work after async call.
-
       const temperatureRequestPromise: Promise<any> = 
         this.weatherService.getTemperature(new TemperatureRequestData(location))
         .then((temperatureResponse) => {
@@ -121,14 +119,14 @@ class MelbourneWeatherClient {
         });
       
       // Wait for both getRainfall() and getTemperature() promises to resolve.
-      const compileWeatherLocationDataPromises: Array<Promise<any>> = [temperatureRequestPromise, 
-        rainfallRequestPromise];
+      const compileWeatherLocationDataPromises: Array<Promise<any>> 
+        = [temperatureRequestPromise, rainfallRequestPromise];
       Promise.all(compileWeatherLocationDataPromises)
       .then((responses) => {
         // Create new WeatherLocationData object with rainfallData object and temperatureData object 
         // when promises resolved.
         const weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
-        weatherLocationDataList.push(weatherData);
+        weatherLocationDataList[locationIndex] = weatherData;
       }).catch((error) => {
         console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
         console.error(chalk.red(error.message));

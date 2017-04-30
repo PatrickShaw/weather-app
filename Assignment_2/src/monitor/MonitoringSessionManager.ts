@@ -82,6 +82,7 @@ class MonitoringSessionManager {
         throw new Error(`Has key ${location} but count is ${monitoringCount}`);
       }
     }
+    monitoredLocations.sort();
     return monitoredLocations;
   }
 

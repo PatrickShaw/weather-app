@@ -113,8 +113,8 @@ new SoapClientBuilder().build()
         // Retrieves all locations from SOAP client points.
         // Only called once, under the assumption locations are set.
         melbourneWeatherLocations = locations.sort();
-        io.sockets.emit('locations', locations);
-        console.log(chalk.cyan(`locations: ${locations}`));
+        io.sockets.emit('locations', melbourneWeatherLocations);
+        console.log(chalk.cyan(`locations: ${melbourneWeatherLocations}`));
         const msInterval = 30000;
         // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
         // 300000 milliseconds = 5 mins.
