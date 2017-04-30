@@ -59,8 +59,8 @@ new SoapClientBuilder().build()
 .then((melbourneWeatherClient): void => {
   // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
   melbourneWeatherClient.addOnWeatherRetrievedListener(
-      new class implements OnWeatherRetrievedListener {        
-        public onWeatherRetrieved(weatherLocationDataList: WeatherLocationData[]): void {
+      new class implements OnWeatherRetrievedListener {
+          public onWeatherRetrieved(weatherLocationDataList: WeatherLocationData[]): void {
           // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
           // Send updated data to front end.
           const timeStamp: string = new Date().toString();

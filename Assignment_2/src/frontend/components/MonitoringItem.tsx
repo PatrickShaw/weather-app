@@ -17,7 +17,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
         }
         {
           this.props.weatherData.temperatureData ? 
-          <h2 className="txt-body-1">{this.props.weatherData.temperatureData.temperature}</h2> :
+          <h2 className="txt-body-1">{`${this.props.weatherData.temperatureData.temperature} ℃`}</h2> :
           null
         }
       </section>

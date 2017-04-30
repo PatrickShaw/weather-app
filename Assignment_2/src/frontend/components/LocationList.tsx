@@ -10,7 +10,6 @@ interface LocationListProps {
 }
 class LocationList extends React.Component<LocationListProps, void> {
   public render(): JSX.Element {
-    console.log(this.props.monitoredLocations);
     return (
       <section>
         {
