@@ -1,7 +1,6 @@
 import './WeatherPage.scss';
 
 import * as React from 'react';
-import * as ReactRouter from 'react-router';
 import * as SocketIo from 'socket.io-client';
 
 import {ActionBar} from '../components/AppBar';
@@ -44,9 +43,9 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   }
 }
 
-class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, AppState> {
+class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
-  constructor(props: ReactRouter.RouteComponentProps<{}>) {
+  constructor(props: {}) {
     super(props);
     this.state = new AppState([], [], new Set<string>());
   }
