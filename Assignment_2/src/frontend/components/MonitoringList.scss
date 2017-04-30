@@ -1,0 +1,12 @@
+.monitoring-list {
+  display: flex;
+  flex-wrap: true;
+  justify-content: center;
+  flex-direction: row;
+}
+.monitoring-item-card {
+  height: 150px;
+  flex-basis: 128px;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
