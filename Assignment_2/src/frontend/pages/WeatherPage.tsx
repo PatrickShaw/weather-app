@@ -52,6 +52,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 
 class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
+  private successfulWeatherMelbourne2Connection: boolean = false;
+
   constructor(props: {}) {
     super(props);
     const initialWeatherData: WeatherLocationData[] = [
@@ -92,7 +94,6 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    console.log('try connect to backend');
     this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
       public onItemClicked(location: string, selected: boolean): void {
         // The backend speaks in MonitorMetadata objects, so create one.
@@ -110,6 +111,11 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       // We were given a list of locations. Let React know that we may need to re-render.
       this.setState({ locations });
     });
+    socket.on('soap_client_creation_success', (success: boolean) => {
+      console.log(`Successful SOAP MelbourneWeather2 connection: ${success}`);
+      this.successfulWeatherMelbourne2Connection = success;
+    });
+
     socket.on('monitored_locations', (monitoredLocationsList: string[]) => {
       console.log('Retrieved new monitored locations:');
       console.log(monitoredLocationsList);
@@ -130,6 +136,16 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
   }
   
   public render(): JSX.Element {
+    if (!this.successfulWeatherMelbourne2Connection) {
+      // No SOAP WeatherMelbourne2 client.
+      return (
+        <h1 className="error">WeatherMelbourne2 WSDL connection unsuccessful. 
+          Make sure your device is connected to the internet and 
+          http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl is available.
+        </h1>
+      );
+    }
+
     return (
       <WeatherPage 
         locations={this.state.locations} 
