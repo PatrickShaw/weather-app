@@ -1,13 +1,13 @@
 import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
+import { MonitorMetadata } from '../model/MonitorMetadata';
+import { MonitoringManager } from '../monitor/MonitoringManager';
+import { MonitoringSessionManager } from '../monitor/MonitoringSessionManager';
 import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { SoapClientBuilder } from '../soap_weather_client/SoapClientBuilder';
 import { WeatherLocationData } from '../model/WeatherLocationData';
-import { MonitoringSessionManager } from '../monitor/MonitoringSessionManager';
-import { MonitoringManager } from '../monitor/MonitoringManager';
-import { MonitorMetadata } from '../model/MonitorMetadata';
 
 let melbourneWeatherLocations: string[] = [];
 const sessionManager: MonitoringSessionManager = new MonitoringSessionManager();

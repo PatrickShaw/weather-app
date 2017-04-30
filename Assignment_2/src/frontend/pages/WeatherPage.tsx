@@ -1,7 +1,6 @@
 import './WeatherPage.scss';
 
 import * as React from 'react';
-import * as ReactRouter from 'react-router';
 import * as SocketIo from 'socket.io-client';
 
 import {ActionBar} from '../components/AppBar';
@@ -9,10 +8,11 @@ import {AppState} from '../model/AppState';
 import {LocationList} from '../components/LocationList';
 import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
-import {WeatherLocationData} from '../../model/WeatherLocationData';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
 import {RainfallData} from '../../model/RainfallData';
 import {TemperatureData} from '../../model/TemperatureData';
+import {WeatherLocationData} from '../../model/WeatherLocationData';
+
 interface WeatherPageProps extends AppState {
   onLocationsListItemClicked?: OnLocationItemClickedObserver;
 }
@@ -50,9 +50,9 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   }
 }
 
-class WeatherPageContainer extends React.Component<ReactRouter.RouteComponentProps<{}>, AppState> {
+class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
-  constructor(props: ReactRouter.RouteComponentProps<{}>) {
+  constructor(props: {}) {
     super(props);
     const initialWeatherData: WeatherLocationData[] = [
       new WeatherLocationData(

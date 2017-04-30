@@ -3,6 +3,7 @@ import * as React from 'react';
 import { GenericListItem } from './GenericListItem';
 import { OnClickObserver } from '../observers/OnClickObserver';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
+
 interface LocationItemProps {
   location: string;
   selected?: boolean;
