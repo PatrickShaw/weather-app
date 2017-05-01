@@ -180,6 +180,7 @@ class FullLambdaService {
            const weatherDataForALocation: WeatherLocationData = 
             new WeatherLocationData(location, rainfallData, temperatureData);
            weatherData.push(weatherDataForALocation);
+           this.locationCache.setLocation(location, weatherDataForALocation);
         })
         .catch((error) => {
           console.error(chalk.red(`Could not make WeatherLocationData for location ${location}`));
