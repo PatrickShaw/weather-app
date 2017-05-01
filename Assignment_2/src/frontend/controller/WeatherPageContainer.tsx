@@ -66,6 +66,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     });
 
     socket.on(SocketKeys.retrievedLocations, (locations: string[]) => {
+      console.log(locations);
       // We were given a list of locations. Let React know that we may need to re-render.
       this.setState({ locations });
     });

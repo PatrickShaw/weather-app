@@ -34,7 +34,10 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           <main className="monitoring-container">
             <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
             <div className="monitoring-list-container">
-              <MonitoringList weatherDataMap={this.props.appCurrentState.weatherDataMap}/>
+              <MonitoringList 
+                locations={this.props.appCurrentState.locations} 
+                weatherDataMap={this.props.appCurrentState.weatherDataMap}
+              />
             </div>
           </main>
         </div>

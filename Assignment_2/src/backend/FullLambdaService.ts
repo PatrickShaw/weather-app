@@ -142,7 +142,8 @@ class FullLambdaService {
   private onAllLocationsRetrieved(locations: string[]) {
     // Retrieves all locations from SOAP client points.
     // Only called once, under the assumption locations are set.
-    this.melbourneWeatherLocations = locations.sort();
+    this.melbourneWeatherLocations = locations;
+    this.melbourneWeatherLocations.sort();
     // Send locations to front end.
     this.io.sockets.emit(SocketKeys.retrievedLocations, locations);
     console.log(chalk.cyan(`locations: ${locations}`));

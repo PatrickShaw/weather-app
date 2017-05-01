@@ -7,7 +7,7 @@ function createWebpackBackend(entryDirectory)
 {
     return {
         output: {
-            path: path.resolve(path.join('.', "build")),
+            path: path.resolve(path.join('.', "backend-build")),
             filename: 'backend-compiled-debug.js'
         },
         resolve: {
@@ -45,7 +45,7 @@ function createWebpackBackend(entryDirectory)
         },
         plugins: [
             new CheckerPlugin(),
-            new WebpackShellPlugin({onBuildEnd: ['node ./build/backend-compiled-debug.js']})
+            new WebpackShellPlugin({onBuildEnd: ['node ./backend-build/backend-compiled-debug.js']})
         ],
         stats: {
             colors: true,
