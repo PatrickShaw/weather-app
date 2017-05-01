@@ -3,8 +3,6 @@ import * as chalk from 'chalk';
 import { LocationMonitoringManager } from '../monitor/LocationMonitoringManager';
 import { WeatherClient } from '../weather_client/WeatherClient';
 import { MonitorMetadata } from '../model/MonitorMetadata';
-import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
-import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { RequestError } from '../model/RequestError';
 import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';

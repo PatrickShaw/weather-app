@@ -1,29 +1,29 @@
 import * as chalk from 'chalk';
 
-import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
-import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
-import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
 import { RainfallData } from '../model/RainfallData';
 import { RainfallRequestData } from '../model/RainfallRequestData';
 import { TemperatureData } from '../model/TemperatureData';
 import { TemperatureRequestData } from '../model/TemperatureRequestData';
 import { WeatherLocationData } from '../model/WeatherLocationData';
 import { WeatherClient } from './WeatherClient';
-
+interface MelbourneWeatherSoapServiceStub {
+  // Get a List of locations.
+  getLocations(): Promise<any>;
+  // Get rainfallRequestData.
+  getRainfall(rainfallRequestData: RainfallRequestData): Promise<any>;
+  // Get temperatureRequestData.
+  getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any>;
+}
 /**
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
 class MelbourneWeatherClient implements WeatherClient {
   // Instance variables.
-  private weatherService: MelbourneWeatherServiceStub;
-  private onWeatherPollCompleteListeners: OnWeatherRetrievedListener[];
-  private onLocationsPollCompleteListeners: OnLocationsRetrievedListener[];
+  private weatherService: MelbourneWeatherSoapServiceStub;
 
   // Default constructor.
-  constructor(melbourneWeatherSoapClient: MelbourneWeatherServiceStub) {
+  constructor(melbourneWeatherSoapClient: MelbourneWeatherSoapServiceStub) {
     this.weatherService = melbourneWeatherSoapClient;
-    this.onWeatherPollCompleteListeners = [];
-    this.onLocationsPollCompleteListeners = [];
   }
 
   /**
