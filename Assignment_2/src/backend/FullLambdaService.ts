@@ -1,13 +1,14 @@
 import * as chalk from 'chalk';
 
 import { LocationMonitoringManager } from '../monitor/LocationMonitoringManager';
-import { WeatherClient } from '../weather_client/WeatherClient';
 import { MonitorMetadata } from '../model/MonitorMetadata';
 import { RequestError } from '../model/RequestError';
 import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';
-import { WeatherLocationData } from '../model/WeatherLocationData';
+import { WeatherClient } from '../weather_client/WeatherClient';
 import { WeatherClientFactory } from '../weather_client/WeatherClientFactory';
+import { WeatherLocationData } from '../model/WeatherLocationData';
+
 /**
  * Controller class instantiated by the node server.
  */
@@ -30,6 +31,7 @@ class FullLambdaService {
     this.sessionManager = sessionManager;
     // Set up socketIoServer connections.
     this.io = io;
+    this.weatherClientFactory = weatherClientFactory;
   }
     
   private initialiseSocketEndpoints(): void {
@@ -190,7 +192,6 @@ class FullLambdaService {
   public run(): void {
     this.initialiseSocketEndpoints();
     // Make MelbourneWeatherClient that has a SOAP Client.
-    const that = this;
     this.weatherClientFactory.createWeatherClient()
     .then((weatherClient: WeatherClient): void => {
       console.log(chalk.green('SOAP Client created'));

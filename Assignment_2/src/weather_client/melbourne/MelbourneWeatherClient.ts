@@ -1,19 +1,13 @@
 import * as chalk from 'chalk';
 
-import { RainfallData } from '../model/RainfallData';
-import { RainfallRequestData } from '../model/RainfallRequestData';
-import { TemperatureData } from '../model/TemperatureData';
-import { TemperatureRequestData } from '../model/TemperatureRequestData';
-import { WeatherLocationData } from '../model/WeatherLocationData';
-import { WeatherClient } from './WeatherClient';
-interface MelbourneWeatherSoapServiceStub {
-  // Get a List of locations.
-  getLocations(): Promise<any>;
-  // Get rainfallRequestData.
-  getRainfall(rainfallRequestData: RainfallRequestData): Promise<any>;
-  // Get temperatureRequestData.
-  getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any>;
-}
+import { MelbourneWeatherSoapServiceStub } from './MelbourneWeatherSoapServiceStub';
+import { RainfallData } from '../../model/RainfallData';
+import { RainfallRequestData } from '../../model/RainfallRequestData';
+import { TemperatureData } from '../../model/TemperatureData';
+import { TemperatureRequestData } from '../../model/TemperatureRequestData';
+import { WeatherClient } from '../WeatherClient';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
+
 /**
  * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
  */
@@ -100,5 +94,5 @@ class MelbourneWeatherClient implements WeatherClient {
   } 
 }
 
-export {MelbourneWeatherClient};
+export {MelbourneWeatherClient };
 export default MelbourneWeatherClient;

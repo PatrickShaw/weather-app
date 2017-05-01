@@ -2,8 +2,8 @@ import * as Soap from 'soap-as-promised';
 import * as chalk from 'chalk';
 
 import { MelbourneWeatherClient } from './MelbourneWeatherClient';
-import { WeatherClientFactory } from './WeatherClientFactory';
-import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
+import { MelbourneWeatherSoapServiceStub } from './MelbourneWeatherSoapServiceStub';
+import { WeatherClientFactory } from '../WeatherClientFactory';
 
 // TODO: There are a lot of optional settings we can set in this Factory.
 
@@ -14,7 +14,7 @@ class MelbourneWeatherClientFactory implements WeatherClientFactory<MelbourneWea
   public createWeatherClient(): Promise<MelbourneWeatherClient> {
     return new Promise<MelbourneWeatherClient>((resolve, reject) => {
       Soap.createClient('http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl')
-      .then((weatherService: MelbourneWeatherServiceStub) => {
+      .then((weatherService: MelbourneWeatherSoapServiceStub) => {
         // weatherService has methods defined in MelbourneWeatherServiceStub.
         const melbourneWeatherClient: MelbourneWeatherClient = new MelbourneWeatherClient(weatherService);
         // TODO: emit good.

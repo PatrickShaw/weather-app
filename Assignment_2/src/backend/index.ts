@@ -1,9 +1,10 @@
+import { } from '../weather_client/Melbourne';
+
 import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
 import { FullLambdaService } from './FullLambdaService';
-import { MelbourneWeatherClientFactory } from '../weather_client/MelbourneWeatherClientFactory';
-import { } from '../weather_client/Melbourne';
+import { MelbourneWeatherClientFactory } from '../weather_client/melbourne/MelbourneWeatherClientFactory';
 
 // Listen to port 8080 for our socket.io server.
 console.log(chalk.cyan('Starting server...'));
