@@ -1,11 +1,12 @@
 import * as React from 'react';
 
 import { LocationItem } from './LocationItem';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 
 interface LocationListProps {
   locations: string[];
-  monitoredLocations: Set<string>;
+  weatherDataMap: Map<string, WeatherLocationData>;
   onItemClickedObserver?: OnLocationItemClickedObserver;
 }
 class LocationList extends React.Component<LocationListProps, void> {
@@ -18,7 +19,7 @@ class LocationList extends React.Component<LocationListProps, void> {
               <LocationItem 
                 key={locationIndex} 
                 location={location} 
-                selected={this.props.monitoredLocations.has(location)}
+                selected={this.props.weatherDataMap.has(location)}
                 onItemClickedObserver={this.props.onItemClickedObserver}
               />
             );

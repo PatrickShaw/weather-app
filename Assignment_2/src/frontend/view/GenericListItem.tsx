@@ -2,15 +2,15 @@ import * as React from 'react';
 
 import {OnClickObserver} from '../observers/OnClickObserver';
 
-interface ListItemProps {
+interface GenericListItemProps {
   title: string;
   subtitle?: string;
   onClickObserver?: OnClickObserver;
 }
 
-class GenericListItem extends React.Component<ListItemProps, void> {
+class GenericListItem extends React.Component<GenericListItemProps, void> {
   private onListItemClickedBound: any;
-  constructor(props: ListItemProps) {
+  constructor(props: GenericListItemProps) {
     super(props);
     this.onListItemClickedBound = this.onListItemClicked.bind(this, this.props.onClickObserver);
   }
