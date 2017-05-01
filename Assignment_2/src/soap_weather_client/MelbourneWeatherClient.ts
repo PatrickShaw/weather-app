@@ -64,19 +64,91 @@ class MelbourneWeatherClient {
   }
   
   /**
+   * Accesses SOAP Client to get location data. Returns a promise. 
+   * Upon successful completion, returns locations (parsed from the locationsResponse).
+   * locations is of form string[].
+   * It can be accessed with a outer .then() propagating it up.
+   */
+  private getLocations(): Promise<any> {
+    return this.weatherService.getLocations()
+    .then((locationsResponse) => {
+      // locationsResponse is an object locationsResponse.return gives the data as an string.
+      const locations: string[] = locationsResponse.return;
+      console.log((`${chalk.cyan('getLocations() inner promise return locations:')} ${locations}`));      
+      return locations;
+    })
+    .catch((error) => {
+      console.error(chalk.red(error.message));
+      console.error(chalk.red(error.stack));
+    });
+  }
+
+  /**
+   * Accesses SOAP Client to get rainfall data. Returns a promise. 
+   * Upon successful completion, returns rainfallStrings (parsed from the rainfallResponse).
+   * rainfallStrings is of form 'timestamp,rainfall in mm'.
+   * It can be accessed with a outer .then() propagating it up.
+   */
+  public getRainfall(rainfallRequestData: RainfallRequestData): Promise<any> {
+    return this.weatherService.getRainfall(rainfallRequestData)
+      .then((rainfallResponse) => {
+        // rainfallResponse is an object, .return will return the data in that object as a string[].
+        const rainfallStrings: string[] = rainfallResponse.return;
+        console.log((`${chalk.cyan('getRainfall() inner promise return rainfall strings:')} 
+          ${rainfallStrings}`)
+        );        
+        // rainfallStrings propagates up to next .then().
+        return rainfallStrings;
+      })
+      .catch((error) => {
+        console.error(chalk.bgRed('Error: getRainfall()'));
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+      });
+  }
+
+  /**
+   * Accesses SOAP Client to get temperature data. Returns a promise. 
+   * Upon successful completion, returns temperatureStrings (parsed from the temperatureResponse).
+   * temperatureStrings is of form 'timestamp,temperature in degrees celsius'.
+   * It can be accessed with a outer .then() propagating it up.
+   */
+  public getTemperature(temperatureRequestData: TemperatureRequestData): Promise<any> { 
+    return this.weatherService.getTemperature(temperatureRequestData)
+      .then((temperatureResponse) => {
+        // temperatureResponse is an object, .return will return the data in that object as a string[].
+        const temperatureStrings: string[] = temperatureResponse.return;
+        console.log((`${chalk.cyan('getTemperature() inner promise return temperature strings:')} 
+          ${temperatureStrings}`)
+        );
+        // temperatureStrings propagates up to next .then().
+        return temperatureStrings;
+      })
+      .catch((error) => {
+        console.error(chalk.bgRed('Error: getTemperature()'));
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+      });
+  }
+
+  /**
    * Retrieve locations from SOAP client endpoint.
    */
   public retrieveLocations(): void {
-    this.weatherService.getLocations().then((locationsResponse) => {
-      // locationsResponse is an object locationsResponse.return gives the data as an string.
-      const locations: string[] = locationsResponse.return;
+    this.getLocations()
+    .then((locations) => {
+      // locationsResponse is of type string[].
       this.onLocationsPollCompleteListeners.forEach(
         (onLocationsPollCompleteListener: OnLocationsRetrievedListener) => {
-          // For each listener, call onLocationsRetrieved() to retrieveWeatherData() for locations.
+          // For each listener, call onLocationsRetrieved() to process weather data locations.
           onLocationsPollCompleteListener.onLocationsRetrieved(locations);
         }
       );
-    });
+    })
+    .catch((error) => {
+      console.error(chalk.bgRed('Error: getLocations()'));
+      console.error(chalk.red(error.message));
+      console.error(chalk.red(error.stack));    });
   }
   
   /**
@@ -88,37 +160,40 @@ class MelbourneWeatherClient {
     const weatherPromises: Array<Promise<any>> = [];
     // For each location, get temp and rainfall data.
     locations.forEach((location: string, locationIndex: number) => {
-      let temperatureData: TemperatureData;
-      let rainfallData: RainfallData;
       // Note: SOAP lib is async, Promise.then to do work after async call.
-      const temperatureRequestPromise: Promise<any> = 
-        this.weatherService.getTemperature(new TemperatureRequestData(location))
-        .then((temperatureResponse) => {
-          // temperatureResponse is an object, .return will return the data in that object as a string[].
-          const temperatureStrings: string[] = temperatureResponse.return;
-          temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
-        })
-        .catch((error) => {
-          console.error(chalk.bgRed('Error: getTemperature()'));
-          console.error(chalk.red(error.message));
-          console.error(chalk.red(error.stack));
-        });
 
-      const rainfallRequestPromise: Promise<any> = 
-        this.weatherService.getRainfall(new RainfallRequestData(location))
-        .then((rainfallResponse) => {
-          const rainfallStrings: string[] = rainfallResponse.return;
-          rainfallData = new RainfallData(rainfallStrings[1], rainfallStrings[0]);
-        })
-        .catch((error) => {
-          console.error(chalk.bgRed('Error: getRainfall()'));
-          console.error(chalk.red(error.message));
-          console.error(chalk.red(error.stack));
-        });
+      let temperatureData: TemperatureData;    
+      // Wrap location in a TemperatureRequestData object.
+      const temperatureRequestData = new TemperatureRequestData(location);
+      const temperatureRequestPromise: Promise<any> = this.getTemperature(temperatureRequestData);
+      // Assign temperatureData when promise is resolved.
+      temperatureRequestPromise.then((temperatureStrings) => {
+        console.log(`${chalk.cyan('Retrieved temperature strings:')} ${temperatureStrings}`);
+        temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
+      }).catch((error) => {
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+      });
+
+      let rainfallData: RainfallData;
+      // Wrap location in a RainfallRequestData object.
+      const rainfallRequestData = new RainfallRequestData(location);
+      const rainfallRequestPromise: Promise<any> = this.getRainfall(rainfallRequestData);
+      // Assign rainfallData when promise is resolved.
+      rainfallRequestPromise.then((rainfallStrings) => {
+        console.log(`${chalk.cyan('Retrieved rainfall strings:')} ${rainfallStrings}`);
+        rainfallData = new RainfallData(rainfallStrings[1], rainfallStrings[0]);
+      })
+      .catch((error) => {
+        console.error(chalk.bgRed('Error: getRainfall()'));
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+      });
       
       // Wait for both getRainfall() and getTemperature() promises to resolve.
       const compileWeatherLocationDataPromises: Array<Promise<any>> 
         = [temperatureRequestPromise, rainfallRequestPromise];
+        
       Promise.all(compileWeatherLocationDataPromises)
       .then((responses) => {
         // Create new WeatherLocationData object with rainfallData object and temperatureData object 

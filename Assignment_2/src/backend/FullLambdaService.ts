@@ -2,14 +2,22 @@ import * as chalk from 'chalk';
 
 import { LocationCache } from './LocationCache';
 import { LocationMonitoringManager } from '../monitor/LocationMonitoringManager';
+import { MelbourneWeatherClient } from '../soap_weather_client/MelbourneWeatherClient';
 import { MelbourneWeatherClientFactory } from '../soap_weather_client/MelbourneWeatherClientFactory';
 import { MonitorMetadata } from '../model/MonitorMetadata';
 import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
+import { RainfallData } from '../model/RainfallData';
+import { RainfallRequestData } from '../model/RainfallRequestData';
 import { RequestError } from '../model/RequestError';
 import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';
+import { TemperatureData } from '../model/TemperatureData';
+import { TemperatureRequestData } from '../model/TemperatureRequestData';
 import { WeatherLocationData } from '../model/WeatherLocationData';
+
+// TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
+// allows for dependency injection where you pass in req parameters.
 
 /**
  * Controller class instantiated by the node server.
@@ -22,6 +30,7 @@ class FullLambdaService {
   private melbourneWeatherLocations: string[] = [];
   private successfulMelbourneWeather2Connection: boolean = false;
   private locationCache: LocationCache = new LocationCache();
+  private melbourneWeatherClient: MelbourneWeatherClient;
 
   constructor(io: SocketIO.Server) {
     // Set up socketIoServer connections.
@@ -61,15 +70,7 @@ class FullLambdaService {
             // Add new location to monitor to all locations that are monitored.
             locationMonitoringManager.addMonitorLocation(monitor);
             const monitoredLocations: string[] = Array.from(locationMonitoringManager.getMonitoredLocations());
-            const response = new RequestResponse(monitoredLocations, null);
-            // Update what monitors are selected on frontend session.
-            socket.emit('monitored_locations', response);
-            console.log('emitted:');
-            console.log(locationMonitoringManager.getMonitoredLocations());
-            // Update data displayed on frontend session.
-            const updatedWeatherDataWithNewMonitor: WeatherLocationData[] = 
-              this.getWeatherDataForLocationsMonitored(monitoredLocations);
-            socket.emit('replace_weather_data', updatedWeatherDataWithNewMonitor);
+            this.updateRenderedMonitorsAndCards(monitoredLocations, socket);
           } else {
             // Can't add monitor.
             console.error(`${chalk.red('Could add monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
@@ -97,10 +98,8 @@ class FullLambdaService {
           if (locationMonitoringManager) {
             // Can remove location.
             locationMonitoringManager.removeMonitoredLocation(monitor);
-            const response = new RequestResponse(
-              Array.from(locationMonitoringManager.getMonitoredLocations()),
-              null);
-            socket.emit('monitored_locations', response);
+            const monitoredLocations: string[] = Array.from(locationMonitoringManager.getMonitoredLocations());
+            this.updateRenderedMonitorsAndCards(monitoredLocations, socket);
           } else {
             // Can't remove location.
             console.error(`${chalk.red('Could remove monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
@@ -125,17 +124,76 @@ class FullLambdaService {
     });
   }
 
-  private getWeatherDataForLocationsMonitored(locations: string[]) {
+  /**
+   * Called when successfully added or removed a monitor. Updates the rendered sidebar and monitor cards.
+   */
+  private updateRenderedMonitorsAndCards(monitoredLocations: string[], socket: SocketIO.Socket) {
+    monitoredLocations.sort();
+    // Update sidebar, shows what locations are selected on frontend session.
+    // Note: A RequestResponse object is only made for monitored_locations as it is a request from the frontend.
+    const response = new RequestResponse(monitoredLocations, null);
+    socket.emit('monitored_locations', response);
+    // Update data cards displayed on frontend session.
+    this.updateRenderedCards(monitoredLocations, socket);
+  }
+
+  /**
+   * Updates rendered monitor cards on frontend.
+   */
+  private updateRenderedCards(locations: string[], socket: SocketIO.Socket) {
     // Assume locations is sorted stable order.
     const weatherData: WeatherLocationData[] = [];
+    const allPromises: Array<Promise<any>>  = [];
+    
     for (const location of locations) {
       if (this.locationCache.has(location)) {
         weatherData.push(this.locationCache.get(location));
       } else {
-        // TODO: Get data from SOAP client.
+        let hadError: boolean = false;
+        const rainfallRequest = new RainfallRequestData(location);
+        let rainfallData: RainfallData;
+        const rainfallPromise: Promise<any> = this.melbourneWeatherClient.getRainfall(rainfallRequest)
+        .then((rainfallStrings) => {
+          rainfallData = new RainfallData(rainfallStrings[1], rainfallStrings[0]);
+        })
+        .catch((error) => {
+          hadError = true;
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
+        });
+
+        const temperatureRequest = new TemperatureRequestData(location);
+        let temperatureData: TemperatureData;
+        const tempPromise: Promise<any>  = this.melbourneWeatherClient.getTemperature(temperatureRequest)
+        .then((temperatureStrings) => {
+          temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
+        })
+        .catch((error) => {
+          hadError = true;
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
+        });
+        allPromises.push(tempPromise);
+        allPromises.push(rainfallPromise);
+        const dependentPromises: Array<Promise<string>>  = [rainfallPromise, tempPromise];
+        Promise.all(dependentPromises).then((responses) => {
+           const weatherDataForALocation: WeatherLocationData = 
+            new WeatherLocationData(location, rainfallData, temperatureData);
+           weatherData.push(weatherDataForALocation);
+        })
+        .catch((error) => {
+          console.error(chalk.red(`Could not make WeatherLocationData for location ${location}`));
+        });
       }
     }
-    return weatherData;
+    Promise.all(allPromises).then((responses) => {
+      socket.emit('replace_weather_data', weatherData);
+    })
+    .catch((error) => {
+      console.error(chalk.bgRed(`getWeatherDataForLocationsMonitored(): Not all promises resolved`));
+      console.error(chalk.bgRed(error.message));
+      console.log(chalk.bgRed(error.stack));
+    });
   }
   
   /**
@@ -148,6 +206,7 @@ class FullLambdaService {
     .then((melbourneWeatherClient): void => {
       // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
       this.successfulMelbourneWeather2Connection = true;
+      that.melbourneWeatherClient = melbourneWeatherClient;
 
       // Listener to update cache.
       melbourneWeatherClient.addOnWeatherRetrievedListener(
@@ -236,7 +295,6 @@ class FullLambdaService {
 
       // Get locations from SOAP client in melbourneWeatherClient.
       melbourneWeatherClient.retrieveLocations();
-      // Can make this member attribuet of Fulllambda, use to get speicfic data for frontends.
     })
     .catch((error) => {
       console.error(chalk.bgRed('Error: SOAP client connection'));

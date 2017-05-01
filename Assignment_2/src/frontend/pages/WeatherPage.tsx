@@ -110,6 +110,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       }
     }();
 
+    // TODO(patrick): Add socket.on('remove_monitor') and socket.on('add_monitor') for errors?
     socket.on('soap_client_creation_success', (success: boolean) => {
       // Assign MelbourneWeather2 successful connection status.
       console.log(`Successful SOAP MelbourneWeather2 connection: ${success}`);
@@ -122,6 +123,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     });
     
     socket.on('monitored_locations', (requestResponse: RequestResponse<string[]>) => {
+      // Handles sidebar.
       const error: RequestError | null = requestResponse.error;
       if (error === null) {
         const monitoredLocationsList: string[] = requestResponse.data;
@@ -131,6 +133,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         // React know that we may need to re-render.
         const monitoredLocations: Set<string> = new Set<string>(monitoredLocationsList);
         console.log(monitoredLocations);
+        // Render greyed out sidebar.
         this.setState({ monitoredLocations });
       } else {
         // Handle error.
@@ -141,6 +144,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     });
 
     socket.on('replace_weather_data', (weatherDataList: WeatherLocationData[]) => {
+      // Handle updates for cards.
       // We received some fresh weather data.
       // Tell React that we may need to re-render
       const timeStamp: string = new Date().toString();
