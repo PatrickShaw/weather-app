@@ -74,7 +74,7 @@ class MelbourneWeatherClient {
     .then((locationsResponse) => {
       // locationsResponse is an object locationsResponse.return gives the data as an string.
       const locations: string[] = locationsResponse.return;
-      console.log((`${chalk.cyan('getLocations() inner promise return locations:')} ${locations}`));      
+      // console.log((`${chalk.cyan('getLocations() inner promise return locations:')} ${locations}`));      
       return locations;
     })
     .catch((error) => {
@@ -94,9 +94,9 @@ class MelbourneWeatherClient {
       .then((rainfallResponse) => {
         // rainfallResponse is an object, .return will return the data in that object as a string[].
         const rainfallStrings: string[] = rainfallResponse.return;
-        console.log((`${chalk.cyan('getRainfall() inner promise return rainfall strings:')} 
-          ${rainfallStrings}`)
-        );        
+        // console.log((`${chalk.cyan('getRainfall() inner promise return rainfall strings:')} 
+        //  ${rainfallStrings}`)
+        // );       
         // rainfallStrings propagates up to next .then().
         return rainfallStrings;
       })
@@ -118,9 +118,9 @@ class MelbourneWeatherClient {
       .then((temperatureResponse) => {
         // temperatureResponse is an object, .return will return the data in that object as a string[].
         const temperatureStrings: string[] = temperatureResponse.return;
-        console.log((`${chalk.cyan('getTemperature() inner promise return temperature strings:')} 
-          ${temperatureStrings}`)
-        );
+        //  console.log((`${chalk.cyan('getTemperature() inner promise return temperature strings:')} 
+        //  ${temperatureStrings}`)
+        // );
         // temperatureStrings propagates up to next .then().
         return temperatureStrings;
       })
@@ -168,7 +168,7 @@ class MelbourneWeatherClient {
       const temperatureRequestPromise: Promise<any> = this.getTemperature(temperatureRequestData);
       // Assign temperatureData when promise is resolved.
       temperatureRequestPromise.then((temperatureStrings) => {
-        console.log(`${chalk.cyan('Retrieved temperature strings:')} ${temperatureStrings}`);
+        // console.log(`${chalk.cyan('Retrieved temperature strings:')} ${temperatureStrings}`);
         temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
       }).catch((error) => {
         console.error(chalk.red(error.message));
@@ -181,7 +181,7 @@ class MelbourneWeatherClient {
       const rainfallRequestPromise: Promise<any> = this.getRainfall(rainfallRequestData);
       // Assign rainfallData when promise is resolved.
       rainfallRequestPromise.then((rainfallStrings) => {
-        console.log(`${chalk.cyan('Retrieved rainfall strings:')} ${rainfallStrings}`);
+        // console.log(`${chalk.cyan('Retrieved rainfall strings:')} ${rainfallStrings}`);consoe
         rainfallData = new RainfallData(rainfallStrings[1], rainfallStrings[0]);
       })
       .catch((error) => {

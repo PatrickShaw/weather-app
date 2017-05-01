@@ -282,7 +282,7 @@ class FullLambdaService {
             console.log(chalk.cyan(`locations: ${locations}`));
             // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
             // 300000 milliseconds = 5 mins.
-            const msInterval = 30000;
+            const msInterval = 300000;
             // TODO: Fix so data populated once a session is connected, cache it.
             // Note: setInterval() doesn't get data at time 0.        
             melbourneWeatherClient.retrieveWeatherData(that.sessionManager.getMonitoredLocations());
