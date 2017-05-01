@@ -27,7 +27,7 @@ class FullLambdaService {
   private readonly io: SocketIO.Server;
   // All locations retrieved from SOAP client.
   private melbourneWeatherLocations: string[] = [];
-  private successfulMelbourneWeather2Connection: boolean;
+  private serverConnectedToSoapApi: boolean;
   private locationCache: LocationCache;
   private weatherClient: WeatherClient;
 
@@ -37,7 +37,7 @@ class FullLambdaService {
     sessionManager: SessionMonitoringManager = new SessionMonitoringManager()
   ) {
     this.locationCache = new LocationCache();
-    this.successfulMelbourneWeather2Connection = false;
+    this.serverConnectedToSoapApi = false;
     this.melbourneWeatherLocations = [];
     this.sessionManager = sessionManager;
     this.io = io;
@@ -50,7 +50,7 @@ class FullLambdaService {
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
       // Emit to front end whether the SOAP Client was successfully created.
-      this.io.emit('soap_client_creation_success', this.successfulMelbourneWeather2Connection);
+      this.io.emit('soap_client_creation_success', this.serverConnectedToSoapApi);
       // Called when session started with frontend.
       const sessionId: string = socket.id;
       console.log(`Session started ${sessionId}`);
@@ -229,7 +229,7 @@ class FullLambdaService {
     const response = new RequestResponse(monitoredLocations, null);
     socket.emit('monitored_locations', response);
     // Update data cards displayed on frontend session.
-    this.updateRenderedCards(this.weatherClient, monitoredLocations, socket);
+    this.updateRenderedCards(monitoredLocations, socket);
   }
 
   /**
@@ -246,7 +246,7 @@ class FullLambdaService {
         let hadError: boolean = false;
         const rainfallRequest = new RainfallRequestData(location);
         let rainfallData: RainfallData;
-        const rainfallPromise: Promise<RainfallData> = weatherClient.retrieveRainfallData(rainfallRequest)
+        const rainfallPromise: Promise<RainfallData> = this.weatherClient.retrieveRainfallData(rainfallRequest)
           .then((retrievedRainfallData) => {
             rainfallData = retrievedRainfallData;
             return retrievedRainfallData;
@@ -259,7 +259,7 @@ class FullLambdaService {
 
         const temperatureRequest = new TemperatureRequestData(location);
         let temperatureData: TemperatureData;
-        const tempPromise: Promise<TemperatureData>  = weatherClient.retrieveTemperatureData(temperatureRequest)
+        const tempPromise: Promise<TemperatureData> = this.weatherClient.retrieveTemperatureData(temperatureRequest)
         .then((temperatureStrings) => {
           temperatureData = new TemperatureData(temperatureStrings[1], temperatureStrings[0]);
           return temperatureData;
@@ -304,8 +304,6 @@ class FullLambdaService {
       console.log(chalk.bgRed(error.stack));
     });
   }
-
-
   
   /**
    * Runs main loop for the full lambda service via setInterval.
@@ -318,8 +316,8 @@ class FullLambdaService {
         this.weatherClient = weatherClient;
         console.log(chalk.green('SOAP Client created'));
         // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
-        this.successfulMelbourneWeather2Connection = true;
-        this.io.emit('soap_client_creation_success', this.successfulMelbourneWeather2Connection);
+        this.serverConnectedToSoapApi = true;
+        this.io.emit('soap_client_creation_success', this.serverConnectedToSoapApi);
         // Get locations from SOAP client in melbourneWeatherClient.
         weatherClient.retrieveLocations().then((locations: string[]) => {
           this.onAllLocationsRetrieved(locations);
