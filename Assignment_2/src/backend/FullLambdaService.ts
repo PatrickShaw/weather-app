@@ -14,7 +14,6 @@ import { WeatherClientFactory } from '../weather_client/WeatherClientFactory';
 class FullLambdaService {
   private readonly weatherClientFactory: WeatherClientFactory<WeatherClient>;
   private readonly sessionManager: SessionMonitoringManager;
-  private readonly temperatureSessionManager: SessionMonitoringManager;
   // Convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;
   // All locations retrieved from SOAP client.
