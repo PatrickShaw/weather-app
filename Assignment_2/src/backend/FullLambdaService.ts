@@ -44,6 +44,9 @@ class FullLambdaService {
     this.weatherClientFactory = weatherClientFactory;
   }
   
+  /**
+   * Setup websocket endpoints using SocketIO.
+   */
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
       // Emit to front end whether the SOAP Client was successfully created.
@@ -232,8 +235,7 @@ class FullLambdaService {
   /**
    * Updates rendered monitor cards on frontend.
    */
-  private updateRenderedCards(weatherClient: WeatherClient, locations: string[], socket: SocketIO.Socket) {
-    // Assume locations is sorted stable order.
+  private updateRenderedCards(locations: string[], socket: SocketIO.Socket) {
     const weatherData: WeatherLocationData[] = [];
     const allPromises: Array<Promise<any>>  = [];
     
@@ -282,14 +284,28 @@ class FullLambdaService {
       }
     }
     Promise.all(allPromises).then((responses) => {
+      // Sort by locations.
+      weatherData.sort(
+        (a: WeatherLocationData, b: WeatherLocationData) => {
+          if (a.location < b.location) {
+            return -1;
+          } 
+          if (a.location > b.location) {
+            return 1;
+          }
+          return 0;
+        } 
+      );
       socket.emit('replace_weather_data', weatherData);
     })
     .catch((error) => {
-      console.error(chalk.bgRed(`getWeatherDataForLocationsMonitored(): Not all promises resolved`));
+      console.error(chalk.bgRed(`updateRenderedCards(): Not all promises resolved`));
       console.error(chalk.bgRed(error.message));
       console.log(chalk.bgRed(error.stack));
     });
   }
+
+
   
   /**
    * Runs main loop for the full lambda service via setInterval.
