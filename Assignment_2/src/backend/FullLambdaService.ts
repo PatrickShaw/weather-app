@@ -128,7 +128,6 @@ class FullLambdaService {
    * Called when successfully added or removed a monitor. Updates the rendered sidebar and monitor cards.
    */
   private updateRenderedMonitorsAndCards(monitoredLocations: string[], socket: SocketIO.Socket) {
-    monitoredLocations.sort();
     // Update sidebar, shows what locations are selected on frontend session.
     // Note: A RequestResponse object is only made for monitored_locations as it is a request from the frontend.
     const response = new RequestResponse(monitoredLocations, null);
@@ -141,7 +140,6 @@ class FullLambdaService {
    * Updates rendered monitor cards on frontend.
    */
   private updateRenderedCards(locations: string[], socket: SocketIO.Socket) {
-    // Assume locations is sorted stable order.
     const weatherData: WeatherLocationData[] = [];
     const allPromises: Array<Promise<any>>  = [];
     
@@ -188,6 +186,18 @@ class FullLambdaService {
       }
     }
     Promise.all(allPromises).then((responses) => {
+      // Sort by locations.
+      weatherData.sort(
+        (a: WeatherLocationData, b: WeatherLocationData) => {
+          if (a.location < b.location) {
+            return -1;
+          } 
+          if (a.location > b.location) {
+            return 1;
+          }
+          return 0;
+        } 
+      );
       socket.emit('replace_weather_data', weatherData);
     })
     .catch((error) => {
@@ -196,6 +206,8 @@ class FullLambdaService {
       console.log(chalk.bgRed(error.stack));
     });
   }
+
+
   
   /**
    * Runs main loop for the full lambda service via setInterval.
