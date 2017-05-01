@@ -63,3 +63,17 @@ However, Redux has a functional programming based nature which didn't fit in wit
 <img src="https://cdn.worldvectorlogo.com/logos/react-router.svg" height="200"/>
 React Router allows easy management of routes/url navigation. 
 The assignment only really required a single page and browser history management was out of scope.
+
+## Other notes.
+
+### Logging standard.
+
+Logging on the backend is really helpful for debugging.
+
+Current adopted standard:
+
+colour
+- red: error (red background shouldn't happen under normal flow of events)
+- cyan: important information
+- green: good things are happening
+- white: data
