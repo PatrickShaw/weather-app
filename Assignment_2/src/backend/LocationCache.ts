@@ -16,7 +16,7 @@ class LocationCache {
   /**
    * Add a location to map, location must not already exist in map.
    */
-  public addLocation(location: string, data: WeatherLocationData) {
+  public addLocation(location: string, data: WeatherLocationData): void {
     if (this.locationMap.has(location)) {
       throw new Error(`location ${location} already exists in ${this.locationMap}`);
     }
@@ -27,7 +27,7 @@ class LocationCache {
   /**
    * Update a location in map, location has to previously exist in map.
    */
-  public updateLocation(location: string, data: WeatherLocationData) {
+  public updateLocation(location: string, data: WeatherLocationData): void {
     if (!this.locationMap.has(location)) {
       throw new Error(`location ${location} doesn't exist in ${this.locationMap}, can't update`);
     }
@@ -38,17 +38,17 @@ class LocationCache {
   /**
    * If location is not in map will add, else updates.
    */
-  public setLocation(location: string, data: WeatherLocationData) {
+  public setLocation(location: string, data: WeatherLocationData): void {
     this.locationMap.set(location, data);
     console.log(chalk.cyan(`Set location ${location} in cache`));
   }
 
-  public has(location: string) {
+  public has(location: string): boolean {
     return this.locationMap.has(location);
   }
 
   // Return weather data associated with a location.
-  public get(location: string) {
+  public get(location: string): WeatherLocationData {
     return this.locationMap.get(location);
   }
 

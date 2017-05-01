@@ -38,6 +38,9 @@ class FullLambdaService {
     this.initialiseSocketEndpoints();
   }
   
+  /**
+   * Setup websocket endpoints using SocketIO.
+   */
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
       if (this.successfulMelbourneWeather2Connection) {
@@ -201,7 +204,7 @@ class FullLambdaService {
       socket.emit('replace_weather_data', weatherData);
     })
     .catch((error) => {
-      console.error(chalk.bgRed(`getWeatherDataForLocationsMonitored(): Not all promises resolved`));
+      console.error(chalk.bgRed(`updateRenderedCards(): Not all promises resolved`));
       console.error(chalk.bgRed(error.message));
       console.log(chalk.bgRed(error.stack));
     });
