@@ -96,18 +96,24 @@ class FullLambdaService {
             locationMonitoringManager.removeMonitoredLocation(monitor);
             const response = new RequestResponse(
               Array.from(locationMonitoringManager.getMonitoredLocations()),
-              null);
+              null
+            );
             socket.emit('monitored_locations', response);
           } else {
             // Can't remove location.
             console.error(`${chalk.red('Could remove monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
-            const requestError = new RequestError(`Could remove monitor ${monitor}.`,
-              `No session for ID: ' ${sessionId}`);
+            const requestError = new RequestError(
+              `Could remove monitor ${monitor}.`,
+              `No session for ID: ' ${sessionId}`
+            );
             const response = new RequestResponse(null, requestError);
             socket.emit('monitored_locations', response);
           }
         } catch (error) {
-          const requestError = new RequestError(`Failed to remove monitor for location ${monitor}`, error.message);
+          const requestError = new RequestError(
+            `Failed to remove monitor for location ${monitor}`, 
+            error.message
+          );
           const response = new RequestResponse(null, requestError);
           console.log(chalk.red(error.message));
           console.log(chalk.red(error.stack));
@@ -134,11 +140,15 @@ class FullLambdaService {
     // TODO: Fix so data populated once a session is connected, cache it.
     // Note: setInterval() doesn't get data at time 0.        
     weatherClient.retrieveWeatherLocationData(this.sessionManager.getMonitoredLocations())
-      .then(this.onWeatherLocationDataRetrieved);
+      .then((weatherLocationDataList) => {
+        this.onWeatherLocationDataRetrieved(weatherLocationDataList);
+      });
     setInterval(
       (): void => { 
         weatherClient.retrieveWeatherLocationData(this.sessionManager.getMonitoredLocations())
-          .then(this.onWeatherLocationDataRetrieved); 
+          .then((weatherLocationDataList) => {
+            this.onWeatherLocationDataRetrieved(weatherLocationDataList);
+          }); 
       }, 
       msInterval
     );  
