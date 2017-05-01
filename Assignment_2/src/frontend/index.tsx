@@ -2,10 +2,10 @@ import './theme/full-lambda-theme.scss';
 import 'reflect-metadata';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { WeatherPage } from './pages/WeatherPage';
+import { WeatherPageContainer } from './controller/WeatherPageContainer';
 
 // Render HTML page based on routes (only has index page).
 ReactDOM.render(
-  <WeatherPage/>,
+  <WeatherPageContainer/>,
   document.getElementById('root') as HTMLElement
 );

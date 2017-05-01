@@ -27,6 +27,7 @@ class MelbourneWeatherClient implements WeatherClient {
    * It can be accessed with a outer .then() propagating it up.
    */
   public retrieveRainfallData(rainfallRequestData: RainfallRequestData): Promise<RainfallData> {
+    // Note: SOAP lib is async, Promise.then to do work after async call.
     return this.weatherService.getRainfall(rainfallRequestData)
       .then((rainfallResponse) => {
         // rainfallResponse is an object, .return will return the data in that object as a string[].
@@ -71,46 +72,56 @@ class MelbourneWeatherClient implements WeatherClient {
       });
   }
   
-  /**
-   * Retrieve weather data from SOAP client endpoint based on locations.
-   * @param locations Locations to get data for.
-   */
-  public retrieveWeatherLocationData(locations: string[]): Promise<WeatherLocationData[]> {
-    const weatherPromises: Array<Promise<WeatherLocationData>> = [];
-    // For each location, get temp and rainfall data.
-    locations.forEach((location: string, locationIndex: number) => {
-      let temperatureData: TemperatureData;
-      let rainfallData: RainfallData;
-      // Note: SOAP lib is async, Promise.then to do work after async call.
+  public retrieveWeatherLocationData(location: string, getRainfall: boolean = true, getTemperature: boolean = true) {
+    if (!getRainfall && !getTemperature) {
+      throw new Error('getRainfall and getTemperature were both false');
+    }
+    const dataPromises: Array<Promise<RainfallData | TemperatureData>> = [];
+    let temperatureData: TemperatureData = null;
+    let rainfallData: RainfallData = null;
+    if (getTemperature) {
       const temperatureRequestPromise: Promise<TemperatureData> = 
-        this.retrieveTemperatureData(new TemperatureRequestData(location)).then((retrievedTemperatureData) => {
-          temperatureData = retrievedTemperatureData;
-          return temperatureData;
-        });
-
+          this.retrieveTemperatureData(new TemperatureRequestData(location))
+            .then((retrievedTemperatureData) => {
+              temperatureData = retrievedTemperatureData;
+              return temperatureData;
+            });
+      dataPromises.push(temperatureRequestPromise);
+    }
+    if (getRainfall) {
       const rainfallRequestPromise: Promise<RainfallData> = 
         this.retrieveRainfallData(new RainfallRequestData(location))
           .then((retrievedRainfallData) => {
             rainfallData = retrievedRainfallData;
             return rainfallData;
           });
-      
-      // Wait for both getRainfall() and getTemperature() promises to resolve.
-      const weatherLocationPromise: Promise<WeatherLocationData> = 
-        Promise.all([temperatureRequestPromise, rainfallRequestPromise])
-          .then((responses) => {
-            const weatherData: WeatherLocationData = new WeatherLocationData(
-                location,
-                rainfallData,
-                temperatureData
-            );
-            return weatherData;
-          }).catch((error) => {
-            console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
-            console.error(chalk.red(error.message));
-            console.error(chalk.red(error.stack));
-          });
-      weatherPromises.push(weatherLocationPromise);
+      dataPromises.push(rainfallRequestPromise);
+    }      
+    // Wait for both getRainfall() and getTemperature() promises to resolve.
+    return Promise.all(dataPromises)
+        .then((responses) => {
+          const weatherData: WeatherLocationData = new WeatherLocationData(
+              location,
+              rainfallData,
+              temperatureData
+          );
+          return weatherData;
+        }).catch((error) => {
+          console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
+        });
+  }
+
+  /**
+   * Retrieve weather data from SOAP client endpoint based on locations.
+   * @param locations Locations to get data for.
+   */
+  public retrieveWeatherLocationDataList(locations: string[]): Promise<WeatherLocationData[]> {
+    const weatherPromises: Array<Promise<WeatherLocationData>> = [];
+    // For each location, get temp and rainfall data.
+    locations.forEach((location: string, locationIndex: number) => {
+      weatherPromises.push(this.retrieveWeatherLocationData(location));
     });
     return Promise.all(weatherPromises);
   } 

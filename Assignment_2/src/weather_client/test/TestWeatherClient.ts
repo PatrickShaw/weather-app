@@ -17,13 +17,14 @@ class TestWeatherClient implements WeatherClient {
       `Rainfall timestamp ${new Date().toString()}`
     );
   }
-    private createDummyTemperatureData(temperatureRequestData: TemperatureRequestData): TemperatureData {
+
+  private createDummyTemperatureData(temperatureRequestData: TemperatureRequestData): TemperatureData {
     return new TemperatureData(
       `Temperature ${temperatureRequestData.parameters}`,
       `Temperature timestamp ${new Date().toString()}`
     );
   }
-  
+
   public retrieveLocations(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       const dummyLocations: string[] = [];
@@ -33,7 +34,34 @@ class TestWeatherClient implements WeatherClient {
       resolve(dummyLocations);
     });
   }
-  public retrieveWeatherLocationData(locations: string[]): Promise<WeatherLocationData[]> {
+
+  public retrieveWeatherLocationData(
+    location: string, 
+    getRainfall: boolean, 
+    getTemperature: boolean
+  ): Promise<WeatherLocationData> {
+    return new Promise<WeatherLocationData>((resolve, reject) => {
+      resolve(new WeatherLocationData(
+          location,
+          this.createDummyRainfallData(new RainfallRequestData(location)),
+          this.createDummyTemperatureData(new TemperatureRequestData(location))
+      ));
+    });
+  }
+
+  public retrieveRainfallData(rainfallRequestData: RainfallRequestData): Promise<RainfallData> {
+    return new Promise<RainfallData>((resolve, reject) => {
+      resolve(this.createDummyRainfallData(rainfallRequestData));
+    });
+  }
+
+  public retrieveTemperatureData(temperatureRequestData: TemperatureRequestData): Promise<TemperatureData> {
+    return new Promise<TemperatureData> ((resolve, reject) => {
+      resolve(this.createDummyTemperatureData(temperatureRequestData));
+    });
+  }
+
+  public retrieveWeatherLocationDataList(locations: string[]): Promise<WeatherLocationData[]> {
     return new Promise<WeatherLocationData[]>((resolve, reject) => {
       const dummyLocationData: WeatherLocationData[] = [];
       for (const location of locations) {
@@ -44,17 +72,6 @@ class TestWeatherClient implements WeatherClient {
         ));
       }
       resolve(dummyLocationData);
-    });
-  }
-  public retrieveRainfallData(rainfallRequestData: RainfallRequestData): Promise<RainfallData> {
-    return new Promise<RainfallData>((resolve, reject) => {
-      resolve(this.createDummyRainfallData(rainfallRequestData));
-    });
-  }
-  public retrieveTemperatureData(temperatureRequestData: TemperatureRequestData): Promise<TemperatureData> {
-    // tslint:disable-next-line:whitespace
-    return new Promise<TemperatureData> ((resolve, reject) => {
-      resolve(this.createDummyTemperatureData(temperatureRequestData));
     });
   }
 }

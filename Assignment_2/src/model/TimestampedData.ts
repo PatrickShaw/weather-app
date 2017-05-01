@@ -1,4 +1,4 @@
-class TimestampedData {
+abstract class TimestampedData {
   public readonly timestamp: string;
 
   constructor(timestamp: string) {

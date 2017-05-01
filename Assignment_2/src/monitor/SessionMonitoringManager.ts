@@ -103,5 +103,6 @@ class SessionMonitoringManager {
     }
   }
 }
+
 export {SessionMonitoringManager};
 export default SessionMonitoringManager;
