@@ -1,5 +1,3 @@
-import { } from '../weather_client/Melbourne';
-
 import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
