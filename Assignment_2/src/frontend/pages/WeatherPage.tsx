@@ -10,6 +10,8 @@ import {MonitorMetadata} from '../../model/MonitorMetadata';
 import {MonitoringList} from '../components/MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
 import {RainfallData} from '../../model/RainfallData';
+import {RequestError} from '../../model/RequestError';
+import {RequestResponse} from '../../model/RequestResponse';
 import {TemperatureData} from '../../model/TemperatureData';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
 
@@ -52,6 +54,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 
 class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListItemClicked: OnLocationItemClickedObserver;
+  private successfulWeatherMelbourne2Connection: boolean = false;
+
   constructor(props: {}) {
     super(props);
     const initialWeatherData: WeatherLocationData[] = [
@@ -92,7 +96,6 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    console.log('try connect to backend');
     this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
       public onItemClicked(location: string, selected: boolean): void {
         // The backend speaks in MonitorMetadata objects, so create one.
@@ -106,19 +109,37 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         }
       }
     }();
+
+    socket.on('soap_client_creation_success', (success: boolean) => {
+      // Assign MelbourneWeather2 successful connection status.
+      console.log(`Successful SOAP MelbourneWeather2 connection: ${success}`);
+      this.successfulWeatherMelbourne2Connection = success;
+    });
+
     socket.on('locations', (locations: string[]) => {
       // We were given a list of locations. Let React know that we may need to re-render.
       this.setState({ locations });
     });
-    socket.on('monitored_locations', (monitoredLocationsList: string[]) => {
-      console.log('Retrieved new monitored locations:');
-      console.log(monitoredLocationsList);
-      // We were given a list of monitored listeners. Turn it into a Set for performance reasons and let
-      // React know that we may need to re-render.
-      const monitoredLocations: Set<string> = new Set<string>(monitoredLocationsList);
-      console.log(monitoredLocations);
-      this.setState({ monitoredLocations });
+    
+    socket.on('monitored_locations', (requestResponse: RequestResponse<string[]>) => {
+      const error: RequestError | null = requestResponse.error;
+      if (error === null) {
+        const monitoredLocationsList: string[] = requestResponse.data;
+        console.log('Retrieved new monitored locations:');
+        console.log(monitoredLocationsList);
+        // We were given a list of monitored listeners. Turn it into a Set for performance reasons and let
+        // React know that we may need to re-render.
+        const monitoredLocations: Set<string> = new Set<string>(monitoredLocationsList);
+        console.log(monitoredLocations);
+        this.setState({ monitoredLocations });
+      } else {
+        // Handle error.
+        // TODO: Render error to screen?
+        console.log(error.message);
+        console.log(error.stackMessage);
+      }
     });
+
     socket.on('replace_weather_data', (weatherDataList: WeatherLocationData[]) => {
       // We received some fresh weather data.
       // Tell React that we may need to re-render
@@ -130,6 +151,17 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
   }
   
   public render(): JSX.Element {
+    if (!this.successfulWeatherMelbourne2Connection) {
+      // No SOAP WeatherMelbourne2 client.
+      return (
+        <h1 className="error">
+          WeatherMelbourne2 WSDL connection unsuccessful. 
+          Make sure your device is connected to the internet and 
+          http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl is available.
+        </h1>
+      );
+    }
+
     return (
       <WeatherPage 
         locations={this.state.locations} 

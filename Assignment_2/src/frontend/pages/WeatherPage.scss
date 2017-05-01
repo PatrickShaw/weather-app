@@ -7,6 +7,13 @@ $main-minimum-height: 600px;
  flex-direction: row;
  flex-wrap: wrap;
 }
+
+.error {
+  color: red;
+  background-color: yellow;
+  font-size: 200%;
+}
+
 .main-content {
   display: flex;
   flex-direction: row;

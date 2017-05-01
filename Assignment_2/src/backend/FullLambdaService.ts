@@ -5,8 +5,8 @@ import { MelbourneWeatherClientFactory } from '../soap_weather_client/MelbourneW
 import { MonitorMetadata } from '../model/MonitorMetadata';
 import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
-import { RequestError } from './RequestError';
-import { RequestResponse } from './RequestResponse';
+import { RequestError } from '../model/RequestError';
+import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';
 import { WeatherLocationData } from '../model/WeatherLocationData';
 
@@ -55,6 +55,7 @@ class FullLambdaService {
           const locationMonitoringManager: LocationMonitoringManager | undefined = 
           this.sessionManager.getLocationMonitorManagerForSession(sessionId);
           if (locationMonitoringManager) {
+            // Can add monitor.
             // Add new location to monitor to all locations that are monitored.
             locationMonitoringManager.addMonitorLocation(monitor);
             const response = new RequestResponse(
@@ -64,14 +65,18 @@ class FullLambdaService {
             console.log('emitted:');
             console.log(locationMonitoringManager.getMonitoredLocations());
           } else {
+            // Can't add montior.
             console.error(`${chalk.red('Could add monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
+            const requestError = new RequestError(`Could add monitor ${monitor}.`, `No session for ID: ' ${sessionId}`);
+            const response = new RequestResponse(null, requestError);
+            socket.emit('monitored_locations', response);
           }
         } catch (error) {
           const requestError = new RequestError(`Failed to add monitor for location ${monitor}`, error.message);
           const response = new RequestResponse(null, requestError);
           console.error(chalk.red(error.message));
           console.error(chalk.red(error.stack));
-          socket.emit('errors_messages', response);
+          socket.emit('monitored_locations', response);
         }
       });
          
