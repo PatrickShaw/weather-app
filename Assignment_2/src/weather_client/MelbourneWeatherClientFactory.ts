@@ -1,7 +1,7 @@
 import * as Soap from 'soap-as-promised';
 import * as chalk from 'chalk';
 
-import { MelbourneWeatherClient } from './SoapMelbourneWeatherClient';
+import { MelbourneWeatherClient } from './MelbourneWeatherClient';
 import { WeatherClientFactory } from './WeatherClientFactory';
 import { MelbourneWeatherServiceStub } from '../interface/MelbourneWeatherServiceStub';
 
