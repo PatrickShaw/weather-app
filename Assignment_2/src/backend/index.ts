@@ -2,19 +2,15 @@ import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
 import { FullLambdaService } from './FullLambdaService';
+import { MelbourneWeatherClientFactory } from '../weather_client/MelbourneWeatherClientFactory';
+import { } from '../weather_client/Melbourne';
 
-// import { MonitorMetadata } from '../model/MonitorMetadata';
-// import { MonitoringManager } from '../monitor/MonitoringManager';
-// import { MonitoringSessionManager } from '../monitor/MonitoringSessionManager';
-// import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
-// import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
-// import { WeatherLocationData } from '../model/WeatherLocationData';
-
-// Setup web sockets.
-// Listen to port 8080, frontend connects to port 8080.
-
-const io = SocketIo.listen(8080);
-
-const server = new FullLambdaService(io);
-server.run();
-console.log(chalk.bgGreen('Server started'));
+// Listen to port 8080 for our socket.io server.
+console.log(chalk.cyan('Starting server...'));
+const io: SocketIO.Server = SocketIo.listen(8080);
+const weatherClientFactory: MelbourneWeatherClientFactory = new MelbourneWeatherClientFactory();
+const service: FullLambdaService = new FullLambdaService(
+  io, 
+  weatherClientFactory
+);
+service.run();

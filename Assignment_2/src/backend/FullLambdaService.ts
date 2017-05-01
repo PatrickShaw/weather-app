@@ -1,7 +1,7 @@
 import * as chalk from 'chalk';
 
 import { LocationMonitoringManager } from '../monitor/LocationMonitoringManager';
-import { MelbourneWeatherClientFactory } from '../soap_weather_client/MelbourneWeatherClientFactory';
+import { WeatherClient } from '../weather_client/WeatherClient';
 import { MonitorMetadata } from '../model/MonitorMetadata';
 import { OnLocationsRetrievedListener } from '../interface/OnLocationsRetrievedListener';
 import { OnWeatherRetrievedListener } from '../interface/OnWeatherRetrievedListener';
@@ -9,33 +9,37 @@ import { RequestError } from '../model/RequestError';
 import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';
 import { WeatherLocationData } from '../model/WeatherLocationData';
-
+import { WeatherClientFactory } from '../weather_client/WeatherClientFactory';
 /**
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
-  private sessionManager: SessionMonitoringManager = new SessionMonitoringManager();
+  private readonly weatherClientFactory: WeatherClientFactory<WeatherClient>;
+  private readonly sessionManager: SessionMonitoringManager;
+  private readonly temperatureSessionManager: SessionMonitoringManager;
   // Convention to call SocketIO.Server io.
-  private io: SocketIO.Server;
+  private readonly io: SocketIO.Server;
   // All locations retrieved from SOAP client.
-  private melbourneWeatherLocations: string[] = [];
-  private successfulMelbourneWeather2Connection: boolean = false;
+  private  melbourneWeatherLocations: string[];
+  private successfulMelbourneWeather2Connection: boolean;
 
-  constructor(io: SocketIO.Server) {
+  constructor(
+    io: SocketIO.Server, 
+    weatherClientFactory: WeatherClientFactory<WeatherClient>,
+    sessionManager: SessionMonitoringManager = new SessionMonitoringManager()
+  ) {
+    this.successfulMelbourneWeather2Connection = false;
+    this.melbourneWeatherLocations = [];
+    this.sessionManager = sessionManager;
     // Set up socketIoServer connections.
     this.io = io;
-    this.initialiseSocketEndpoints();
   }
     
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
+      // Emit to front end whether the SOAP Client was successfully created.
       if (this.successfulMelbourneWeather2Connection) {
-           // Emit to front end SOAP Client successfully created.
-          this.io.emit('soap_client_creation_success', true);
-      } else {
-        // Emit to front end SOAP Client creation failed.
-        this.io.emit('soap_client_creation_success', false);
-        return;
+        socket.emit('soap_client_creation_success', this.successfulMelbourneWeather2Connection);
       }
       // Called when session started with frontend.
       const sessionId: string = socket.id;
@@ -118,94 +122,90 @@ class FullLambdaService {
       });
     });
   }
+  private onAllLocationsRetrieved(weatherClient: WeatherClient, locations: string[]) {
+    // Retrieves all locations from SOAP client points.
+    // Only called once, under the assumption locations are set.
+    this.melbourneWeatherLocations = locations.sort();
+    // Send locations to front end.
+    this.io.sockets.emit('locations', locations);
+    console.log(chalk.cyan(`locations: ${locations}`));
+    // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
+    // 300000 milliseconds = 5 mins.
+    const msInterval = 30000;
+    // TODO: Fix so data populated once a session is connected, cache it.
+    // Note: setInterval() doesn't get data at time 0.        
+    weatherClient.retrieveWeatherLocationData(this.sessionManager.getMonitoredLocations())
+      .then(this.onWeatherLocationDataRetrieved);
+    setInterval(
+      (): void => { 
+        weatherClient.retrieveWeatherLocationData(this.sessionManager.getMonitoredLocations())
+          .then(this.onWeatherLocationDataRetrieved); 
+      }, 
+      msInterval
+    );  
+  }
+
+  private onWeatherLocationDataRetrieved(weatherLocationDataList: WeatherLocationData[]) {
+  // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
+  // Send updated data to front end.
+  const timeStamp: string = new Date().toString();
+  console.log(`${chalk.green('Retrieved weather data at time: ')}${timeStamp}`);
+  console.log(weatherLocationDataList);
+  // Note: sockets.sockets is a Socket IO library attribute.
+  for (const sessionId of Object.keys(this.io.sockets.sockets)) {
+    try {
+      console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
+      const monitoringSession: LocationMonitoringManager | undefined = 
+      this.sessionManager.getLocationMonitorManagerForSession(sessionId);
+      if (monitoringSession) {
+        const locationsToEmitWeatherFor: Set<string> = monitoringSession.getMonitoredLocations();
+        // We only need to emit data if the user is monitoring a location.
+        // Otherwise don't even bother executing the emission code.
+        if (locationsToEmitWeatherFor.size > 0) {
+          const weatherDataToEmit: WeatherLocationData[] = [];
+          for (const weatherData of weatherLocationDataList) {
+            if (locationsToEmitWeatherFor.has(weatherData.location)) {
+              weatherDataToEmit.push(weatherData);
+            }
+          }
+          const socket = this.io.sockets.sockets[sessionId];
+          socket.emit('replace_weather_data', weatherDataToEmit);
+        } else {
+          console.log(
+            `Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`
+          );
+        }
+      } else {
+        console.error(
+          chalk.red(`Socket ${chalk.magenta(sessionId)} had no monitoring session. Skipping emit.`)
+        );
+      }
+    } catch (error) {
+      console.error(chalk.bgRed(error.message));
+      console.error(chalk.red(error.stack));
+    }
+  }
+  }
 
   /**
    * Runs main loop for the full lambda service via setInterval.
    */
   public run(): void {
+    this.initialiseSocketEndpoints();
     // Make MelbourneWeatherClient that has a SOAP Client.
     const that = this;
-    new MelbourneWeatherClientFactory().build()
-    .then((melbourneWeatherClient): void => {
+    this.weatherClientFactory.createWeatherClient()
+    .then((weatherClient: WeatherClient): void => {
+      console.log(chalk.green('SOAP Client created'));
       // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
       this.successfulMelbourneWeather2Connection = true;
-   
-      melbourneWeatherClient.addOnWeatherRetrievedListener(
-          new class implements OnWeatherRetrievedListener {        
-            // Define what to do when weather data is retrieved, specific for to full lambda service.
-            public onWeatherRetrieved(weatherLocationDataList: WeatherLocationData[]): void {
-              // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
-              // Send updated data to front end.
-              const timeStamp: string = new Date().toString();
-              console.log(`${chalk.green('Retrieved weather data at time: ')}${timeStamp}`);
-              console.log(weatherLocationDataList);
-              // Note: sockets.sockets is a Socket IO library attribute.
-              for (const sessionId of Object.keys(that.io.sockets.sockets)) {
-                try {
-                  console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
-                  const monitoringSession: LocationMonitoringManager | undefined = 
-                  that.sessionManager.getLocationMonitorManagerForSession(sessionId);
-                  if (monitoringSession) {
-                    const locationsToEmitWeatherFor: Set<string> = monitoringSession.getMonitoredLocations();
-                    // We only need to emit data if the user is monitoring a location.
-                    // Otherwise don't even bother executing the emission code.
-                    if (locationsToEmitWeatherFor.size > 0) {
-                      const weatherDataToEmit: WeatherLocationData[] = [];
-                      for (const weatherData of weatherLocationDataList) {
-                        if (locationsToEmitWeatherFor.has(weatherData.location)) {
-                          weatherDataToEmit.push(weatherData);
-                        }
-                      }
-                      const socket = that.io.sockets.sockets[sessionId];
-                      socket.emit('replace_weather_data', weatherDataToEmit);
-                    } else {
-                      console.log(
-                        `Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`
-                      );
-                    }
-                  } else {
-                    console.error(
-                      chalk.red(`Socket ${chalk.magenta(sessionId)} had no monitoring session. Skipping emit.`)
-                    );
-                  }
-                } catch (error) {
-                  console.error(chalk.bgRed(error.message));
-                  console.error(chalk.red(error.stack));
-                }
-              }
-            }
-          }()
-        );
-
-      melbourneWeatherClient.addOnLocationsRetrievedListener(
-        new class implements OnLocationsRetrievedListener {
-          // Define what to do when location data is retrieved.
-          // Specific for to full lambda service, only ever called once.
-          public onLocationsRetrieved(locations: string[]): void {
-            // Retrieves all locations from SOAP client points.
-            // Only called once, under the assumption locations are set.
-            that.melbourneWeatherLocations = locations.sort();
-            // Send locations to front end.
-            that.io.sockets.emit('locations', locations);
-            console.log(chalk.cyan(`locations: ${locations}`));
-            // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
-            // 300000 milliseconds = 5 mins.
-            const msInterval = 30000;
-            // TODO: Fix so data populated once a session is connected, cache it.
-            // Note: setInterval() doesn't get data at time 0.        
-            melbourneWeatherClient.retrieveWeatherData(that.sessionManager.getMonitoredLocations());
-            setInterval((): void => { 
-              melbourneWeatherClient.retrieveWeatherData(that.sessionManager.getMonitoredLocations()); 
-            }, msInterval);  
-          }
-        }()
-      );
-
       // Get locations from SOAP client in melbourneWeatherClient.
-      melbourneWeatherClient.retrieveLocations();
+      weatherClient.retrieveLocations().then((locations: string[]) => {
+        this.onAllLocationsRetrieved(weatherClient, locations);
+      });
     })
     .catch((error) => {
-      console.error(chalk.bgRed('Error: SOAP client connection'));
+      console.error(chalk.bgRed('Failed to create SOAP client connection'));
       console.error(chalk.red(error.message));
       console.error(chalk.red(error.stack));
     });
