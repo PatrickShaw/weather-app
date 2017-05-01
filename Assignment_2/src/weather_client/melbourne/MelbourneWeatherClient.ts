@@ -40,7 +40,6 @@ class MelbourneWeatherClient implements WeatherClient {
    * @param locations Locations to get data for.
    */
   public retrieveWeatherLocationData(locations: string[]): Promise<WeatherLocationData[]> {
-    const weatherLocationDataList: WeatherLocationData[] = new Array<WeatherLocationData>(locations.length);
     const weatherPromises: Array<Promise<any>> = [];
     // For each location, get temp and rainfall data.
     locations.forEach((location: string, locationIndex: number) => {
@@ -73,22 +72,25 @@ class MelbourneWeatherClient implements WeatherClient {
         });
       
       // Wait for both getRainfall() and getTemperature() promises to resolve.
-      const compileWeatherLocationDataPromises: Array<Promise<any>> 
-        = [temperatureRequestPromise, rainfallRequestPromise];
-      Promise.all(compileWeatherLocationDataPromises)
-      .then((responses) => {
-        // Create new WeatherLocationData object with rainfallData object and temperatureData object 
-        // when promises resolved.
-        const weatherData: WeatherLocationData = new WeatherLocationData(location, rainfallData, temperatureData);
-        weatherLocationDataList[locationIndex] = weatherData;
-      }).catch((error) => {
+      const weatherLocationPromise: Promise<WeatherLocationData> = new Promise<WeatherLocationData>(
+        (resolve, reject) => {
+          Promise.all([temperatureRequestPromise, rainfallRequestPromise]).then((responses) => {
+            const weatherData: WeatherLocationData = new WeatherLocationData(
+                location,
+                rainfallData,
+                temperatureData
+            );
+            resolve(weatherData);
+          }).catch((error) => {
+            reject(error);
+          });
+        }
+      ).catch((error) => {
         console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
         console.error(chalk.red(error.message));
         console.error(chalk.red(error.stack));
       });
-      // Add promises to ensure all promises resolve before sending off data.
-      weatherPromises.push(rainfallRequestPromise);
-      weatherPromises.push(temperatureRequestPromise);
+      weatherPromises.push(weatherLocationPromise);
     });
     return Promise.all(weatherPromises);
   } 
