@@ -1,6 +1,5 @@
 import * as chalk from 'chalk';
 
-import { LocationCache } from './LocationCache';
 import { LocationMonitoringManager } from '../monitor/LocationMonitoringManager';
 import { MonitorMetadata } from '../model/MonitorMetadata';
 import { RequestError } from '../model/RequestError';
@@ -19,26 +18,28 @@ import SocketKeys from '../socket.io/socket-keys';
  */
 class FullLambdaService {
   private readonly weatherClientFactory: WeatherClientFactory<WeatherClient>;
-  private readonly sessionManager: SessionMonitoringManager;
+  private readonly rainfallSessionManager: SessionMonitoringManager;
+  private readonly temperatureSessionManager: SessionMonitoringManager;
   // Convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;
   // All locations retrieved from SOAP client.
   private melbourneWeatherLocations: string[] = [];
   private succesfulSoapClientconnection: boolean;
-  private locationCache: LocationCache;
   private weatherClient: WeatherClient;
 
   constructor(
     io: SocketIO.Server, 
     weatherClientFactory: WeatherClientFactory<WeatherClient>,
-    sessionManager: SessionMonitoringManager = new SessionMonitoringManager()
+    sessionManager: SessionMonitoringManager = new SessionMonitoringManager(),
+    rainfallSessionManager: SessionMonitoringManager = new SessionMonitoringManager(),
+    temperatureSessionManager: SessionMonitoringManager = new SessionMonitoringManager()
   ) {
-    this.locationCache = new LocationCache();
     this.succesfulSoapClientconnection = false;
     this.melbourneWeatherLocations = [];
-    this.sessionManager = sessionManager;
+    this.rainfallSessionManager = sessionManager;
     this.io = io;
     this.weatherClientFactory = weatherClientFactory;
+    this.temperatureSessionManager = temperatureSessionManager;
   }
   
   /**
@@ -50,62 +51,96 @@ class FullLambdaService {
       const sessionId: string = socket.id;
       console.log(`Session started ${sessionId}`);
       // Add MonitoringManager to manage session with front end client.
-      this.sessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
+      this.rainfallSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
       if (this.melbourneWeatherLocations.length > 0) {
         // Send off locations from SOAP client.
         socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
       }
 
-      socket.on(SocketKeys.addMonitor, (monitor: MonitorMetadata) => {
-        try {
-          // Frontend sessions wants to monitor another location.
-          // monitor is a string that is a location.
-          const locationMonitoringManager: LocationMonitoringManager | undefined = 
-          this.sessionManager.getLocationMonitorManagerForSession(sessionId);
-          if (locationMonitoringManager) {
-            console.log(`Session ID ${chalk.magenta(sessionId)} added monitor ${chalk.magenta(monitor.location)}`);
-            // Can add monitor.
-            // Add new location to monitor to all locations that are monitored.
-            locationMonitoringManager.addMonitorLocation(monitor);
-            if (this.locationCache.has(monitor.location)) {
-              socket.emit(SocketKeys.addMonitor, new RequestResponse(this.locationCache.get(monitor.location), null));
-            } else {
-              this.weatherClient.retrieveWeatherLocationData(monitor.location, true, true)
-                .then((weatherLocationData) => {
-                  socket.emit(SocketKeys.addMonitor, new RequestResponse(weatherLocationData, null));
-                }).catch((error) => {
-                  console.log(chalk.red(error.message));
-                  console.log(chalk.red(error.stack));
-                });
-            }
-          } else {
-            // Can't add monitor.
-            console.error(`${chalk.red('Could add monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
-            const requestError = new RequestError(`Could add monitor ${monitor}.`, `No session for ID: ' ${sessionId}`);
-            const response = new RequestResponse(null, requestError);
-            socket.emit(SocketKeys.addMonitor, response);
-          }
-        } catch (error) {
-          const requestError = new RequestError(`Failed to add monitor for location ${monitor}`, error.message);
-          const response = new RequestResponse(null, requestError);
-          console.error(chalk.red(error.message));
-          console.error(chalk.red(error.stack));
-          socket.emit(SocketKeys.addMonitor, response);
-        }
+      this.initialiseMonitorSocketEvent(
+        socket,
+        SocketKeys.addRainfallMonitor, 
+        SocketKeys.removeRainfallMonitor, 
+        this.rainfallSessionManager
+      );
+
+      this.initialiseMonitorSocketEvent(
+        socket,
+        SocketKeys.addTemperatureMonitor,
+        SocketKeys.removeTemperatureMonitor,
+        this.temperatureSessionManager
+      );
+
+      socket.on('disconnect', () => {
+        console.log(`Session ended: ${sessionId}`);
+        this.rainfallSessionManager.removeMonitoringSession(sessionId);
       });
-         
-      socket.on(SocketKeys.removeMonitor, (monitor: MonitorMetadata) => {
+
+      // Emit to front end whether the SOAP Client was successfully created.
+      this.io.emit(SocketKeys.soapClientCreationSuccess, this.succesfulSoapClientconnection);
+    });
+  }
+
+  private initialiseMonitorSocketEvent(
+    socket: SocketIO.Socket,
+    addEventName: string, 
+    removeEventName: string,
+    sessionManager: SessionMonitoringManager
+  ) {
+    const sessionId = socket.id;
+    socket.on(addEventName, (monitor: MonitorMetadata) => {
+      try {
+        // Frontend sessions wants to monitor another location.
+        // monitor is a string that is a location.
+        const locationMonitoringManager: LocationMonitoringManager | undefined = 
+        sessionManager.getLocationMonitorManagerForSession(sessionId);
+        if (locationMonitoringManager) {
+          console.log(`Session ID ${chalk.magenta(sessionId)} added monitor ${chalk.magenta(monitor.location)}`);
+          // Can add monitor.
+          // Add new location to monitor to all locations that are monitored.
+          locationMonitoringManager.addMonitorLocation(monitor);
+          const rainfallSessionManager: LocationMonitoringManager 
+            = this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
+          const temperatureSessionManager: LocationMonitoringManager 
+            = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
+          this.weatherClient.retrieveWeatherLocationData(
+            monitor.location, 
+            rainfallSessionManager.getMonitoredLocations().has(monitor.location), 
+            temperatureSessionManager.getMonitoredLocations().has(monitor.location)
+          ).then((weatherLocationData) => {
+            socket.emit(addEventName, new RequestResponse(weatherLocationData, null));
+          }).catch((error) => {
+            console.log(chalk.red(error.message));
+            console.log(chalk.red(error.stack));
+          });
+        } else {
+          // Can't add monitor.
+          console.error(`${chalk.red('Could add monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
+          const requestError = new RequestError(`Could add monitor ${monitor}.`, `No session for ID: ' ${sessionId}`);
+          const response = new RequestResponse(null, requestError);
+          socket.emit(addEventName, response);
+        }
+      } catch (error) {
+        const requestError = new RequestError(`Failed to add monitor for location ${monitor}`, error.message);
+        const response = new RequestResponse(null, requestError);
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+        socket.emit(addEventName, response);
+      }
+    });
+    
+    socket.on(SocketKeys.removeRainfallMonitor, (monitor: MonitorMetadata) => {
         // monitor is a string that is a location.
         // Frontend emitted remove_monitor with MonitorMetadata.
         try {
           // Note: | means can be type_a or type_b where type_a | type_b.
           const locationMonitoringManager: LocationMonitoringManager | undefined = 
-          this.sessionManager.getLocationMonitorManagerForSession(sessionId);
+          sessionManager.getLocationMonitorManagerForSession(sessionId);
           if (locationMonitoringManager) {
             console.log(`Session ID ${chalk.magenta(sessionId)} removed monitor ${chalk.magenta(monitor.location)}`);
             // Can remove location.
             locationMonitoringManager.removeMonitoredLocation(monitor);
-            socket.emit(SocketKeys.removeMonitor, new RequestResponse(monitor, null));
+            socket.emit(removeEventName, new RequestResponse(monitor, null));
           } else {
             // Can't remove location.
             console.error(`${chalk.red('Could remove monitor. No session for ID: ')}${chalk.magenta(sessionId)}`);
@@ -114,7 +149,7 @@ class FullLambdaService {
               `No session for ID: ' ${sessionId}`
             );
             const response = new RequestResponse(null, requestError);
-            socket.emit(SocketKeys.removeMonitor, response);
+            socket.emit(removeEventName, response);
           }
         } catch (error) {
           const requestError = new RequestError(
@@ -124,20 +159,10 @@ class FullLambdaService {
           const response = new RequestResponse(null, requestError);
           console.log(chalk.red(error.message));
           console.log(chalk.red(error.stack));
-          socket.emit(SocketKeys.removeMonitor, response);
+          socket.emit(removeEventName, response);
         }
       });
-
-      socket.on('disconnect', () => {
-        console.log(`Session ended: ${sessionId}`);
-        this.sessionManager.removeMonitoringSession(sessionId);
-      });
-
-      // Emit to front end whether the SOAP Client was successfully created.
-      this.io.emit(SocketKeys.soapClientCreationSuccess, this.succesfulSoapClientconnection);
-    });
   }
-
 
   private onAllLocationsRetrieved(locations: string[]) {
     // Retrieves all locations from SOAP client points.
@@ -162,15 +187,12 @@ class FullLambdaService {
     // Send updated data to front end.
     const timeStamp: string = new Date().toString();
     console.log(`${chalk.green('Retrieved weather data at time: ')}${timeStamp}`);
-    for (const weatherData of weatherLocationDataList) {
-      this.locationCache.setLocation(weatherData.location, weatherData);
-    }
     // Note: sockets.sockets is a Socket IO library attribute.
     for (const sessionId of Object.keys(this.io.sockets.sockets)) {
       try {
         console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
         const monitoringSession: LocationMonitoringManager | undefined = 
-        this.sessionManager.getLocationMonitorManagerForSession(sessionId);
+        this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
         if (monitoringSession) {
           const locationsToEmitWeatherFor: Set<string> = monitoringSession.getMonitoredLocations();
           // We only need to emit data if the user is monitoring a location.
@@ -201,8 +223,29 @@ class FullLambdaService {
     }
   }
 
+  private getAllMonitoredLocations(): Set<string> {
+    const unionedMonitoredLocations: Set<string> = new Set<string>();
+    for (const rainfallLocation of this.rainfallSessionManager.getMonitoredLocations()) {
+      unionedMonitoredLocations.add(rainfallLocation);
+    }
+    for (const temperatureLocation of this.temperatureSessionManager.getMonitoredLocations()) {
+      unionedMonitoredLocations.add(temperatureLocation);
+    }
+    return unionedMonitoredLocations;
+  }
+
+  private getAllMonitoredLocationsList(): string[] {
+    const locationsSet: Set<string> = this.getAllMonitoredLocations();
+    const locationIterator: IterableIterator<string> = locationsSet.values();
+    const locationsList: string[] = [];
+    for (let l = 0; l < locationsSet.size; l++) {
+      locationsList[l] = locationIterator.next().value;
+    }
+    return locationsList;
+  }
+
   private retrieveAllMonitoredWeatherData(): void {
-    this.weatherClient.retrieveWeatherLocationDataList(this.sessionManager.getMonitoredLocations())
+    this.weatherClient.retrieveWeatherLocationDataList(this.getAllMonitoredLocationsList())
       .then((weatherLocationDataList) => {
         this.onWeatherLocationDataRetrieved(weatherLocationDataList);
       }).catch((error) => {

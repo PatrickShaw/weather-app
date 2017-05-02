@@ -1,7 +1,5 @@
-import * as chalk from 'chalk';
-
-import {WeatherLocationData} from '../model/WeatherLocationData';
-
+import chalk from 'chalk';
+import { WeatherLocationData } from '../model/WeatherLocationData';
 /**
  * Provides caching mechanism so new frontend sessions that connect can display monitors instantly.
  * TODO: Maybe move to a database without changing methods for stage 2.
@@ -51,7 +49,6 @@ class LocationCache {
   public get(location: string): WeatherLocationData {
     return this.locationMap.get(location);
   }
-
 }
 export {LocationCache};
 export default LocationCache;

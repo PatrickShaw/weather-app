@@ -74,20 +74,19 @@ class SessionMonitoringManager {
     }
   }
 
-  public getMonitoredLocations(): string[] {
-    const monitoredLocations: string[] = [];
+  public getMonitoredLocations(): Set<string> {
+    const monitoredLocations: Set<string> = new Set<string>();
     for (const location of this.sessionMonitoringLocationCounts.keys()) {
       const monitoringCount: number | undefined = this.sessionMonitoringLocationCounts.get(location);
       console.log(`${location} has ${monitoringCount} sessions monitoring it.`);
       if (monitoringCount !== undefined) {
         if (monitoringCount > 0) {
-          monitoredLocations.push(location);
+          monitoredLocations.add(location);
         }
       } else {
         throw new Error(`Has key ${location} but count is ${monitoringCount}`);
       }
     }
-    monitoredLocations.sort();
     return monitoredLocations;
   }
 

@@ -19,6 +19,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     super(props);
     this.state = new AppState([], new Map<string, WeatherLocationData>(), false);
   }
+
   public componentDidMount(): void {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
@@ -29,35 +30,25 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         const monitor: MonitorMetadata = new MonitorMetadata(location);
         if (selected) {
           // We're unselecting a location so emit to remove the monitor
-          socket.emit(SocketKeys.removeMonitor, monitor);
+          socket.emit(SocketKeys.removeRainfallMonitor, monitor);
         } else {
           // We're selecting a location so emit to add the monitor
-          socket.emit(SocketKeys.addMonitor, monitor);
+          socket.emit(SocketKeys.addRainfallMonitor, monitor);
         }
       }
     }();
 
-    socket.on(SocketKeys.addMonitor, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
-      if (addMonitorResponse.error) {
-        console.error(addMonitorResponse.error);
-      } else {
-        const newWeatherData: WeatherLocationData = addMonitorResponse.data;
-        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
-        weatherDataMap.set(newWeatherData.location, newWeatherData);
-        this.setState({ weatherDataMap });
-      }
-    });
+    this.initialiseMonitoringSocketEndPoint(
+      socket, 
+      SocketKeys.addRainfallMonitor, 
+      SocketKeys.removeRainfallMonitor
+    );
     
-    socket.on(SocketKeys.removeMonitor, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
-      if (removeMonitorResponse.error) {
-        console.error(removeMonitorResponse.error);
-      } else {
-        const removedMonitor = removeMonitorResponse.data;
-        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
-        weatherDataMap.delete(removedMonitor.location);
-        this.setState({ weatherDataMap });
-      }
-    });
+    this.initialiseMonitoringSocketEndPoint(
+      socket, 
+      SocketKeys.addTemperatureMonitor, 
+      SocketKeys.removeTemperatureMonitor
+    );
 
     socket.on(SocketKeys.soapClientCreationSuccess, (connectedToServer: boolean) => {
       // Assign MelbourneWeather2 successful connection status.
@@ -83,6 +74,34 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         newWeatherDataMap.set(weatherLocationData.location, weatherLocationData);
       }
       this.setState({ weatherDataMap: newWeatherDataMap });
+    });
+  }
+
+  private initialiseMonitoringSocketEndPoint(
+    socket: SocketIOClient.Socket,
+    addMonitorEvent: string,
+    removeMonitorEvent: string,
+  ): void {
+    socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
+      if (addMonitorResponse.error) {
+        console.error(addMonitorResponse.error);
+      } else {
+        const newWeatherData: WeatherLocationData = addMonitorResponse.data;
+        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
+        weatherDataMap.set(newWeatherData.location, newWeatherData);
+        this.setState({ weatherDataMap });
+      }
+    });
+    
+    socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
+      if (removeMonitorResponse.error) {
+        console.error(removeMonitorResponse.error);
+      } else {
+        const removedMonitor = removeMonitorResponse.data;
+        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
+        weatherDataMap.delete(removedMonitor.location);
+        this.setState({ weatherDataMap });
+      }
     });
   }
   

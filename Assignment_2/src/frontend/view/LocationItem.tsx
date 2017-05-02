@@ -6,7 +6,8 @@ import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClicke
 
 interface LocationItemProps {
   location: string;
-  selected?: boolean;
+  rainfallMonitorSelected: boolean;
+  temperatureMonitorSelected: boolean;
   onItemClickedObserver?: OnLocationItemClickedObserver;
 }
 
@@ -24,8 +25,16 @@ class LocationItem extends React.Component<LocationItemProps, void> {
 
   public render(): JSX.Element {
     return (
-      <div className={this.props.selected ? 'ripple selected' : 'ripple'}>
+      <div >
         <GenericListItem title={this.props.location} onClickObserver={this.onClickObserver}/>
+        <div className="monitor-options">
+          <GenericListItem 
+            title={this.props.rainfallMonitorSelected ? 'Remove rainfall monitor' : 'Add rainfall monitor'}
+          />
+          <GenericListItem 
+            title={this.props.temperatureMonitorSelected ? 'Remove rainfall monitor' : 'Add rainfall monitor'}
+          />
+        </div>
       </div>
     );
   }

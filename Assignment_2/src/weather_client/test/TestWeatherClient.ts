@@ -49,18 +49,6 @@ class TestWeatherClient implements WeatherClient {
     });
   }
 
-  public retrieveRainfallData(rainfallRequestData: RainfallRequestData): Promise<RainfallData> {
-    return new Promise<RainfallData>((resolve, reject) => {
-      resolve(this.createDummyRainfallData(rainfallRequestData));
-    });
-  }
-
-  public retrieveTemperatureData(temperatureRequestData: TemperatureRequestData): Promise<TemperatureData> {
-    return new Promise<TemperatureData> ((resolve, reject) => {
-      resolve(this.createDummyTemperatureData(temperatureRequestData));
-    });
-  }
-
   public retrieveWeatherLocationDataList(locations: string[]): Promise<WeatherLocationData[]> {
     return new Promise<WeatherLocationData[]>((resolve, reject) => {
       const dummyLocationData: WeatherLocationData[] = [];
