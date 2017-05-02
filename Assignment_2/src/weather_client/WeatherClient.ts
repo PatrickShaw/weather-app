@@ -6,7 +6,8 @@ interface WeatherClient {
   retrieveWeatherLocationData(
     location: string, 
     getRainfall: boolean, 
-    getTemperature: boolean
+    getTemperature: boolean,
+    forceRefresh: boolean
   ): Promise<WeatherLocationData>;
 }
 export { WeatherClient };

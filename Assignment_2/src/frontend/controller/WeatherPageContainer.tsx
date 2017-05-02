@@ -13,7 +13,8 @@ import SocketKeys from '../../socket.io/socket-keys';
  * re-render of certain components in the DOM.
  */
 class WeatherPageContainer extends React.Component<{}, AppState> {
-  private onLocationsListItemClicked: OnLocationItemClickedObserver;
+  private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
+  private onLocationsListTemperatureItemClicked: OnLocationItemClickedObserver;
 
   constructor(props: {}) {
     super(props);
@@ -24,7 +25,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
+    this.onLocationsListRainfallItemClicked = new class implements OnLocationItemClickedObserver {
       public onItemClicked(location: string, selected: boolean): void {
         // The backend speaks in MonitorMetadata objects, so create one.
         const monitor: MonitorMetadata = new MonitorMetadata(location);
@@ -34,6 +35,20 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         } else {
           // We're selecting a location so emit to add the monitor
           socket.emit(SocketKeys.addRainfallMonitor, monitor);
+        }
+      }
+    }();
+
+    this.onLocationsListTemperatureItemClicked = new class implements OnLocationItemClickedObserver {
+      public onItemClicked(location: string, selected: boolean): void {
+        // The backend speaks in MonitorMetadata objects, so create one.
+        const monitor: MonitorMetadata = new MonitorMetadata(location);
+        if (selected) {
+          // We're unselecting a location so emit to remove the monitor
+          socket.emit(SocketKeys.removeTemperatureMonitor, monitor);
+        } else {
+          // We're selecting a location so emit to add the monitor
+          socket.emit(SocketKeys.addTemperatureMonitor, monitor);
         }
       }
     }();
@@ -112,7 +127,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       (
         <WeatherPage 
           appCurrentState={this.state}
-          onLocationsListItemClicked={this.onLocationsListItemClicked}
+          onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
+          onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
         />
       ) : 
       (

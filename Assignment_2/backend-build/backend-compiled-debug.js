@@ -133,6 +133,7 @@ class FullLambdaService {
             console.log(`Session started ${sessionId}`);
             // Add MonitoringManager to manage session with front end client.
             this.rainfallSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager_1.LocationMonitoringManager());
+            this.temperatureSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager_1.LocationMonitoringManager());
             if (this.melbourneWeatherLocations.length > 0) {
                 // Send off locations from SOAP client.
                 socket.emit(socket_keys_1.default.retrievedLocations, this.melbourneWeatherLocations);
@@ -142,6 +143,7 @@ class FullLambdaService {
             socket.on('disconnect', () => {
                 console.log(`Session ended: ${sessionId}`);
                 this.rainfallSessionManager.removeMonitoringSession(sessionId);
+                this.temperatureSessionManager.removeMonitoringSession(sessionId);
             });
             // Emit to front end whether the SOAP Client was successfully created.
             this.io.emit(socket_keys_1.default.soapClientCreationSuccess, this.succesfulSoapClientconnection);
@@ -161,7 +163,7 @@ class FullLambdaService {
                     locationMonitoringManager.addMonitorLocation(monitor);
                     const rainfallSessionManager = this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
                     const temperatureSessionManager = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
-                    this.weatherClient.retrieveWeatherLocationData(monitor.location, rainfallSessionManager.getMonitoredLocations().has(monitor.location), temperatureSessionManager.getMonitoredLocations().has(monitor.location)).then((weatherLocationData) => {
+                    this.weatherClient.retrieveWeatherLocationData(monitor.location, rainfallSessionManager.getMonitoredLocations().has(monitor.location), temperatureSessionManager.getMonitoredLocations().has(monitor.location), false).then((weatherLocationData) => {
                         socket.emit(addEventName, new RequestResponse_1.RequestResponse(weatherLocationData, null));
                     }).catch((error) => {
                         console.log(chalk.red(error.message));
@@ -230,7 +232,6 @@ class FullLambdaService {
         setInterval(() => { this.retrieveAllMonitoredWeatherData(); }, msInterval);
     }
     onWeatherLocationDataRetrieved(weatherLocationDataList) {
-        console.log(weatherLocationDataList);
         // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
         // Send updated data to front end.
         const timeStamp = new Date().toString();

@@ -7,7 +7,8 @@ import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClicke
 interface LocationListProps {
   locations: string[];
   weatherDataMap: Map<string, WeatherLocationData>;
-  onItemClickedObserver?: OnLocationItemClickedObserver;
+  onRainfallItemClickedObserver?: OnLocationItemClickedObserver;
+  onTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
 }
 class LocationList extends React.Component<LocationListProps, void> {
   public render(): JSX.Element {
@@ -30,10 +31,11 @@ class LocationList extends React.Component<LocationListProps, void> {
             return ( 
               <LocationItem 
                 key={locationIndex} 
-                location={location} 
+                location={location}   
                 rainfallMonitorSelected={rainfallSelected}
                 temperatureMonitorSelected={temperatureSelected}
-                onItemClickedObserver={this.props.onItemClickedObserver}
+                onRainfallMonitorClickedObserver={this.props.onRainfallItemClickedObserver}
+                onTemperatureMonitorClickedObserver={this.props.onTemperatureItemClickedObserver}
               />
             );
           })

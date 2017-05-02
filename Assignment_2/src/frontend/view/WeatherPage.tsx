@@ -9,7 +9,8 @@ import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
 
 interface WeatherPageProps {
-  onLocationsListItemClicked?: OnLocationItemClickedObserver;
+  onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
+  onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
   appCurrentState: AppState; 
 }
 
@@ -28,7 +29,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             <LocationList 
               locations={this.props.appCurrentState.locations} 
               weatherDataMap={this.props.appCurrentState.weatherDataMap}
-              onItemClickedObserver={this.props.onLocationsListItemClicked}
+              onRainfallItemClickedObserver={this.props.onLocationRainfallItemClickedObserver}
+              onTemperatureItemClickedObserver={this.props.onLocationTemperatureItemClickedObserver}
             />
           </aside>
           <main className="monitoring-container">

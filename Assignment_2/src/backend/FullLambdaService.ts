@@ -52,6 +52,7 @@ class FullLambdaService {
       console.log(`Session started ${sessionId}`);
       // Add MonitoringManager to manage session with front end client.
       this.rainfallSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
+      this.temperatureSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
       if (this.melbourneWeatherLocations.length > 0) {
         // Send off locations from SOAP client.
         socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
@@ -74,6 +75,7 @@ class FullLambdaService {
       socket.on('disconnect', () => {
         console.log(`Session ended: ${sessionId}`);
         this.rainfallSessionManager.removeMonitoringSession(sessionId);
+        this.temperatureSessionManager.removeMonitoringSession(sessionId);
       });
 
       // Emit to front end whether the SOAP Client was successfully created.
@@ -104,9 +106,10 @@ class FullLambdaService {
           const temperatureSessionManager: LocationMonitoringManager 
             = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
           this.weatherClient.retrieveWeatherLocationData(
-            monitor.location, 
+            monitor.location,
             rainfallSessionManager.getMonitoredLocations().has(monitor.location), 
-            temperatureSessionManager.getMonitoredLocations().has(monitor.location)
+            temperatureSessionManager.getMonitoredLocations().has(monitor.location),
+            false
           ).then((weatherLocationData) => {
             socket.emit(addEventName, new RequestResponse(weatherLocationData, null));
           }).catch((error) => {
@@ -182,7 +185,6 @@ class FullLambdaService {
   }
 
   private onWeatherLocationDataRetrieved(weatherLocationDataList: WeatherLocationData[]) {
-    console.log(weatherLocationDataList);
     // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
     // Send updated data to front end.
     const timeStamp: string = new Date().toString();
