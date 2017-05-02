@@ -26,7 +26,9 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   public render(): JSX.Element {
     return (
       <div >
-        <GenericListItem title={this.props.location} onClickObserver={this.onClickObserver}/>
+        <div className="ripple">
+          <GenericListItem title={this.props.location} onClickObserver={this.onClickObserver}/>
+        </div>
         <div className="monitor-options">
           <GenericListItem 
             title={this.props.rainfallMonitorSelected ? 'Remove rainfall monitor' : 'Add rainfall monitor'}
@@ -40,7 +42,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   }
 
   private onItemClicked(): void {
-    const selected: boolean | undefined = this.props.selected;
+    const selected: boolean | undefined = this.props.rainfallMonitorSelected;
     if (this.props.onItemClickedObserver) {
       this.props.onItemClickedObserver.onItemClicked(
         this.props.location, 

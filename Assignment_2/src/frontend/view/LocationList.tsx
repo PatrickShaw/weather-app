@@ -16,11 +16,23 @@ class LocationList extends React.Component<LocationListProps, void> {
       <section>
         {
           this.props.locations.map((location, locationIndex) => {
+            const weatherData: WeatherLocationData | undefined = this.props.weatherDataMap.get(location);
+            let rainfallSelected: boolean = false;
+            let temperatureSelected: boolean = false;
+            if (weatherData) {
+              if (weatherData.rainfallData) {
+                rainfallSelected = true;
+              }
+              if (weatherData.temperatureData) {
+                temperatureSelected = true;
+              }
+            }
             return ( 
               <LocationItem 
                 key={locationIndex} 
                 location={location} 
-                selected={this.props.weatherDataMap.has(location)}
+                rainfallMonitorSelected={rainfallSelected}
+                temperatureMonitorSelected={temperatureSelected}
                 onItemClickedObserver={this.props.onItemClickedObserver}
               />
             );
