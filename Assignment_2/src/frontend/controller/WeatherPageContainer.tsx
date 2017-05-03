@@ -56,13 +56,19 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     this.initialiseMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addRainfallMonitor, 
-      SocketKeys.removeRainfallMonitor
+      SocketKeys.removeRainfallMonitor,
+      (removedLocation: string, weatherData: WeatherLocationData) => { 
+        return new WeatherLocationData(removedLocation, undefined, weatherData.temperatureData); 
+      }
     );
     
     this.initialiseMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addTemperatureMonitor, 
-      SocketKeys.removeTemperatureMonitor
+      SocketKeys.removeTemperatureMonitor,
+      (removedLocation: string, weatherData: WeatherLocationData) => { 
+        return new WeatherLocationData(removedLocation, weatherData.rainfallData, undefined); 
+      }
     );
 
     socket.on(SocketKeys.soapClientCreationSuccess, (connectedToServer: boolean) => {
@@ -96,6 +102,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     socket: SocketIOClient.Socket,
     addMonitorEvent: string,
     removeMonitorEvent: string,
+    filterWeatherLocationData: (location: string, weatherData: WeatherLocationData) => WeatherLocationData
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
       if (addMonitorResponse.error) {
@@ -114,7 +121,18 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       } else {
         const removedMonitor = removeMonitorResponse.data;
         const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
-        weatherDataMap.delete(removedMonitor.location);
+        const originalWeatherData: WeatherLocationData | undefined = weatherDataMap.get(removedMonitor.location);
+        if (originalWeatherData) {
+          const newWeatherData: WeatherLocationData = 
+            filterWeatherLocationData(originalWeatherData.location, originalWeatherData);
+          if (newWeatherData.rainfallData === undefined && newWeatherData.temperatureData === undefined) {
+            console.log('DELETE!');
+            weatherDataMap.delete(newWeatherData.location);
+          } else {
+           console.log('SET!');
+           weatherDataMap.set(newWeatherData.location, newWeatherData);
+          }
+        }
         this.setState({ weatherDataMap });
       }
     });

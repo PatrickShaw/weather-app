@@ -48,6 +48,7 @@ function createWebpackBackend(entryDirectory)
             new WebpackShellPlugin({onBuildEnd: ['node ./backend-build/backend-compiled-debug.js']})
         ],
         stats: {
+            errors: true,
             colors: true,
             modules: true,
             reasons: true,

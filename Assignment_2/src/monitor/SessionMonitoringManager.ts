@@ -49,16 +49,16 @@ class SessionMonitoringManager {
   }
 
   public addMonitoringSession(sessionId: string, monitoringSession: LocationMonitoringManager): void {
-    console.assert(
-      !(sessionId in this.monitoringSessions), 
-      `Monitoring session with session ID ${sessionId} already exists within the session manager`
-    );
-    this.monitoringSessions.set(sessionId, monitoringSession);
-    for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
-      this.incrementLocationCount(monitoredLocation, 1);
+    if (!(sessionId in this.monitoringSessions)) {
+      this.monitoringSessions.set(sessionId, monitoringSession);
+      for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
+        this.incrementLocationCount(monitoredLocation, 1);
+      }
+      monitoringSession.addOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
+      monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
+    } else {
+      throw new Error(`Monitoring session with session ID ${sessionId} already exists within the session manager`);
     }
-    monitoringSession.addOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
-    monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
   }
   public removeMonitoringSession(sessionId: string): void {
     const monitoringSession: LocationMonitoringManager | undefined = this.monitoringSessions.get(sessionId);

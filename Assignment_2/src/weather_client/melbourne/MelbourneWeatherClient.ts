@@ -29,11 +29,11 @@ class MelbourneWeatherClient implements WeatherClient {
    */
   public retrieveLocations(): Promise<string[]> {
     return this.weatherService.getLocations().then((locationsResponse) => {
-        // locationsResponse is an object locationsResponse.return gives the data as an string.
-        return locationsResponse.return;
-      }).catch((error) => {
-        return error;
-      });
+      // locationsResponse is an object locationsResponse.return gives the data as an string.
+      return locationsResponse.return;
+    }).catch((error) => {
+      return error;
+    });
   }
   
   public retrieveWeatherLocationData(
@@ -52,8 +52,8 @@ class MelbourneWeatherClient implements WeatherClient {
     if (!forceRefresh) {
       cachedWeatherData = this.locationCache.get(location);
       if (cachedWeatherData) {
-        rainfallData = cachedWeatherData.rainfallData;
-        temperatureData = cachedWeatherData.temperatureData;
+        rainfallData = getRainfall ? cachedWeatherData.rainfallData : null;
+        temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
       }
     }
     if (getTemperature) {
@@ -61,11 +61,11 @@ class MelbourneWeatherClient implements WeatherClient {
         temperatureData = cachedWeatherData.temperatureData;
       } else {
         const temperatureRequestPromise: Promise<TemperatureData> = 
-            this.retrieveTemperatureData(new TemperatureRequestData(location))
-              .then((retrievedTemperatureData) => {
-                temperatureData = retrievedTemperatureData;
-                return temperatureData;
-              });
+          this.retrieveTemperatureData(new TemperatureRequestData(location))
+            .then((retrievedTemperatureData) => {
+              temperatureData = retrievedTemperatureData;
+              return temperatureData;
+            });
         dataPromises.push(temperatureRequestPromise);
       }
     }
@@ -74,29 +74,29 @@ class MelbourneWeatherClient implements WeatherClient {
         rainfallData = cachedWeatherData.rainfallData;
       } else {
         const rainfallRequestPromise: Promise<RainfallData> = 
-        this.retrieveRainfallData(new RainfallRequestData(location))
-          .then((retrievedRainfallData) => {
-            rainfallData = retrievedRainfallData;
-            return rainfallData;
-          });
+          this.retrieveRainfallData(new RainfallRequestData(location))
+            .then((retrievedRainfallData) => {
+              rainfallData = retrievedRainfallData;
+              return rainfallData;
+            });
         dataPromises.push(rainfallRequestPromise);
       }
     }      
     // Wait for both getRainfall() and getTemperature() promises to resolve.
     return Promise.all(dataPromises)
-        .then((responses) => {
-          const weatherData: WeatherLocationData = new WeatherLocationData(
-              location,
-              rainfallData,
-              temperatureData
-          );
-          this.locationCache.addLocation(weatherData.location, weatherData);
-          return weatherData;
-        }).catch((error) => {
-          console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
-          console.error(chalk.red(error.message));
-          console.error(chalk.red(error.stack));
-        });
+      .then((responses) => {
+        const weatherData: WeatherLocationData = new WeatherLocationData(
+            location,
+            rainfallData,
+            temperatureData
+        );
+        this.locationCache.addLocation(weatherData.location, weatherData);
+        return weatherData;
+      }).catch((error) => {
+        console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+        console.error(chalk.red(error.message));
+        console.error(chalk.red(error.stack));
+      });
   }
 
   /**

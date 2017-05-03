@@ -37,29 +37,25 @@ class TestWeatherClient implements WeatherClient {
 
   public retrieveWeatherLocationData(
     location: string, 
-    getRainfall: boolean, 
-    getTemperature: boolean
+    getRainfall: boolean = true, 
+    getTemperature: boolean = true
   ): Promise<WeatherLocationData> {
     return new Promise<WeatherLocationData>((resolve, reject) => {
       resolve(new WeatherLocationData(
           location,
-          this.createDummyRainfallData(new RainfallRequestData(location)),
-          this.createDummyTemperatureData(new TemperatureRequestData(location))
+          getRainfall ? this.createDummyRainfallData(new RainfallRequestData(location)) : null,
+          getTemperature ? this.createDummyTemperatureData(new TemperatureRequestData(location)) : null
       ));
     });
   }
 
   public retrieveWeatherLocationDataList(locations: string[]): Promise<WeatherLocationData[]> {
     return new Promise<WeatherLocationData[]>((resolve, reject) => {
-      const dummyLocationData: WeatherLocationData[] = [];
+      const weatherPromises: Array<Promise<WeatherLocationData>> = [] ;
       for (const location of locations) {
-        dummyLocationData.push(new WeatherLocationData(
-          location,
-          this.createDummyRainfallData(new RainfallRequestData(location)),
-          this.createDummyTemperatureData(new TemperatureRequestData(location))
-        ));
+        weatherPromises.push(this.retrieveWeatherLocationData(location));
       }
-      resolve(dummyLocationData);
+      resolve(Promise.all(weatherPromises));
     });
   }
 }
