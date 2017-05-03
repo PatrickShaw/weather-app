@@ -24,6 +24,7 @@ class LocationMonitoringManager {
 
   public getMonitoredLocations(): Set<string> {
     const locationsSet: Set<string> = new Set<string>();
+    // monitoredLocations.keys() effectively returns the equivelant of Iterator<String> in Java
     for (const monitoredLocation of this.monitoredLocations.keys()) {
       locationsSet.add(monitoredLocation);
     }
