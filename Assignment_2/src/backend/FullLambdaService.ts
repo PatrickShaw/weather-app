@@ -282,7 +282,7 @@ class FullLambdaService {
       });
   }
 
-  public onSoapWeatherClientInitialised(weatherClient: WeatherClient): void {
+  private onSoapWeatherClientInitialised(weatherClient: WeatherClient): void {
       console.log(chalk.green('SOAP weather client created'));
       this.weatherClient = weatherClient;
       // This lets any consumers of the API know that we reset the server
