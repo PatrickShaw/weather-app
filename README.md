@@ -35,7 +35,7 @@ We used SASS over plain CSS3 simply for SASS's variable constants feature.
 
 ## Frameworks & libraries we use
 ### React
-<img src="Images/react.png" height="200" />
+<img src="https://d1xwtr0qwr70yv.cloudfront.net/assets/tech/react-7b90239e805d8b06ca263be745f8ad5f.svg" height="200" />
 A a declarative and flexible JavaScript library for building user interfaces developed by Facebook.
 
 ## Node.js
