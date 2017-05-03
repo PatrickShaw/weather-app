@@ -49,16 +49,16 @@ class SessionMonitoringManager {
   }
 
   public addMonitoringSession(sessionId: string, monitoringSession: LocationMonitoringManager): void {
-    console.assert(
-      !(sessionId in this.monitoringSessions), 
-      `Monitoring session with session ID ${sessionId} already exists within the session manager`
-    );
-    this.monitoringSessions.set(sessionId, monitoringSession);
-    for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
-      this.incrementLocationCount(monitoredLocation, 1);
+    if (!(sessionId in this.monitoringSessions)) {
+      this.monitoringSessions.set(sessionId, monitoringSession);
+      for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
+        this.incrementLocationCount(monitoredLocation, 1);
+      }
+      monitoringSession.addOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
+      monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
+    } else {
+      throw new Error(`Monitoring session with session ID ${sessionId} already exists within the session manager`);
     }
-    monitoringSession.addOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
-    monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
   }
   public removeMonitoringSession(sessionId: string): void {
     const monitoringSession: LocationMonitoringManager | undefined = this.monitoringSessions.get(sessionId);
@@ -74,20 +74,19 @@ class SessionMonitoringManager {
     }
   }
 
-  public getMonitoredLocations(): string[] {
-    const monitoredLocations: string[] = [];
+  public getMonitoredLocations(): Set<string> {
+    const monitoredLocations: Set<string> = new Set<string>();
     for (const location of this.sessionMonitoringLocationCounts.keys()) {
       const monitoringCount: number | undefined = this.sessionMonitoringLocationCounts.get(location);
       console.log(`${location} has ${monitoringCount} sessions monitoring it.`);
       if (monitoringCount !== undefined) {
         if (monitoringCount > 0) {
-          monitoredLocations.push(location);
+          monitoredLocations.add(location);
         }
       } else {
         throw new Error(`Has key ${location} but count is ${monitoringCount}`);
       }
     }
-    monitoredLocations.sort();
     return monitoredLocations;
   }
 

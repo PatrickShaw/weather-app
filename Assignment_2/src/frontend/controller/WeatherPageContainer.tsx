@@ -13,51 +13,63 @@ import SocketKeys from '../../socket.io/socket-keys';
  * re-render of certain components in the DOM.
  */
 class WeatherPageContainer extends React.Component<{}, AppState> {
-  private onLocationsListItemClicked: OnLocationItemClickedObserver;
+  private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
+  private onLocationsListTemperatureItemClicked: OnLocationItemClickedObserver;
 
   constructor(props: {}) {
     super(props);
     this.state = new AppState([], new Map<string, WeatherLocationData>(), false);
   }
+
   public componentDidMount(): void {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    this.onLocationsListItemClicked = new class implements OnLocationItemClickedObserver {
+    this.onLocationsListRainfallItemClicked = new class implements OnLocationItemClickedObserver {
       public onItemClicked(location: string, selected: boolean): void {
         // The backend speaks in MonitorMetadata objects, so create one.
         const monitor: MonitorMetadata = new MonitorMetadata(location);
         if (selected) {
           // We're unselecting a location so emit to remove the monitor
-          socket.emit(SocketKeys.removeMonitor, monitor);
+          socket.emit(SocketKeys.removeRainfallMonitor, monitor);
         } else {
           // We're selecting a location so emit to add the monitor
-          socket.emit(SocketKeys.addMonitor, monitor);
+          socket.emit(SocketKeys.addRainfallMonitor, monitor);
         }
       }
     }();
 
-    socket.on(SocketKeys.addMonitor, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
-      if (addMonitorResponse.error) {
-        console.error(addMonitorResponse.error);
-      } else {
-        const newWeatherData: WeatherLocationData = addMonitorResponse.data;
-        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
-        weatherDataMap.set(newWeatherData.location, newWeatherData);
-        this.setState({ weatherDataMap });
+    this.onLocationsListTemperatureItemClicked = new class implements OnLocationItemClickedObserver {
+      public onItemClicked(location: string, selected: boolean): void {
+        // The backend speaks in MonitorMetadata objects, so create one.
+        const monitor: MonitorMetadata = new MonitorMetadata(location);
+        if (selected) {
+          // We're unselecting a location so emit to remove the monitor
+          socket.emit(SocketKeys.removeTemperatureMonitor, monitor);
+        } else {
+          // We're selecting a location so emit to add the monitor
+          socket.emit(SocketKeys.addTemperatureMonitor, monitor);
+        }
       }
-    });
+    }();
+
+    this.initialiseMonitoringSocketEndPoint(
+      socket, 
+      SocketKeys.addRainfallMonitor, 
+      SocketKeys.removeRainfallMonitor,
+      (removedLocation: string, weatherData: WeatherLocationData) => { 
+        return new WeatherLocationData(removedLocation, undefined, weatherData.temperatureData); 
+      }
+    );
     
-    socket.on(SocketKeys.removeMonitor, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
-      if (removeMonitorResponse.error) {
-        console.error(removeMonitorResponse.error);
-      } else {
-        const removedMonitor = removeMonitorResponse.data;
-        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
-        weatherDataMap.delete(removedMonitor.location);
-        this.setState({ weatherDataMap });
+    this.initialiseMonitoringSocketEndPoint(
+      socket, 
+      SocketKeys.addTemperatureMonitor, 
+      SocketKeys.removeTemperatureMonitor,
+      (removedLocation: string, weatherData: WeatherLocationData) => { 
+        return new WeatherLocationData(removedLocation, weatherData.rainfallData, undefined); 
       }
-    });
+    );
 
     socket.on(SocketKeys.soapClientCreationSuccess, (connectedToServer: boolean) => {
       // Assign MelbourneWeather2 successful connection status.
@@ -85,6 +97,46 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       this.setState({ weatherDataMap: newWeatherDataMap });
     });
   }
+
+  private initialiseMonitoringSocketEndPoint(
+    socket: SocketIOClient.Socket,
+    addMonitorEvent: string,
+    removeMonitorEvent: string,
+    filterWeatherLocationData: (location: string, weatherData: WeatherLocationData) => WeatherLocationData
+  ): void {
+    socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
+      if (addMonitorResponse.error) {
+        console.error(addMonitorResponse.error);
+      } else {
+        const newWeatherData: WeatherLocationData = addMonitorResponse.data;
+        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
+        weatherDataMap.set(newWeatherData.location, newWeatherData);
+        this.setState({ weatherDataMap });
+      }
+    });
+    
+    socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
+      if (removeMonitorResponse.error) {
+        console.error(removeMonitorResponse.error);
+      } else {
+        const removedMonitor = removeMonitorResponse.data;
+        const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
+        const originalWeatherData: WeatherLocationData | undefined = weatherDataMap.get(removedMonitor.location);
+        if (originalWeatherData) {
+          const newWeatherData: WeatherLocationData = 
+            filterWeatherLocationData(originalWeatherData.location, originalWeatherData);
+          if (newWeatherData.rainfallData === undefined && newWeatherData.temperatureData === undefined) {
+            console.log('DELETE!');
+            weatherDataMap.delete(newWeatherData.location);
+          } else {
+           console.log('SET!');
+           weatherDataMap.set(newWeatherData.location, newWeatherData);
+          }
+        }
+        this.setState({ weatherDataMap });
+      }
+    });
+  }
   
   public render(): JSX.Element {
     console.log(this.state.weatherDataMap);
@@ -93,7 +145,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       (
         <WeatherPage 
           appCurrentState={this.state}
-          onLocationsListItemClicked={this.onLocationsListItemClicked}
+          onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
+          onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
         />
       ) : 
       (

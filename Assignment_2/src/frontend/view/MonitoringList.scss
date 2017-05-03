@@ -1,15 +1,15 @@
 @import '../theme/full-lambda-dimens';
-$monitoring-list-gap: $layout-padding-md;
+$monitoring-list-gap: $layout-padding-lg;
 .monitoring-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center;
+  align-items: stretch;
   flex-direction: row;
   margin: -$monitoring-list-gap;
 }
 .monitoring-item-card {
-  flex-basis: 256px;
+  flex-basis: 320px;
   flex-grow: 0;
   flex-shrink: 0;
   margin: calc(0.5 * #{$monitoring-list-gap});

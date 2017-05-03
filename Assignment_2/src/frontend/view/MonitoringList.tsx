@@ -10,7 +10,6 @@ interface MonitoringListProps {
 
 class MonitoringList extends React.Component<MonitoringListProps, void> {
   public render(): JSX.Element {  
-    console.log('Next is a keys');
     console.log(Object.keys(this.props.weatherDataMap));
     console.log(this.props.weatherDataMap);
     return (
