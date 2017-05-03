@@ -81,6 +81,7 @@ class FullLambdaService {
       const sessionId: string = socket.id;
       console.log(`Session started ${sessionId}`);
       socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
+      socket.emit(SocketKeys.replaceWeatherData, []);
       // Add MonitoringManagerData to manage session with front end client.
       for (const monitoringManager of this.monitoringDataList) {
         monitoringManager.sessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
@@ -238,7 +239,7 @@ class FullLambdaService {
         }
         let hasDataToEmit: boolean = false;
         for (const monitoringSession of this.monitoringDataList) {
-          if (monitoringSession.sessionManager.getMonitoredLocations().size > 1) {
+          if (monitoringSession.sessionManager.getMonitoredLocations().size > 0) {
             hasDataToEmit = true;
             break;
           }
@@ -316,13 +317,13 @@ class FullLambdaService {
     console.log(chalk.green('SOAP weather client created'));
     this.weatherClient = weatherClient;
     // This lets any consumers of the API know that we reset the server
-    this.io.emit(SocketKeys.retrievedLocations, []);
-    this.io.emit(SocketKeys.replaceWeatherData, []);
+    this.io.sockets.emit(SocketKeys.retrievedLocations, []);
+    this.io.sockets.emit(SocketKeys.replaceWeatherData, []);
     // Initialise the socket.io events
     this.initialiseSocketEndpoints();
     // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
     this.successfulClientSetup = true;
-    this.io.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
+    this.io.sockets.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
     // Get locations from SOAP client in melbourneWeatherClient.
     weatherClient.retrieveLocations().then((locations: string[]) => {
       this.onAllLocationsRetrieved(locations);
@@ -345,6 +346,5 @@ class FullLambdaService {
       });
   }
 }
-
 export {FullLambdaService};
 export default FullLambdaService;

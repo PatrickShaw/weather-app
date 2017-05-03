@@ -9,16 +9,25 @@ import { TemperatureData } from '../../model/TemperatureData';
  * On top of that we also have needed to run tests independant of the SOAP client.
  */
 class TestWeatherClient implements WeatherClient {
-  private createDummyRainfallData(location: string): RainfallData {
+  private pollCount: number = 0;
+  constructor() {
+    setInterval(
+      () => {
+        this.pollCount += 1;
+      }, 
+      500
+    );
+  }
+  private createDummyRainfallData(location: string, forceRefresh: boolean): RainfallData {
     return new RainfallData(
-      `Rainfall ${location}`,
+      `Rainfall ${location}, ${this.pollCount} (Forced refresh: ${forceRefresh})`,
       `Rainfall timestamp ${new Date().toString()}`
     );
   }
 
-  private createDummyTemperatureData(location: string): TemperatureData {
+  private createDummyTemperatureData(location: string, forceRefresh: boolean): TemperatureData {
     return new TemperatureData(
-      `Temperature ${location}`,
+      `Temperature ${location}, ${this.pollCount} (Forced refresh: ${forceRefresh})`,
       `Temperature timestamp ${new Date().toString()}`
     );
   }
@@ -36,13 +45,14 @@ class TestWeatherClient implements WeatherClient {
   public retrieveWeatherLocationData(
     location: string, 
     getRainfall: boolean = true, 
-    getTemperature: boolean = true
+    getTemperature: boolean = true,
+    forceRefresh: boolean = true
   ): Promise<WeatherLocationData> {
     return new Promise<WeatherLocationData>((resolve, reject) => {
       resolve(new WeatherLocationData(
           location,
-          getRainfall ? this.createDummyRainfallData(location) : null,
-          getTemperature ? this.createDummyTemperatureData(location) : null
+          getRainfall ? this.createDummyRainfallData(location, forceRefresh) : null,
+          getTemperature ? this.createDummyTemperatureData(location, forceRefresh) : null
       ));
     });
   }

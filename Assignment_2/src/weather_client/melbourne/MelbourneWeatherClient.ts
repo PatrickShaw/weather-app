@@ -48,16 +48,16 @@ class MelbourneWeatherClient implements WeatherClient {
     const dataPromises: Array<Promise<RainfallData | TemperatureData>> = [];
     let temperatureData: TemperatureData;
     let rainfallData: RainfallData;
-    let cachedWeatherData: WeatherLocationData;
     if (!forceRefresh) {
+      let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
-      if (cachedWeatherData) {
+      if (cachedWeatherData === undefined) {
         rainfallData = getRainfall ? cachedWeatherData.rainfallData : null;
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
       }
     }
     if (getTemperature) {
-      if (temperatureData) {
+      if (temperatureData !== undefined) {
         temperatureData = cachedWeatherData.temperatureData;
       } else {
         const temperatureRequestPromise: Promise<TemperatureData> = 
@@ -75,7 +75,7 @@ class MelbourneWeatherClient implements WeatherClient {
       }
     }
     if (getRainfall) {
-      if (rainfallData) {
+      if (rainfallData !== undefined) {
         rainfallData = cachedWeatherData.rainfallData;
       } else {
         const rainfallRequestPromise: Promise<RainfallData> = 
