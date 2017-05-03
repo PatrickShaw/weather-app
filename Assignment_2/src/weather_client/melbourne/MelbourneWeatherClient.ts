@@ -46,9 +46,9 @@ class MelbourneWeatherClient implements WeatherClient {
       throw new Error('getRainfall and getTemperature were both false');
     }
     const dataPromises: Array<Promise<RainfallData | TemperatureData>> = [];
-    let temperatureData: TemperatureData = null;
-    let rainfallData: RainfallData = null;
-    let cachedWeatherData: WeatherLocationData = null;
+    let temperatureData: TemperatureData;
+    let rainfallData: RainfallData;
+    let cachedWeatherData: WeatherLocationData;
     if (!forceRefresh) {
       cachedWeatherData = this.locationCache.get(location);
       if (cachedWeatherData) {

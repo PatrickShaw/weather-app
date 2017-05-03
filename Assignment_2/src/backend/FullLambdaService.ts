@@ -37,7 +37,7 @@ class FullLambdaService {
   // A array to help with some of the duplicate code that the rainfall and temperature managers share
   private readonly monitoringDataList: MonitoringManagerData[];
   private readonly rainfallMonitoringData: MonitoringManagerData;
-  private readonly temperatureMonitoringData: MonitoringManagerData;
+  private readonly temperatureMonitoringData: MonitoringManagerData;  
   
   // It's convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;

@@ -39,19 +39,12 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       }
     }();
 
-    this.onLocationsListTemperatureItemClicked = new class implements OnLocationItemClickedObserver {
-      public onItemClicked(location: string, selected: boolean): void {
-        // The backend speaks in MonitorMetadata objects, so create one.
-        const monitor: MonitorMetadata = new MonitorMetadata(location);
-        if (selected) {
-          // We're unselecting a location so emit to remove the monitor
-          socket.emit(SocketKeys.removeTemperatureMonitor, monitor);
-        } else {
-          // We're selecting a location so emit to add the monitor
-          socket.emit(SocketKeys.addTemperatureMonitor, monitor);
-        }
-      }
-    }();
+    this.onLocationsListRainfallItemClicked = this.createOnChangeMonitorListener(
+      socket, SocketKeys.addRainfallMonitor, SocketKeys.removeRainfallMonitor
+    );
+    this.onLocationsListTemperatureItemClicked = this.createOnChangeMonitorListener(
+      socket, SocketKeys.addTemperatureMonitor, SocketKeys.removeTemperatureMonitor
+    );
 
     this.initialiseMonitoringSocketEndPoint(
       socket, 
@@ -74,7 +67,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     socket.on(SocketKeys.successfulServerSetup, (connectedToServer: boolean) => {
       // Assign MelbourneWeather2 successful connection status.
       console.log(`Successful connection to server: ${connectedToServer}`);
-      this.setState({connectedToServer});
+      this.setState({ connectedToServer });
     });
 
     socket.on(SocketKeys.retrievedLocations, (locations: string[]) => {
@@ -98,6 +91,26 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     });
   }
 
+  public createOnChangeMonitorListener(
+    socket: SocketIOClient.Socket,
+    addMonitorEvent: string, 
+    removeMonitorEvent: string
+  ): OnLocationItemClickedObserver {
+    return new class implements OnLocationItemClickedObserver {
+      public onItemClicked(location: string, selected: boolean): void {
+        // The backend speaks in MonitorMetadata objects, so create one.
+        const monitor: MonitorMetadata = new MonitorMetadata(location);
+        if (selected) {
+          // We're unselecting a location so emit to remove the monitor
+          socket.emit(removeMonitorEvent, monitor);
+        } else {
+          // We're selecting a location so emit to add the monitor
+          socket.emit(addMonitorEvent, monitor);
+        }
+      }
+    }();
+  }
+
   private initialiseMonitoringSocketEndPoint(
     socket: SocketIOClient.Socket,
     addMonitorEvent: string,
@@ -105,27 +118,25 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     filterWeatherLocationData: (location: string, weatherData: WeatherLocationData) => WeatherLocationData
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
-      if (addMonitorResponse.error) {
-        console.error(addMonitorResponse.error);
-      } else {
+      if (addMonitorResponse.error == null) {
         const newWeatherData: WeatherLocationData = addMonitorResponse.data;
         const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
         weatherDataMap.set(newWeatherData.location, newWeatherData);
         this.setState({ weatherDataMap });
+      } else {
+        console.error(addMonitorResponse.error);
       }
     });
     
     socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
-      if (removeMonitorResponse.error) {
-        console.error(removeMonitorResponse.error);
-      } else {
+      if (removeMonitorResponse.error == null) {
         const removedMonitor = removeMonitorResponse.data;
         const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
         const originalWeatherData: WeatherLocationData | undefined = weatherDataMap.get(removedMonitor.location);
-        if (originalWeatherData) {
+        if (originalWeatherData != null) {
           const newWeatherData: WeatherLocationData = 
             filterWeatherLocationData(originalWeatherData.location, originalWeatherData);
-          if (newWeatherData.rainfallData === undefined && newWeatherData.temperatureData === undefined) {
+          if (newWeatherData.rainfallData == null && newWeatherData.temperatureData == null) {
             console.log('DELETE!');
             weatherDataMap.delete(newWeatherData.location);
           } else {
@@ -134,6 +145,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
           }
         }
         this.setState({ weatherDataMap });
+      } else {
+        console.error(removeMonitorResponse.error);
       }
     });
   }

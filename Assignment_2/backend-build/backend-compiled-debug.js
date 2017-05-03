@@ -472,7 +472,7 @@ class LocationCache {
             throw new Error(`location ${location} already exists in cache`);
         }
         this.locationMap.set(data.location, data);
-        console.log(chalk.red(`Add location ${data.location} to cache`));
+        console.log(chalk.green(`Added location ${data.location} to cache`));
     }
     /**
      * Update a location in map, location has to previously exist in map.
@@ -482,7 +482,7 @@ class LocationCache {
             throw new Error(`location ${location} doesn't exist in cache, can't update`);
         }
         this.locationMap.set(data.location, data);
-        console.log(chalk.red(`Update location ${data.location} in cache`));
+        console.log(chalk.green(`Updated location ${data.location} in cache`));
     }
     hasLocation(location) {
         return this.locationMap.has(location);
@@ -513,13 +513,7 @@ const TimestampedData_1 = __webpack_require__(1);
 class RainfallData extends TimestampedData_1.TimestampedData {
     constructor(rainfall, timestamp) {
         super(timestamp);
-        if (rainfall === '') {
-            // Handle no data from SOAP client.
-            this.rainfall = 'N/A';
-        }
-        else {
-            this.rainfall = rainfall;
-        }
+        this.rainfall = rainfall;
     }
 }
 exports.RainfallData = RainfallData;
@@ -580,12 +574,7 @@ const TimestampedData_1 = __webpack_require__(1);
 class TemperatureData extends TimestampedData_1.TimestampedData {
     constructor(temperature, timestamp) {
         super(timestamp);
-        if (temperature === '') {
-            this.temperature = 'N/A';
-        }
-        else {
-            this.temperature = temperature;
-        }
+        this.temperature = temperature;
     }
 }
 exports.TemperatureData = TemperatureData;
@@ -803,9 +792,9 @@ class MelbourneWeatherClient {
             throw new Error('getRainfall and getTemperature were both false');
         }
         const dataPromises = [];
-        let temperatureData = null;
-        let rainfallData = null;
-        let cachedWeatherData = null;
+        let temperatureData;
+        let rainfallData;
+        let cachedWeatherData;
         if (!forceRefresh) {
             cachedWeatherData = this.locationCache.get(location);
             if (cachedWeatherData) {

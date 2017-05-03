@@ -4,7 +4,7 @@ import {RequestError} from './RequestError';
  */
 class RequestResponse<T> {
   public readonly data: T;
-  public readonly error: RequestError | null;
+  public readonly error: RequestError;
   constructor(data: T, error: RequestError) {
     this.data = data;
     this.error = error;
