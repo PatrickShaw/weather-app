@@ -1,5 +1,5 @@
-import { RainfallRequestData } from '../../model/RainfallRequestData';
-import { TemperatureRequestData } from '../../model/TemperatureRequestData';
+import { RainfallRequestData } from './RainfallRequestData';
+import { TemperatureRequestData } from './TemperatureRequestData';
 interface SoapResponse<T> {
   return: T;
 }

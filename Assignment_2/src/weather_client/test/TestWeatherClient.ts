@@ -2,8 +2,6 @@ import { WeatherClient } from '../WeatherClient';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { RainfallData } from '../../model/RainfallData';
 import { TemperatureData } from '../../model/TemperatureData';
-import { RainfallRequestData } from '../../model/RainfallRequestData';
-import { TemperatureRequestData } from '../../model/TemperatureRequestData';
 
 /**
  * Sometimes the SOAP API is down so we needed to create an extra client so that we could use offline dummy data 
@@ -11,16 +9,16 @@ import { TemperatureRequestData } from '../../model/TemperatureRequestData';
  * On top of that we also have needed to run tests independant of the SOAP client.
  */
 class TestWeatherClient implements WeatherClient {
-  private createDummyRainfallData(rainfallRequestData: RainfallRequestData): RainfallData {
+  private createDummyRainfallData(location: string): RainfallData {
     return new RainfallData(
-      `Rainfall ${rainfallRequestData.parameters}`,
+      `Rainfall ${location}`,
       `Rainfall timestamp ${new Date().toString()}`
     );
   }
 
-  private createDummyTemperatureData(temperatureRequestData: TemperatureRequestData): TemperatureData {
+  private createDummyTemperatureData(location: string): TemperatureData {
     return new TemperatureData(
-      `Temperature ${temperatureRequestData.parameters}`,
+      `Temperature ${location}`,
       `Temperature timestamp ${new Date().toString()}`
     );
   }
@@ -43,8 +41,8 @@ class TestWeatherClient implements WeatherClient {
     return new Promise<WeatherLocationData>((resolve, reject) => {
       resolve(new WeatherLocationData(
           location,
-          getRainfall ? this.createDummyRainfallData(new RainfallRequestData(location)) : null,
-          getTemperature ? this.createDummyTemperatureData(new TemperatureRequestData(location)) : null
+          getRainfall ? this.createDummyRainfallData(location) : null,
+          getTemperature ? this.createDummyTemperatureData(location) : null
       ));
     });
   }

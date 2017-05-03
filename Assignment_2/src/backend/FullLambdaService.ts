@@ -15,36 +15,61 @@ import SocketKeys from '../socket.io/socket-keys';
 
 // 300000 milliseconds = 5 mins.
 const defaultWeatherPollingInterval: number = 5000;
-// const defaultSoapClientCreationRetries: number = 20;
-// const defaultSoapClientRetryInterval: number = 30000;
-
+class MonitoringManagerData {
+  public readonly sessionManager: SessionMonitoringManager;
+  public readonly addMonitorEventName: string;
+  public readonly removeMonitorEventName: string;
+  constructor(
+    sessionManager: SessionMonitoringManager,
+    addMonitorEventName: string,
+    removeMonitorEventName: string
+  ) {
+    this.sessionManager = sessionManager;
+    this.addMonitorEventName = addMonitorEventName;
+    this.removeMonitorEventName = removeMonitorEventName;
+  }
+}
 /**
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
   private readonly weatherClientFactory: WeatherClientFactory<WeatherClient>;
-  private readonly rainfallSessionManager: SessionMonitoringManager;
-  private readonly temperatureSessionManager: SessionMonitoringManager;
-  // Convention to call SocketIO.Server io.
+  // A array to help with some of the duplicate code that the rainfall and temperature managers share
+  private readonly monitoringDataList: MonitoringManagerData[];
+  private readonly rainfallMonitoringData: MonitoringManagerData;
+  private readonly temperatureMonitoringData: MonitoringManagerData;
+  
+  // It's convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;
-  // All locations retrieved from SOAP client.
-  private melbourneWeatherLocations: string[] = [];
-  private succesfulSoapClientconnection: boolean;
+  // Contains all locations retrieved from weather client
+  private melbourneWeatherLocations: string[];
+  // Specifies whether we have successfully made a connection to the weather client
+  private successfulClientSetup: boolean;
+  // Our client that we retrieve weather data from
   private weatherClient: WeatherClient;
 
   constructor(
     io: SocketIO.Server, 
-    weatherClientFactory: WeatherClientFactory<WeatherClient>,
-    sessionManager: SessionMonitoringManager = new SessionMonitoringManager(),
-    rainfallSessionManager: SessionMonitoringManager = new SessionMonitoringManager(),
-    temperatureSessionManager: SessionMonitoringManager = new SessionMonitoringManager()
+    weatherClientFactory: WeatherClientFactory<WeatherClient>
   ) {
-    this.succesfulSoapClientconnection = false;
+    this.successfulClientSetup = false;
     this.melbourneWeatherLocations = [];
-    this.rainfallSessionManager = sessionManager;
     this.io = io;
     this.weatherClientFactory = weatherClientFactory;
-    this.temperatureSessionManager = temperatureSessionManager;
+    this.rainfallMonitoringData = new MonitoringManagerData(
+      new SessionMonitoringManager(),
+      SocketKeys.addRainfallMonitor,
+      SocketKeys.removeRainfallMonitor
+    );
+    this.temperatureMonitoringData = new MonitoringManagerData(
+      new SessionMonitoringManager(),
+      SocketKeys.addTemperatureMonitor,
+      SocketKeys.removeTemperatureMonitor
+    );
+    this.monitoringDataList = [
+      this.rainfallMonitoringData,
+      this.temperatureMonitoringData
+    ];
   }
   
   /**
@@ -55,32 +80,27 @@ class FullLambdaService {
       // Called when session started with frontend.
       const sessionId: string = socket.id;
       console.log(`Session started ${sessionId}`);
-      this.io.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
-      // Add MonitoringManager to manage session with front end client.
-      this.rainfallSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
-      this.temperatureSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
-      this.initialiseMonitorSocketEvent(
-        socket,
-        SocketKeys.addRainfallMonitor, 
-        SocketKeys.removeRainfallMonitor, 
-        this.rainfallSessionManager
-      );
-
-      this.initialiseMonitorSocketEvent(
-        socket,
-        SocketKeys.addTemperatureMonitor,
-        SocketKeys.removeTemperatureMonitor,
-        this.temperatureSessionManager
-      );
+      socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
+      // Add MonitoringManagerData to manage session with front end client.
+      for (const monitoringManager of this.monitoringDataList) {
+        monitoringManager.sessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager());
+        this.initialiseMonitorSocketEvent(
+          socket,
+          monitoringManager.addMonitorEventName,
+          monitoringManager.removeMonitorEventName,
+          monitoringManager.sessionManager
+        );
+      }
 
       socket.on('disconnect', () => {
         console.log(`Session ended: ${sessionId}`);
-        this.rainfallSessionManager.removeMonitoringSession(sessionId);
-        this.temperatureSessionManager.removeMonitoringSession(sessionId);
+        for (const monitoringManager of this.monitoringDataList) {
+          monitoringManager.sessionManager.removeMonitoringSession(sessionId);
+        }
       });
 
       // Emit to front end whether the SOAP Client was successfully created.
-      this.io.emit(SocketKeys.soapClientCreationSuccess, this.succesfulSoapClientconnection);
+      socket.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
     });
   }
 
@@ -96,16 +116,16 @@ class FullLambdaService {
         // Frontend sessions wants to monitor another location.
         // monitor is a string that is a location.
         const locationMonitoringManager: LocationMonitoringManager | undefined = 
-        sessionManager.getLocationMonitorManagerForSession(sessionId);
+          sessionManager.getLocationMonitorManagerForSession(sessionId);
         if (locationMonitoringManager) {
           console.log(`Session ID ${chalk.magenta(sessionId)} added monitor ${chalk.magenta(monitor.location)}`);
           // Can add monitor.
           // Add new location to monitor to all locations that are monitored.
           locationMonitoringManager.addMonitorLocation(monitor);
           const rainfallLocationManager: LocationMonitoringManager 
-            = this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
+            = this.rainfallMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
           const temperatureLocationMonitor: LocationMonitoringManager 
-            = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
+            = this.temperatureMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
           this.weatherClient.retrieveWeatherLocationData(
             monitor.location,
             rainfallLocationManager.getMonitoredLocations().has(monitor.location), 
@@ -202,47 +222,58 @@ class FullLambdaService {
     for (const sessionId of Object.keys(this.io.sockets.sockets)) {
       try {
         console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
-        const rainfallMonitoringSession: LocationMonitoringManager | undefined = 
-          this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
-        const temperatureMonitoringSession: LocationMonitoringManager | undefined = 
-          this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
-        if (rainfallMonitoringSession && temperatureMonitoringSession) {
-          const rainfallToEmitWeatherFor: Set<string> = rainfallMonitoringSession.getMonitoredLocations();
-          const temperatureToEmitWeatherFor: Set<string> = temperatureMonitoringSession.getMonitoredLocations();
-          // We only need to emit data if the user is monitoring a location.
-          // Otherwise don't even bother executing the emission code.
-          if (rainfallToEmitWeatherFor.size > 0 && temperatureToEmitWeatherFor.size > 0) {
-            const weatherDataToEmit: WeatherLocationData[] = [];
-            for (const weatherData of weatherLocationDataList) {
-              const emitRainfall: boolean = rainfallToEmitWeatherFor.has(weatherData.location);
-              const emitTemperature: boolean = temperatureToEmitWeatherFor.has(weatherData.location);
-              if (emitTemperature && emitRainfall) {
-                weatherDataToEmit.push(weatherData);
-              } else if (emitRainfall) {
-                weatherDataToEmit.push(new WeatherLocationData(
-                  weatherData.location,
-                  weatherData.rainfallData,
-                  null
-                ));
-              } else if (emitTemperature) {
-                weatherDataToEmit.push(new WeatherLocationData(
-                  weatherData.location,
-                  null,
-                  weatherData.temperatureData
-                ));
-              }
-            }
-            const socket = this.io.sockets.sockets[sessionId];
-            socket.emit(SocketKeys.replaceWeatherData, weatherDataToEmit);
-          } else {
-            console.log(
-              `Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`
-            );
+        let validSessionMonitors: boolean = true;
+        for (const monitoringSession of this.monitoringDataList) {
+          const sessionManager: SessionMonitoringManager = monitoringSession.sessionManager;
+          if (!sessionManager) {
+            validSessionMonitors = false;
+            break;
           }
-        } else {
+        }
+        if (!validSessionMonitors) {
           console.error(
             chalk.red(`Socket ${chalk.magenta(sessionId)} had no monitoring session. Skipping emit.`)
-          );
+          ); 
+          continue; 
+        }
+        let hasDataToEmit: boolean = false;
+        for (const monitoringSession of this.monitoringDataList) {
+          if (monitoringSession.sessionManager.getMonitoredLocations().size > 1) {
+            hasDataToEmit = true;
+            break;
+          }
+        }
+        if (!hasDataToEmit) {
+          console.log(`Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`);
+          continue;
+        }
+        const rainfallToEmitWeatherFor: Set<string> 
+          = this.rainfallMonitoringData.sessionManager.getMonitoredLocations();
+        const temperatureToEmitWeatherFor: Set<string> 
+          = this.temperatureMonitoringData.sessionManager.getMonitoredLocations();
+        // We only need to emit data if the user is monitoring a location.
+        // Otherwise don't even bother executing the emission code.
+        const weatherDataToEmit: WeatherLocationData[] = [];
+        for (const weatherData of weatherLocationDataList) {
+          const emitRainfall: boolean = rainfallToEmitWeatherFor.has(weatherData.location);
+          const emitTemperature: boolean = temperatureToEmitWeatherFor.has(weatherData.location);
+          if (emitTemperature && emitRainfall) {
+            weatherDataToEmit.push(weatherData);
+          } else if (emitRainfall) {
+            weatherDataToEmit.push(new WeatherLocationData(
+              weatherData.location,
+              weatherData.rainfallData,
+              null
+            ));
+          } else if (emitTemperature) {
+            weatherDataToEmit.push(new WeatherLocationData(
+              weatherData.location,
+              null,
+              weatherData.temperatureData
+            ));
+          }
+          const socket = this.io.sockets.sockets[sessionId];
+          socket.emit(SocketKeys.replaceWeatherData, weatherDataToEmit);
         }
       } catch (error) {
         console.error(chalk.bgRed(error.message));
@@ -253,11 +284,10 @@ class FullLambdaService {
 
   private getAllMonitoredLocations(): Set<string> {
     const unionedMonitoredLocations: Set<string> = new Set<string>();
-    for (const rainfallLocation of this.rainfallSessionManager.getMonitoredLocations()) {
-      unionedMonitoredLocations.add(rainfallLocation);
-    }
-    for (const temperatureLocation of this.temperatureSessionManager.getMonitoredLocations()) {
-      unionedMonitoredLocations.add(temperatureLocation);
+    for (const monitoringManager of this.monitoringDataList) {
+      for (const location of monitoringManager.sessionManager.getMonitoredLocations()) {
+        unionedMonitoredLocations.add(location);
+      }
     }
     return unionedMonitoredLocations;
   }
@@ -283,22 +313,22 @@ class FullLambdaService {
   }
 
   private onSoapWeatherClientInitialised(weatherClient: WeatherClient): void {
-      console.log(chalk.green('SOAP weather client created'));
-      this.weatherClient = weatherClient;
-      // This lets any consumers of the API know that we reset the server
-      this.onAllLocationsRetrieved([]);
-      this.onWeatherLocationDataRetrieved([]);
-      // Initialise the socket.io events
-      this.initialiseSocketEndpoints();
-      // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
-      this.succesfulSoapClientconnection = true;
-      this.io.emit(SocketKeys.soapClientCreationSuccess, this.succesfulSoapClientconnection);
-      // Get locations from SOAP client in melbourneWeatherClient.
-      weatherClient.retrieveLocations().then((locations: string[]) => {
-        this.onAllLocationsRetrieved(locations);
-      });
-
+    console.log(chalk.green('SOAP weather client created'));
+    this.weatherClient = weatherClient;
+    // This lets any consumers of the API know that we reset the server
+    this.io.emit(SocketKeys.retrievedLocations, []);
+    this.io.emit(SocketKeys.replaceWeatherData, []);
+    // Initialise the socket.io events
+    this.initialiseSocketEndpoints();
+    // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
+    this.successfulClientSetup = true;
+    this.io.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
+    // Get locations from SOAP client in melbourneWeatherClient.
+    weatherClient.retrieveLocations().then((locations: string[]) => {
+      this.onAllLocationsRetrieved(locations);
+    });
   }
+
   /**
    * Runs main loop for the full lambda service via setInterval.
    */

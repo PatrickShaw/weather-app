@@ -124,31 +124,38 @@ exports.default = WeatherLocationData;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = __webpack_require__(0);
-const LocationMonitoringManager_1 = __webpack_require__(13);
+const LocationMonitoringManager_1 = __webpack_require__(12);
 const RequestError_1 = __webpack_require__(9);
 const RequestResponse_1 = __webpack_require__(10);
-const SessionMonitoringManager_1 = __webpack_require__(14);
+const SessionMonitoringManager_1 = __webpack_require__(13);
 const WeatherLocationData_1 = __webpack_require__(2);
-const socket_keys_1 = __webpack_require__(15);
+const socket_keys_1 = __webpack_require__(14);
 // TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
 // allows for dependency injection where you pass in req parameters.
 // 300000 milliseconds = 5 mins.
 const defaultWeatherPollingInterval = 5000;
-// const defaultSoapClientCreationRetries: number = 20;
-// const defaultSoapClientRetryInterval: number = 30000;
+class MonitoringManagerData {
+    constructor(sessionManager, addMonitorEventName, removeMonitorEventName) {
+        this.sessionManager = sessionManager;
+        this.addMonitorEventName = addMonitorEventName;
+        this.removeMonitorEventName = removeMonitorEventName;
+    }
+}
 /**
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
-    constructor(io, weatherClientFactory, sessionManager = new SessionMonitoringManager_1.SessionMonitoringManager(), rainfallSessionManager = new SessionMonitoringManager_1.SessionMonitoringManager(), temperatureSessionManager = new SessionMonitoringManager_1.SessionMonitoringManager()) {
-        // All locations retrieved from SOAP client.
+    constructor(io, weatherClientFactory) {
+        this.successfulClientSetup = false;
         this.melbourneWeatherLocations = [];
-        this.succesfulSoapClientconnection = false;
-        this.melbourneWeatherLocations = [];
-        this.rainfallSessionManager = sessionManager;
         this.io = io;
         this.weatherClientFactory = weatherClientFactory;
-        this.temperatureSessionManager = temperatureSessionManager;
+        this.rainfallMonitoringData = new MonitoringManagerData(new SessionMonitoringManager_1.SessionMonitoringManager(), socket_keys_1.default.addRainfallMonitor, socket_keys_1.default.removeRainfallMonitor);
+        this.temperatureMonitoringData = new MonitoringManagerData(new SessionMonitoringManager_1.SessionMonitoringManager(), socket_keys_1.default.addTemperatureMonitor, socket_keys_1.default.removeTemperatureMonitor);
+        this.monitoringDataList = [
+            this.rainfallMonitoringData,
+            this.temperatureMonitoringData
+        ];
     }
     /**
      * Setup websocket endpoints using SocketIO.
@@ -158,19 +165,20 @@ class FullLambdaService {
             // Called when session started with frontend.
             const sessionId = socket.id;
             console.log(`Session started ${sessionId}`);
-            this.io.emit(socket_keys_1.default.retrievedLocations, this.melbourneWeatherLocations);
-            // Add MonitoringManager to manage session with front end client.
-            this.rainfallSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager_1.LocationMonitoringManager());
-            this.temperatureSessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager_1.LocationMonitoringManager());
-            this.initialiseMonitorSocketEvent(socket, socket_keys_1.default.addRainfallMonitor, socket_keys_1.default.removeRainfallMonitor, this.rainfallSessionManager);
-            this.initialiseMonitorSocketEvent(socket, socket_keys_1.default.addTemperatureMonitor, socket_keys_1.default.removeTemperatureMonitor, this.temperatureSessionManager);
+            socket.emit(socket_keys_1.default.retrievedLocations, this.melbourneWeatherLocations);
+            // Add MonitoringManagerData to manage session with front end client.
+            for (const monitoringManager of this.monitoringDataList) {
+                monitoringManager.sessionManager.addMonitoringSession(sessionId, new LocationMonitoringManager_1.LocationMonitoringManager());
+                this.initialiseMonitorSocketEvent(socket, monitoringManager.addMonitorEventName, monitoringManager.removeMonitorEventName, monitoringManager.sessionManager);
+            }
             socket.on('disconnect', () => {
                 console.log(`Session ended: ${sessionId}`);
-                this.rainfallSessionManager.removeMonitoringSession(sessionId);
-                this.temperatureSessionManager.removeMonitoringSession(sessionId);
+                for (const monitoringManager of this.monitoringDataList) {
+                    monitoringManager.sessionManager.removeMonitoringSession(sessionId);
+                }
             });
             // Emit to front end whether the SOAP Client was successfully created.
-            this.io.emit(socket_keys_1.default.soapClientCreationSuccess, this.succesfulSoapClientconnection);
+            socket.emit(socket_keys_1.default.successfulServerSetup, this.successfulClientSetup);
         });
     }
     initialiseMonitorSocketEvent(socket, addEventName, removeEventName, sessionManager) {
@@ -185,8 +193,8 @@ class FullLambdaService {
                     // Can add monitor.
                     // Add new location to monitor to all locations that are monitored.
                     locationMonitoringManager.addMonitorLocation(monitor);
-                    const rainfallLocationManager = this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
-                    const temperatureLocationMonitor = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
+                    const rainfallLocationManager = this.rainfallMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
+                    const temperatureLocationMonitor = this.temperatureMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
                     this.weatherClient.retrieveWeatherLocationData(monitor.location, rainfallLocationManager.getMonitoredLocations().has(monitor.location), temperatureLocationMonitor.getMonitoredLocations().has(monitor.location), false).then((weatherLocationData) => {
                         socket.emit(addEventName, new RequestResponse_1.RequestResponse(weatherLocationData, null));
                     }).catch((error) => {
@@ -265,37 +273,48 @@ class FullLambdaService {
         for (const sessionId of Object.keys(this.io.sockets.sockets)) {
             try {
                 console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
-                const rainfallMonitoringSession = this.rainfallSessionManager.getLocationMonitorManagerForSession(sessionId);
-                const temperatureMonitoringSession = this.temperatureSessionManager.getLocationMonitorManagerForSession(sessionId);
-                if (rainfallMonitoringSession && temperatureMonitoringSession) {
-                    const rainfallToEmitWeatherFor = rainfallMonitoringSession.getMonitoredLocations();
-                    const temperatureToEmitWeatherFor = temperatureMonitoringSession.getMonitoredLocations();
-                    // We only need to emit data if the user is monitoring a location.
-                    // Otherwise don't even bother executing the emission code.
-                    if (rainfallToEmitWeatherFor.size > 0 && temperatureToEmitWeatherFor.size > 0) {
-                        const weatherDataToEmit = [];
-                        for (const weatherData of weatherLocationDataList) {
-                            const emitRainfall = rainfallToEmitWeatherFor.has(weatherData.location);
-                            const emitTemperature = temperatureToEmitWeatherFor.has(weatherData.location);
-                            if (emitTemperature && emitRainfall) {
-                                weatherDataToEmit.push(weatherData);
-                            }
-                            else if (emitRainfall) {
-                                weatherDataToEmit.push(new WeatherLocationData_1.WeatherLocationData(weatherData.location, weatherData.rainfallData, null));
-                            }
-                            else if (emitTemperature) {
-                                weatherDataToEmit.push(new WeatherLocationData_1.WeatherLocationData(weatherData.location, null, weatherData.temperatureData));
-                            }
-                        }
-                        const socket = this.io.sockets.sockets[sessionId];
-                        socket.emit(socket_keys_1.default.replaceWeatherData, weatherDataToEmit);
-                    }
-                    else {
-                        console.log(`Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`);
+                let validSessionMonitors = true;
+                for (const monitoringSession of this.monitoringDataList) {
+                    const sessionManager = monitoringSession.sessionManager;
+                    if (!sessionManager) {
+                        validSessionMonitors = false;
+                        break;
                     }
                 }
-                else {
+                if (!validSessionMonitors) {
                     console.error(chalk.red(`Socket ${chalk.magenta(sessionId)} had no monitoring session. Skipping emit.`));
+                    continue;
+                }
+                let hasDataToEmit = false;
+                for (const monitoringSession of this.monitoringDataList) {
+                    if (monitoringSession.sessionManager.getMonitoredLocations().size > 1) {
+                        hasDataToEmit = true;
+                        break;
+                    }
+                }
+                if (!hasDataToEmit) {
+                    console.log(`Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`);
+                    continue;
+                }
+                const rainfallToEmitWeatherFor = this.rainfallMonitoringData.sessionManager.getMonitoredLocations();
+                const temperatureToEmitWeatherFor = this.temperatureMonitoringData.sessionManager.getMonitoredLocations();
+                // We only need to emit data if the user is monitoring a location.
+                // Otherwise don't even bother executing the emission code.
+                const weatherDataToEmit = [];
+                for (const weatherData of weatherLocationDataList) {
+                    const emitRainfall = rainfallToEmitWeatherFor.has(weatherData.location);
+                    const emitTemperature = temperatureToEmitWeatherFor.has(weatherData.location);
+                    if (emitTemperature && emitRainfall) {
+                        weatherDataToEmit.push(weatherData);
+                    }
+                    else if (emitRainfall) {
+                        weatherDataToEmit.push(new WeatherLocationData_1.WeatherLocationData(weatherData.location, weatherData.rainfallData, null));
+                    }
+                    else if (emitTemperature) {
+                        weatherDataToEmit.push(new WeatherLocationData_1.WeatherLocationData(weatherData.location, null, weatherData.temperatureData));
+                    }
+                    const socket = this.io.sockets.sockets[sessionId];
+                    socket.emit(socket_keys_1.default.replaceWeatherData, weatherDataToEmit);
                 }
             }
             catch (error) {
@@ -306,11 +325,10 @@ class FullLambdaService {
     }
     getAllMonitoredLocations() {
         const unionedMonitoredLocations = new Set();
-        for (const rainfallLocation of this.rainfallSessionManager.getMonitoredLocations()) {
-            unionedMonitoredLocations.add(rainfallLocation);
-        }
-        for (const temperatureLocation of this.temperatureSessionManager.getMonitoredLocations()) {
-            unionedMonitoredLocations.add(temperatureLocation);
+        for (const monitoringManager of this.monitoringDataList) {
+            for (const location of monitoringManager.sessionManager.getMonitoredLocations()) {
+                unionedMonitoredLocations.add(location);
+            }
         }
         return unionedMonitoredLocations;
     }
@@ -336,13 +354,13 @@ class FullLambdaService {
         console.log(chalk.green('SOAP weather client created'));
         this.weatherClient = weatherClient;
         // This lets any consumers of the API know that we reset the server
-        this.onAllLocationsRetrieved([]);
-        this.onWeatherLocationDataRetrieved([]);
+        this.io.emit(socket_keys_1.default.retrievedLocations, []);
+        this.io.emit(socket_keys_1.default.replaceWeatherData, []);
         // Initialise the socket.io events
         this.initialiseSocketEndpoints();
         // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
-        this.succesfulSoapClientconnection = true;
-        this.io.emit(socket_keys_1.default.soapClientCreationSuccess, this.succesfulSoapClientconnection);
+        this.successfulClientSetup = true;
+        this.io.emit(socket_keys_1.default.successfulServerSetup, this.successfulClientSetup);
         // Get locations from SOAP client in melbourneWeatherClient.
         weatherClient.retrieveLocations().then((locations) => {
             this.onAllLocationsRetrieved(locations);
@@ -375,19 +393,34 @@ exports.default = FullLambdaService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const TestWeatherClient_1 = __webpack_require__(16);
+const Soap = __webpack_require__(18);
+const chalk = __webpack_require__(0);
+const MelbourneWeatherClient_1 = __webpack_require__(15);
+// TODO: There are a lot of optional settings we can set in this Factory.
 /**
- *
+ * Builds an async SOAP Client from the provided wsdl file.
  */
-class TestWeatherClientFactory {
+class MelbourneWeatherClientFactory {
     createWeatherClient() {
         return new Promise((resolve, reject) => {
-            resolve(new TestWeatherClient_1.TestWeatherClient());
+            Soap.createClient('http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl')
+                .then((weatherService) => {
+                // weatherService has methods defined in MelbourneWeatherServiceStub.
+                const melbourneWeatherClient = new MelbourneWeatherClient_1.MelbourneWeatherClient(weatherService);
+                // TODO: emit good.
+                console.log(chalk.cyan('SOAP Client created'));
+                resolve(melbourneWeatherClient);
+            })
+                .catch((error) => {
+                // TODO: emit bad.
+                console.log(chalk.bgRed('Could not make SOAP Client'));
+                reject(error);
+            });
         });
     }
 }
-exports.TestWeatherClientFactory = TestWeatherClientFactory;
-exports.default = TestWeatherClientFactory;
+exports.MelbourneWeatherClientFactory = MelbourneWeatherClientFactory;
+exports.default = MelbourneWeatherClientFactory;
 
 
 /***/ }),
@@ -406,13 +439,68 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SocketIo = __webpack_require__(5);
 const chalk = __webpack_require__(0);
 const FullLambdaService_1 = __webpack_require__(3);
-const TestWeatherClientFactory_1 = __webpack_require__(4);
-console.log(chalk.cyan('Starting test server...'));
-new FullLambdaService_1.FullLambdaService(SocketIo.listen(8080), new TestWeatherClientFactory_1.TestWeatherClientFactory()).run();
+const MelbourneWeatherClientFactory_1 = __webpack_require__(4);
+// Listen to port 8080 for our socket.io server.
+console.log(chalk.cyan('Starting server...'));
+const io = SocketIo.listen(8080);
+const weatherClientFactory = new MelbourneWeatherClientFactory_1.MelbourneWeatherClientFactory();
+const service = new FullLambdaService_1.FullLambdaService(io, weatherClientFactory);
+service.run();
 
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const chalk = __webpack_require__(0);
+/**
+ * Provides caching mechanism so new frontend sessions that connect can display monitors instantly.
+ * TODO: Maybe move to a database without changing methods for stage 2.
+ */
+class LocationCache {
+    constructor() {
+        this.locationMap = new Map();
+    }
+    /**
+     * Add a location to map, location must not already exist in map.
+     */
+    addLocation(data) {
+        if (this.locationMap.has(data.location)) {
+            throw new Error(`location ${location} already exists in cache`);
+        }
+        this.locationMap.set(data.location, data);
+        console.log(chalk.red(`Add location ${data.location} to cache`));
+    }
+    /**
+     * Update a location in map, location has to previously exist in map.
+     */
+    updateLocation(data) {
+        if (!this.locationMap.has(data.location)) {
+            throw new Error(`location ${location} doesn't exist in cache, can't update`);
+        }
+        this.locationMap.set(data.location, data);
+        console.log(chalk.red(`Update location ${data.location} in cache`));
+    }
+    hasLocation(location) {
+        return this.locationMap.has(location);
+    }
+    has(weatherData) {
+        return this.locationMap.has(weatherData.location);
+    }
+    // Return weather data associated with a location.
+    get(location) {
+        return this.locationMap.get(location);
+    }
+}
+exports.LocationCache = LocationCache;
+exports.default = LocationCache;
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -436,25 +524,6 @@ class RainfallData extends TimestampedData_1.TimestampedData {
 }
 exports.RainfallData = RainfallData;
 exports.default = RainfallData;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Class to hold data to be sent to SOAP client to retrieve rainfall data.
- */
-class RainfallRequestData {
-    constructor(parameters) {
-        this.parameters = parameters;
-    }
-}
-exports.RainfallRequestData = RainfallRequestData;
-exports.default = RainfallRequestData;
 
 
 /***/ }),
@@ -531,25 +600,6 @@ exports.default = TemperatureData;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Class to hold data to be sent to SOAP client to retrieve temperature data.
- */
-class TemperatureRequestData {
-    constructor(parameters) {
-        this.parameters = parameters;
-    }
-}
-exports.TemperatureRequestData = TemperatureRequestData;
-exports.default = TemperatureRequestData;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
  * Controller class to monitor which locations are required to display data for, one instance for each frontend session.
  */
 class LocationMonitoringManager {
@@ -600,7 +650,7 @@ exports.default = LocationMonitoringManager;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -696,7 +746,7 @@ exports.default = SessionMonitoringManager;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -709,9 +759,166 @@ const keys = {
     removeTemperatureMonitor: 'remove_temperature_monitor',
     replaceWeatherData: 'replace_weather_data',
     retrievedLocations: 'locations',
-    soapClientCreationSuccess: 'soap_client_creation_success'
+    successfulServerSetup: 'successful_server_setup'
 };
 exports.default = keys;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const chalk = __webpack_require__(0);
+const RainfallData_1 = __webpack_require__(8);
+const RainfallRequestData_1 = __webpack_require__(16);
+const TemperatureRequestData_1 = __webpack_require__(17);
+const TemperatureData_1 = __webpack_require__(11);
+const WeatherLocationData_1 = __webpack_require__(2);
+const LocationCache_1 = __webpack_require__(7);
+/**
+ * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
+ */
+class MelbourneWeatherClient {
+    // Default constructor.
+    constructor(melbourneWeatherSoapClient, locationCache = new LocationCache_1.LocationCache()) {
+        this.weatherService = melbourneWeatherSoapClient;
+        this.locationCache = locationCache;
+    }
+    /**
+     * Retrieve locations from SOAP client endpoint.
+     */
+    retrieveLocations() {
+        return this.weatherService.getLocations().then((locationsResponse) => {
+            // locationsResponse is an object locationsResponse.return gives the data as an string.
+            return locationsResponse.return;
+        }).catch((error) => {
+            return error;
+        });
+    }
+    retrieveWeatherLocationData(location, getRainfall = true, getTemperature = true, forceRefresh = true) {
+        if (!getRainfall && !getTemperature) {
+            throw new Error('getRainfall and getTemperature were both false');
+        }
+        const dataPromises = [];
+        let temperatureData = null;
+        let rainfallData = null;
+        let cachedWeatherData = null;
+        if (!forceRefresh) {
+            cachedWeatherData = this.locationCache.get(location);
+            if (cachedWeatherData) {
+                rainfallData = getRainfall ? cachedWeatherData.rainfallData : null;
+                temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
+            }
+        }
+        if (getTemperature) {
+            if (temperatureData) {
+                temperatureData = cachedWeatherData.temperatureData;
+            }
+            else {
+                const temperatureRequestPromise = this.retrieveTemperatureData(new TemperatureRequestData_1.TemperatureRequestData(location))
+                    .then((retrievedTemperatureData) => {
+                    temperatureData = retrievedTemperatureData;
+                    return temperatureData;
+                })
+                    .catch((error) => {
+                    console.error(chalk.bgRed('Error: retrieveTemperatureData()'));
+                    console.error(chalk.red(error.message));
+                    console.error(chalk.red(error.stack));
+                });
+                dataPromises.push(temperatureRequestPromise);
+            }
+        }
+        if (getRainfall) {
+            if (rainfallData) {
+                rainfallData = cachedWeatherData.rainfallData;
+            }
+            else {
+                const rainfallRequestPromise = this.retrieveRainfallData(new RainfallRequestData_1.RainfallRequestData(location))
+                    .then((retrievedRainfallData) => {
+                    rainfallData = retrievedRainfallData;
+                    return rainfallData;
+                })
+                    .catch((error) => {
+                    console.error(chalk.bgRed('Error: retrieveRainfallData()'));
+                    console.error(chalk.red(error.message));
+                    console.error(chalk.red(error.stack));
+                });
+                dataPromises.push(rainfallRequestPromise);
+            }
+        }
+        // Wait for both getRainfall() and getTemperature() promises to resolve.
+        return Promise.all(dataPromises)
+            .then((responses) => {
+            const weatherData = new WeatherLocationData_1.WeatherLocationData(location, rainfallData, temperatureData);
+            if (this.locationCache.has(weatherData)) {
+                this.locationCache.updateLocation(weatherData);
+            }
+            else {
+                this.locationCache.addLocation(weatherData);
+            }
+            return weatherData;
+        }).catch((error) => {
+            console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+            console.error(chalk.red(error.message));
+            console.error(chalk.red(error.stack));
+        });
+    }
+    /**
+     * Retrieve weather data from SOAP client endpoint based on locations.
+     * @param locations Locations to get data for.
+     */
+    retrieveWeatherLocationDataList(locations) {
+        const weatherPromises = [];
+        // For each location, get temp and rainfall data.
+        locations.forEach((location, locationIndex) => {
+            weatherPromises.push(this.retrieveWeatherLocationData(location));
+        });
+        return Promise.all(weatherPromises);
+    }
+    /**
+     * Accesses SOAP Client to get rainfall data. Returns a promise.
+     * Upon successful completion, returns rainfallStrings (parsed from the rainfallResponse).
+     * rainfallStrings is of form 'timestamp,rainfall in mm'.
+     * It can be accessed with a outer .then() propagating it up.
+     */
+    retrieveRainfallData(rainfallRequestData) {
+        // Note: SOAP lib is async, Promise.then to do work after async call.
+        return this.weatherService.getRainfall(rainfallRequestData)
+            .then((rainfallResponse) => {
+            // rainfallResponse is an object, .return will return the data in that object as a string[].
+            const rainfallStrings = rainfallResponse.return;
+            return new RainfallData_1.RainfallData(rainfallStrings[1], rainfallStrings[0]);
+        })
+            .catch((error) => {
+            console.error(chalk.bgRed('Error: getRainfall()'));
+            console.error(chalk.red(error.message));
+            console.error(chalk.red(error.stack));
+        });
+    }
+    /**
+     * Accesses SOAP Client to get temperature data. Returns a promise.
+     * Upon successful completion, returns temperatureStrings (parsed from the temperatureResponse).
+     * temperatureStrings is of form 'timestamp,temperature in degrees celsius'.
+     * It can be accessed with a outer .then() propagating it up.
+     */
+    retrieveTemperatureData(temperatureRequestData) {
+        return this.weatherService.getTemperature(temperatureRequestData)
+            .then((temperatureResponse) => {
+            const temperatureStrings = temperatureResponse.return;
+            return new TemperatureData_1.TemperatureData(temperatureStrings[1], temperatureStrings[0]);
+        })
+            .catch((error) => {
+            console.error(chalk.bgRed('Error: getTemperature()'));
+            console.error(chalk.red(error.message));
+            console.error(chalk.red(error.stack));
+        });
+    }
+}
+exports.MelbourneWeatherClient = MelbourneWeatherClient;
+exports.default = MelbourneWeatherClient;
 
 
 /***/ }),
@@ -721,50 +928,42 @@ exports.default = keys;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const WeatherLocationData_1 = __webpack_require__(2);
-const RainfallData_1 = __webpack_require__(7);
-const TemperatureData_1 = __webpack_require__(11);
-const RainfallRequestData_1 = __webpack_require__(8);
-const TemperatureRequestData_1 = __webpack_require__(12);
 /**
- * Sometimes the SOAP API is down so we needed to create an extra client so that we could use offline dummy data
- * while we wait for the SOAP API to turn on again.
- * On top of that we also have needed to run tests independant of the SOAP client.
+ * Class to hold data to be sent to SOAP client to retrieve rainfall data.
  */
-class TestWeatherClient {
-    createDummyRainfallData(rainfallRequestData) {
-        return new RainfallData_1.RainfallData(`Rainfall ${rainfallRequestData.parameters}`, `Rainfall timestamp ${new Date().toString()}`);
-    }
-    createDummyTemperatureData(temperatureRequestData) {
-        return new TemperatureData_1.TemperatureData(`Temperature ${temperatureRequestData.parameters}`, `Temperature timestamp ${new Date().toString()}`);
-    }
-    retrieveLocations() {
-        return new Promise((resolve, reject) => {
-            const dummyLocations = [];
-            for (let l = 0; l < 15; l++) {
-                dummyLocations.push(`Location ${l}`);
-            }
-            resolve(dummyLocations);
-        });
-    }
-    retrieveWeatherLocationData(location, getRainfall = true, getTemperature = true) {
-        return new Promise((resolve, reject) => {
-            resolve(new WeatherLocationData_1.WeatherLocationData(location, getRainfall ? this.createDummyRainfallData(new RainfallRequestData_1.RainfallRequestData(location)) : null, getTemperature ? this.createDummyTemperatureData(new TemperatureRequestData_1.TemperatureRequestData(location)) : null));
-        });
-    }
-    retrieveWeatherLocationDataList(locations) {
-        return new Promise((resolve, reject) => {
-            const weatherPromises = [];
-            for (const location of locations) {
-                weatherPromises.push(this.retrieveWeatherLocationData(location));
-            }
-            resolve(Promise.all(weatherPromises));
-        });
+class RainfallRequestData {
+    constructor(parameters) {
+        this.parameters = parameters;
     }
 }
-exports.TestWeatherClient = TestWeatherClient;
-exports.default = TestWeatherClient;
+exports.RainfallRequestData = RainfallRequestData;
+exports.default = RainfallRequestData;
 
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Class to hold data to be sent to SOAP client to retrieve temperature data.
+ */
+class TemperatureRequestData {
+    constructor(parameters) {
+        this.parameters = parameters;
+    }
+}
+exports.TemperatureRequestData = TemperatureRequestData;
+exports.default = TemperatureRequestData;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = require("soap-as-promised");
 
 /***/ })
 /******/ ]);

@@ -2,9 +2,9 @@ import * as chalk from 'chalk';
 
 import { MelbourneWeatherSoapServiceStub } from './MelbourneWeatherSoapServiceStub';
 import { RainfallData } from '../../model/RainfallData';
-import { RainfallRequestData } from '../../model/RainfallRequestData';
+import { RainfallRequestData } from './RainfallRequestData';
+import { TemperatureRequestData } from './TemperatureRequestData';
 import { TemperatureData } from '../../model/TemperatureData';
-import { TemperatureRequestData } from '../../model/TemperatureRequestData';
 import { WeatherClient } from '../WeatherClient';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { LocationCache } from '../../cache/LocationCache';
@@ -65,6 +65,11 @@ class MelbourneWeatherClient implements WeatherClient {
             .then((retrievedTemperatureData) => {
               temperatureData = retrievedTemperatureData;
               return temperatureData;
+            })
+            .catch((error) => {
+              console.error(chalk.bgRed('Error: retrieveTemperatureData()'));
+              console.error(chalk.red(error.message));
+              console.error(chalk.red(error.stack));
             });
         dataPromises.push(temperatureRequestPromise);
       }
@@ -78,6 +83,11 @@ class MelbourneWeatherClient implements WeatherClient {
             .then((retrievedRainfallData) => {
               rainfallData = retrievedRainfallData;
               return rainfallData;
+            })
+            .catch((error) => {
+              console.error(chalk.bgRed('Error: retrieveRainfallData()'));
+              console.error(chalk.red(error.message));
+              console.error(chalk.red(error.stack));
             });
         dataPromises.push(rainfallRequestPromise);
       }
@@ -90,7 +100,11 @@ class MelbourneWeatherClient implements WeatherClient {
             rainfallData,
             temperatureData
         );
-        this.locationCache.addLocation(weatherData.location, weatherData);
+        if (this.locationCache.has(weatherData)) {
+          this.locationCache.updateLocation(weatherData);
+        } else {
+          this.locationCache.addLocation(weatherData);
+        }
         return weatherData;
       }).catch((error) => {
         console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));

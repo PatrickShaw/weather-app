@@ -71,7 +71,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       }
     );
 
-    socket.on(SocketKeys.soapClientCreationSuccess, (connectedToServer: boolean) => {
+    socket.on(SocketKeys.successfulServerSetup, (connectedToServer: boolean) => {
       // Assign MelbourneWeather2 successful connection status.
       console.log(`Successful connection to server: ${connectedToServer}`);
       this.setState({connectedToServer});

@@ -5,6 +5,6 @@ const keys = {
   removeTemperatureMonitor: 'remove_temperature_monitor',
   replaceWeatherData: 'replace_weather_data',
   retrievedLocations: 'locations',
-  soapClientCreationSuccess: 'soap_client_creation_success'
+  successfulServerSetup: 'successful_server_setup'
 };
 export default keys; 

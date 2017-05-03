@@ -1,7 +1,7 @@
 import { WeatherClientFactory } from '../WeatherClientFactory';
 import { TestWeatherClient } from './TestWeatherClient';
 /**
- * 
+ * Creates offline test enviornment test clients
  */
 class TestWeatherClientFactory implements WeatherClientFactory<TestWeatherClient> {
   public createWeatherClient(): Promise<TestWeatherClient> {
