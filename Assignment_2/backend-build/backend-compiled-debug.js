@@ -134,22 +134,19 @@ const socket_keys_1 = __webpack_require__(14);
 // allows for dependency injection where you pass in req parameters.
 // 300000 milliseconds = 5 mins.
 const defaultWeatherPollingInterval = 5000;
-class MonitoringManagerData {
-    constructor(sessionManager, addMonitorEventName, removeMonitorEventName) {
-        this.sessionManager = sessionManager;
-        this.addMonitorEventName = addMonitorEventName;
-        this.removeMonitorEventName = removeMonitorEventName;
-    }
-}
 /**
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
     constructor(io, weatherClientFactory, weatherInterval = defaultWeatherPollingInterval) {
+        // Weather client hasn't been built yet so this is false.
         this.successfulClientSetup = false;
+        // Locations will be empty for now, better than nothing.
         this.melbourneWeatherLocations = [];
         this.io = io;
         this.weatherClientFactory = weatherClientFactory;
+        // Time to compile our monitoring manager data
+        // Could probably dependency inject the SessionMontoringManager but that's a bit overkill
         this.rainfallMonitoringData = new MonitoringManagerData(new SessionMonitoringManager_1.SessionMonitoringManager(), socket_keys_1.default.addRainfallMonitor, socket_keys_1.default.removeRainfallMonitor);
         this.temperatureMonitoringData = new MonitoringManagerData(new SessionMonitoringManager_1.SessionMonitoringManager(), socket_keys_1.default.addTemperatureMonitor, socket_keys_1.default.removeTemperatureMonitor);
         this.monitoringDataList = [
@@ -159,13 +156,15 @@ class FullLambdaService {
         this.weatherPollingInterval = weatherInterval;
     }
     /**
-     * Setup websocket endpoints using SocketIO.
+     * We need to setup the websocket end points so that consumers of the API
+     * Ez pez
      */
     initialiseSocketEndpoints() {
         this.io.sockets.on('connection', (socket) => {
             // Called when session started with frontend.
             const sessionId = socket.id;
             console.log(`Session started ${sessionId}`);
+            // Pass them some fresh data, if the server went down, we should let the API consumers
             socket.emit(socket_keys_1.default.retrievedLocations, this.melbourneWeatherLocations);
             socket.emit(socket_keys_1.default.replaceWeatherData, []);
             // Add MonitoringManagerData to manage session with front end client.
@@ -289,7 +288,7 @@ class FullLambdaService {
                 }
                 let hasDataToEmit = false;
                 for (const monitoringSession of this.monitoringDataList) {
-                    if (monitoringSession.sessionManager.getMonitoredLocations().size > 0) {
+                    if (monitoringSession.sessionManager.getAllMonitoredLocations().size > 0) {
                         hasDataToEmit = true;
                         break;
                     }
@@ -298,8 +297,8 @@ class FullLambdaService {
                     console.log(`Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`);
                     continue;
                 }
-                const rainfallToEmitWeatherFor = this.rainfallMonitoringData.sessionManager.getMonitoredLocations();
-                const temperatureToEmitWeatherFor = this.temperatureMonitoringData.sessionManager.getMonitoredLocations();
+                const rainfallToEmitWeatherFor = this.rainfallMonitoringData.sessionManager.getAllMonitoredLocations();
+                const temperatureToEmitWeatherFor = this.temperatureMonitoringData.sessionManager.getAllMonitoredLocations();
                 // We only need to emit data if the user is monitoring a location.
                 // Otherwise don't even bother executing the emission code.
                 const weatherDataToEmit = [];
@@ -328,7 +327,7 @@ class FullLambdaService {
     getAllMonitoredLocations() {
         const unionedMonitoredLocations = new Set();
         for (const monitoringManager of this.monitoringDataList) {
-            for (const location of monitoringManager.sessionManager.getMonitoredLocations()) {
+            for (const location of monitoringManager.sessionManager.getAllMonitoredLocations()) {
                 unionedMonitoredLocations.add(location);
             }
         }
@@ -385,6 +384,13 @@ class FullLambdaService {
     }
 }
 exports.FullLambdaService = FullLambdaService;
+class MonitoringManagerData {
+    constructor(sessionManager, addMonitorEventName, removeMonitorEventName) {
+        this.sessionManager = sessionManager;
+        this.addMonitorEventName = addMonitorEventName;
+        this.removeMonitorEventName = removeMonitorEventName;
+    }
+}
 exports.default = FullLambdaService;
 
 
@@ -599,12 +605,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class LocationMonitoringManager {
     constructor() {
         this.monitoredLocations = new Map();
+        // We're just going to assume that no one wants to add an observer twice, performance is more important so 
+        // we're going to use a Set.
         this.onAddedMonitoredLocationObservers = new Set();
         this.onRemovedMonitoredLocationObservers = new Set();
     }
+    /**
+     * Gets all locations within the location monitoring manager as a set.
+     */
     getMonitoredLocations() {
         const locationsSet = new Set();
         // monitoredLocations.keys() effectively returns the equivelant of Iterator<String> in Java
+        // Consequently we need to add it to a new set so we can use the locations more than once.
+        // That said, alternatively we could return the iterator and let the caller of the method put the 
+        // locations into whatever data structure they like. That's out of scope for this assignment
         for (const monitoredLocation of this.monitoredLocations.keys()) {
             locationsSet.add(monitoredLocation);
         }
@@ -652,63 +666,103 @@ exports.default = LocationMonitoringManager;
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Controller class to monitor all sessions, keeps track of LocationMonitorManager based on session ids.
+ * Keeps track of some collective statistics of the locations being monitored like the number of sessions
+ * that are tracking the location.
  */
 class SessionMonitoringManager {
     constructor() {
+        const that = this;
         this.monitoringSessions = new Map();
         this.sessionMonitoringLocationCounts = new Map();
-        const that = this;
         this.onAddedMonitoredLocationObserver = new class {
             onAddedMonitoredLocation(monitor) {
-                that.addMonitoredLocation(monitor);
+                if (!(monitor.location in that.sessionMonitoringLocationCounts)) {
+                    that.sessionMonitoringLocationCounts.set(monitor.location, 1);
+                }
+                else {
+                    that.incrementLocationCountFromMonitor(monitor, 1);
+                }
             }
         }();
         this.onRemovedMonitoredLocationObserver = new class {
             onRemovedMonitoredLocation(monitor) {
-                that.removeMonitoredLocation(monitor);
+                that.incrementLocationCountFromMonitor(monitor, -1);
             }
         }();
     }
+    /**
+     * Essentially an overloader method for MonitorMetadata. Unfortunately Typescript has trouble with
+     * overloading methods.
+     */
     incrementLocationCountFromMonitor(monitor, amountIncremented) {
         this.incrementLocationCount(monitor.location, amountIncremented);
     }
+    /**
+     * Increments the location count of a given location.
+     */
     incrementLocationCount(monitoredLocation, amountIncremented) {
+        // Get the count associated with thep provided location.
         const retrievedMonitoringCount = this.sessionMonitoringLocationCounts.get(monitoredLocation);
+        // If the number was undefined then replace the value with 0.
+        // Unfortunately there's no default dictionary in ECMAScript 2015 so we have to mimic the functionaltiy
+        // manually.
         const sessionMonitoringLocationCount = retrievedMonitoringCount !== undefined ? retrievedMonitoringCount : 0;
+        // Now set the value but with the incremented amount added in.
         this.sessionMonitoringLocationCounts.set(monitoredLocation, sessionMonitoringLocationCount + amountIncremented);
     }
+    /**
+     * Gets the location manager for a given session id.
+     */
     getLocationMonitorManagerForSession(sessionId) {
         return this.monitoringSessions.get(sessionId);
     }
+    /**
+     * Adds a location manager, given a session id, into the session manager.
+     */
     addMonitoringSession(sessionId, monitoringSession) {
+        // Make sure that a location manager doesn't already exist.
         if (!(sessionId in this.monitoringSessions)) {
+            // Good there's no location manager, let's set it to the one that we've been provided.
             this.monitoringSessions.set(sessionId, monitoringSession);
+            // Now increment each count that the location manager has by 1.
             for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
                 this.incrementLocationCount(monitoredLocation, 1);
             }
+            // Also add listeners to the location manager so we can keep track of the monitored locations count.
             monitoringSession.addOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
             monitoringSession.addOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
         }
         else {
+            // The location manager already exists. Throw an error because this probably shouldn't happen.
             throw new Error(`Monitoring session with session ID ${sessionId} already exists within the session manager`);
         }
     }
     removeMonitoringSession(sessionId) {
+        // Get the existing location manager.
         const monitoringSession = this.monitoringSessions.get(sessionId);
-        if (monitoringSession) {
+        // Check if an actual location manager actually exists.
+        if (monitoringSession !== undefined) {
+            // Remove the observers that we added previously.
             monitoringSession.removeOnAddedMonitoredLocationObserver(this.onAddedMonitoredLocationObserver);
             monitoringSession.removeOnRemovedMonitoredLocationObserver(this.onRemovedMonitoredLocationObserver);
             this.monitoringSessions.delete(sessionId);
+            // Decrement by 1 for each location that the location manager was monitoring
             for (const monitoredLocation of monitoringSession.getMonitoredLocations().keys()) {
                 this.incrementLocationCount(monitoredLocation, -1);
             }
         }
         else {
+            // The location manager doesn't exist with the session manager. Throw an error.
             throw new Error(`No monitoring session with session id ${sessionId}`);
         }
     }
-    getMonitoredLocations() {
+    /**
+     * Gets the set of all locations that are actually being monitored by a location manager within the session manager.
+     */
+    getAllMonitoredLocations() {
+        // This is the set that we're going to add the locations to.
         const monitoredLocations = new Set();
+        // Go through each key in the location count.
         for (const location of this.sessionMonitoringLocationCounts.keys()) {
             const monitoringCount = this.sessionMonitoringLocationCounts.get(location);
             console.log(`${location} has ${monitoringCount} sessions monitoring it.`);
@@ -718,21 +772,12 @@ class SessionMonitoringManager {
                 }
             }
             else {
+                // This shouldn't ever be called but if does. Throw an error.
+                // A value shouldn't be undefined if there's a key that exists for the value.
                 throw new Error(`Has key ${location} but count is ${monitoringCount}`);
             }
         }
         return monitoredLocations;
-    }
-    removeMonitoredLocation(monitor) {
-        this.incrementLocationCountFromMonitor(monitor, -1);
-    }
-    addMonitoredLocation(monitor) {
-        if (!(monitor.location in this.sessionMonitoringLocationCounts)) {
-            this.sessionMonitoringLocationCounts.set(monitor.location, 1);
-        }
-        else {
-            this.incrementLocationCountFromMonitor(monitor, 1);
-        }
     }
 }
 exports.SessionMonitoringManager = SessionMonitoringManager;

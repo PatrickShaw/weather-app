@@ -15,38 +15,27 @@ import SocketKeys from '../socket.io/socket-keys';
 
 // 300000 milliseconds = 5 mins.
 const defaultWeatherPollingInterval: number = 5000;
-class MonitoringManagerData {
-  public readonly sessionManager: SessionMonitoringManager;
-  public readonly addMonitorEventName: string;
-  public readonly removeMonitorEventName: string;
-  constructor(
-    sessionManager: SessionMonitoringManager,
-    addMonitorEventName: string,
-    removeMonitorEventName: string
-  ) {
-    this.sessionManager = sessionManager;
-    this.addMonitorEventName = addMonitorEventName;
-    this.removeMonitorEventName = removeMonitorEventName;
-  }
-}
-
 /**
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
+  // We use this for building a weather client
+  // We decided to pass in the weather client's factory because we intend on giving this class the 
+  // responsibility of retrying the weather client building.
   private readonly weatherClientFactory: WeatherClientFactory<WeatherClient>;
   // A array to help with some of the duplicate code that the rainfall and temperature managers share
   private readonly monitoringDataList: MonitoringManagerData[];
   private readonly rainfallMonitoringData: MonitoringManagerData;
   private readonly temperatureMonitoringData: MonitoringManagerData;  
+  // Specifies how often we poll for data
   private readonly weatherPollingInterval: number;
   // It's convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;
-  // Contains all locations retrieved from weather client
+  // Contains all locations retrieved from weather client.
   private melbourneWeatherLocations: string[];
-  // Specifies whether we have successfully made a connection to the weather client
+  // Specifies whether we have successfully made a connection to the weather client.
   private successfulClientSetup: boolean;
-  // Our client that we retrieve weather data from
+  // Our client that we retrieve weather data from. 
   private weatherClient: WeatherClient;
 
   constructor(
@@ -54,10 +43,14 @@ class FullLambdaService {
     weatherClientFactory: WeatherClientFactory<WeatherClient>,
     weatherInterval: number = defaultWeatherPollingInterval
   ) {
+    // Weather client hasn't been built yet so this is false.
     this.successfulClientSetup = false;
+    // Locations will be empty for now, better than nothing.
     this.melbourneWeatherLocations = [];
     this.io = io;
     this.weatherClientFactory = weatherClientFactory;
+    // Time to compile our monitoring manager data
+    // Could probably dependency inject the SessionMontoringManager but that's a bit overkill
     this.rainfallMonitoringData = new MonitoringManagerData(
       new SessionMonitoringManager(),
       SocketKeys.addRainfallMonitor,
@@ -76,13 +69,15 @@ class FullLambdaService {
   }
   
   /**
-   * Setup websocket endpoints using SocketIO.
+   * We need to setup the websocket end points so that consumers of the API
+   * Ez pez
    */
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
       // Called when session started with frontend.
       const sessionId: string = socket.id;
       console.log(`Session started ${sessionId}`);
+      // Pass them some fresh data, if the server went down, we should let the API consumers
       socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
       socket.emit(SocketKeys.replaceWeatherData, []);
       // Add MonitoringManagerData to manage session with front end client.
@@ -242,7 +237,7 @@ class FullLambdaService {
         }
         let hasDataToEmit: boolean = false;
         for (const monitoringSession of this.monitoringDataList) {
-          if (monitoringSession.sessionManager.getMonitoredLocations().size > 0) {
+          if (monitoringSession.sessionManager.getAllMonitoredLocations().size > 0) {
             hasDataToEmit = true;
             break;
           }
@@ -252,9 +247,9 @@ class FullLambdaService {
           continue;
         }
         const rainfallToEmitWeatherFor: Set<string> 
-          = this.rainfallMonitoringData.sessionManager.getMonitoredLocations();
+          = this.rainfallMonitoringData.sessionManager.getAllMonitoredLocations();
         const temperatureToEmitWeatherFor: Set<string> 
-          = this.temperatureMonitoringData.sessionManager.getMonitoredLocations();
+          = this.temperatureMonitoringData.sessionManager.getAllMonitoredLocations();
         // We only need to emit data if the user is monitoring a location.
         // Otherwise don't even bother executing the emission code.
         const weatherDataToEmit: WeatherLocationData[] = [];
@@ -289,7 +284,7 @@ class FullLambdaService {
   private getAllMonitoredLocations(): Set<string> {
     const unionedMonitoredLocations: Set<string> = new Set<string>();
     for (const monitoringManager of this.monitoringDataList) {
-      for (const location of monitoringManager.sessionManager.getMonitoredLocations()) {
+      for (const location of monitoringManager.sessionManager.getAllMonitoredLocations()) {
         unionedMonitoredLocations.add(location);
       }
     }
@@ -349,5 +344,21 @@ class FullLambdaService {
       });
   }
 }
+
+class MonitoringManagerData {
+  public readonly sessionManager: SessionMonitoringManager;
+  public readonly addMonitorEventName: string;
+  public readonly removeMonitorEventName: string;
+  constructor(
+    sessionManager: SessionMonitoringManager,
+    addMonitorEventName: string,
+    removeMonitorEventName: string
+  ) {
+    this.sessionManager = sessionManager;
+    this.addMonitorEventName = addMonitorEventName;
+    this.removeMonitorEventName = removeMonitorEventName;
+  }
+}
+
 export {FullLambdaService};
 export default FullLambdaService;

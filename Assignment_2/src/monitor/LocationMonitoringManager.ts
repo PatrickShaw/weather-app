@@ -12,19 +12,33 @@ interface OnRemovedMonitoredLocationObserver {
  * Controller class to monitor which locations are required to display data for, one instance for each frontend session.
  */
 class LocationMonitoringManager {
-  private monitoredLocations: Map<string, MonitorMetadata>;
+  // The locations that this manager is currently keeping a track of.
+  // Note that MonitorMetadata currently just has a location. However, in the future, we may add more data to
+  // the monitorm metadata.
+  private monitoredLocations: Map<string, MonitorMetadata>;  
+  // Observer list for when a monitor is added to the manager
   private onAddedMonitoredLocationObservers: Set<OnAddedMonitoredLocationObserver>;
+  // Observer list for when a monitor is removed from the manager
   private onRemovedMonitoredLocationObservers: Set<OnRemovedMonitoredLocationObserver>;
 
   constructor() {
     this.monitoredLocations = new Map<string, MonitorMetadata>();
+    // We're just going to assume that no one wants to add an observer twice, performance is more important so 
+    // we're going to use a Set.
     this.onAddedMonitoredLocationObservers = new Set<OnAddedMonitoredLocationObserver>();
     this.onRemovedMonitoredLocationObservers = new Set<OnRemovedMonitoredLocationObserver>();    
   }
 
+
+  /**
+   * Gets all locations within the location monitoring manager as a set.
+   */
   public getMonitoredLocations(): Set<string> {
     const locationsSet: Set<string> = new Set<string>();
     // monitoredLocations.keys() effectively returns the equivelant of Iterator<String> in Java
+    // Consequently we need to add it to a new set so we can use the locations more than once.
+    // That said, alternatively we could return the iterator and let the caller of the method put the 
+    // locations into whatever data structure they like. That's out of scope for this assignment
     for (const monitoredLocation of this.monitoredLocations.keys()) {
       locationsSet.add(monitoredLocation);
     }
