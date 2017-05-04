@@ -5,16 +5,16 @@ import { MonitorMetadata } from '../model/MonitorMetadata';
 import { RequestError } from '../model/RequestError';
 import { RequestResponse } from '../model/RequestResponse';
 import { SessionMonitoringManager } from '../monitor/SessionMonitoringManager';
+import SocketKeys from '../socket.io/socket-keys';
 import { WeatherClient } from '../weather_client/WeatherClient';
 import { WeatherClientFactory } from '../weather_client/WeatherClientFactory';
 import { WeatherLocationData } from '../model/WeatherLocationData';
-import SocketKeys from '../socket.io/socket-keys';
 
 // TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
 // allows for dependency injection where you pass in req parameters.
 
 // 300000 milliseconds = 5 mins.
-const defaultWeatherPollingInterval: number = 300000;
+const defaultWeatherPollingInterval: number = 30000;
 /**
  * Controller class instantiated by the node server. This specifies the core logic specified in 
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
@@ -212,6 +212,9 @@ class FullLambdaWeatherService {
     );  
   }
 
+  /**
+   * Called at intervals once all weather data for monitored locations retrieved.
+   */
   private onWeatherLocationDataRetrieved(weatherLocationDataList: WeatherLocationData[]) {
     // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
     // Send updated data to front end.
@@ -222,6 +225,11 @@ class FullLambdaWeatherService {
       chalk.green('weather data items at time:') +
       chalk.magenta(` ${retrievedDataTimeStamp} `)
     );
+
+    // weatherLocationDataList.forEach((weatherLocationData) => {
+    //   console.log(chalk.cyan(weatherLocationData.toString()));
+    // });
+
     // Note: sockets.sockets is a Socket IO library attribute.
     for (const sessionId of Object.keys(this.io.sockets.sockets)) {
       try {
@@ -240,6 +248,7 @@ class FullLambdaWeatherService {
           ); 
           continue; 
         }
+
         let hasDataToEmit: boolean = false;
         for (const monitoringSession of this.monitoringDataList) {
           if (monitoringSession.sessionManager.getAllMonitoredLocations().size > 0) {
@@ -251,10 +260,29 @@ class FullLambdaWeatherService {
           console.log(`Session ID ${chalk.magenta(sessionId)} wasn't monitoring anything, skipping emission.`);
           continue;
         }
+
+        // Data to emit for this session.
         const rainfallToEmitWeatherFor: Set<string> 
-          = this.rainfallMonitoringData.sessionManager.getAllMonitoredLocations();
+          = this.rainfallMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId).
+            getMonitoredLocations();
         const temperatureToEmitWeatherFor: Set<string> 
-          = this.temperatureMonitoringData.sessionManager.getAllMonitoredLocations();
+          = this.temperatureMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId).
+            getMonitoredLocations();
+                  
+        // Log for debugging.
+        let rainfallLocationString: string = '';
+        rainfallToEmitWeatherFor.forEach((location) => {
+          rainfallLocationString = rainfallLocationString.concat(', ', location);
+        });
+        let temperatureLocationsString: string = '';
+        temperatureToEmitWeatherFor.forEach((location) => {
+           temperatureLocationsString = temperatureLocationsString.concat(', ', location);
+        });
+
+        console.log(`${chalk.magenta(`Session: ${sessionId}`)}, 
+          ${chalk.cyan(`rainfall locations: ${temperatureLocationsString}, 
+          temperature locations: ${temperatureLocationsString}`)}`);
+
         // We only need to emit data if the user is monitoring a location.
         // Otherwise don't even bother executing the emission code.
         const weatherDataToEmit: WeatherLocationData[] = [];
