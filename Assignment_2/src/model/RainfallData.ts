@@ -9,6 +9,10 @@ class RainfallData extends TimestampedData {
     super(timestamp);
     this.rainfall = rainfall;
   }  
+
+  public toString(): string {
+    return `${this.rainfall} at time ${this.timestamp}`;
+  }
 }
 
 export {RainfallData};
