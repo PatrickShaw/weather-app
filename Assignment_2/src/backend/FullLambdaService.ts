@@ -29,6 +29,7 @@ class MonitoringManagerData {
     this.removeMonitorEventName = removeMonitorEventName;
   }
 }
+
 /**
  * Controller class instantiated by the node server.
  */
@@ -38,7 +39,7 @@ class FullLambdaService {
   private readonly monitoringDataList: MonitoringManagerData[];
   private readonly rainfallMonitoringData: MonitoringManagerData;
   private readonly temperatureMonitoringData: MonitoringManagerData;  
-  
+  private readonly weatherPollingInterval: number;
   // It's convention to call SocketIO.Server io.
   private readonly io: SocketIO.Server;
   // Contains all locations retrieved from weather client
@@ -50,7 +51,8 @@ class FullLambdaService {
 
   constructor(
     io: SocketIO.Server, 
-    weatherClientFactory: WeatherClientFactory<WeatherClient>
+    weatherClientFactory: WeatherClientFactory<WeatherClient>,
+    weatherInterval: number = defaultWeatherPollingInterval
   ) {
     this.successfulClientSetup = false;
     this.melbourneWeatherLocations = [];
@@ -70,6 +72,7 @@ class FullLambdaService {
       this.rainfallMonitoringData,
       this.temperatureMonitoringData
     ];
+    this.weatherPollingInterval = weatherInterval;
   }
   
   /**
@@ -205,7 +208,7 @@ class FullLambdaService {
     this.retrieveAllMonitoredWeatherData();
     setInterval(
       (): void => { this.retrieveAllMonitoredWeatherData(); },
-      defaultWeatherPollingInterval 
+      this.weatherPollingInterval 
     );  
   }
 

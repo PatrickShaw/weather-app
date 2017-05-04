@@ -145,7 +145,7 @@ class MonitoringManagerData {
  * Controller class instantiated by the node server.
  */
 class FullLambdaService {
-    constructor(io, weatherClientFactory) {
+    constructor(io, weatherClientFactory, weatherInterval = defaultWeatherPollingInterval) {
         this.successfulClientSetup = false;
         this.melbourneWeatherLocations = [];
         this.io = io;
@@ -156,6 +156,7 @@ class FullLambdaService {
             this.rainfallMonitoringData,
             this.temperatureMonitoringData
         ];
+        this.weatherPollingInterval = weatherInterval;
     }
     /**
      * Setup websocket endpoints using SocketIO.
@@ -260,7 +261,7 @@ class FullLambdaService {
         // setInterval() is a JavaScript method that runs the method every msInterval milliseconds.
         // Note: setInterval() doesn't get data at time 0.
         this.retrieveAllMonitoredWeatherData();
-        setInterval(() => { this.retrieveAllMonitoredWeatherData(); }, defaultWeatherPollingInterval);
+        setInterval(() => { this.retrieveAllMonitoredWeatherData(); }, this.weatherPollingInterval);
     }
     onWeatherLocationDataRetrieved(weatherLocationDataList) {
         // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
