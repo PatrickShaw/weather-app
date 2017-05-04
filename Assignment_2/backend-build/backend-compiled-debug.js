@@ -142,7 +142,7 @@ const defaultWeatherPollingInterval = 5000;
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments,
  * try-catches and methods seperated over multiple lines.
  */
-class FullLambdaService {
+class FullLambdaWeatherService {
     constructor(io, weatherClientFactory, weatherInterval = defaultWeatherPollingInterval) {
         // Weather client hasn't been built yet so this is false.
         this.successfulClientSetup = false;
@@ -392,7 +392,7 @@ class FullLambdaService {
         });
     }
 }
-exports.FullLambdaService = FullLambdaService;
+exports.FullLambdaWeatherService = FullLambdaWeatherService;
 class MonitoringManagerData {
     constructor(sessionManager, addMonitorEventName, removeMonitorEventName) {
         this.sessionManager = sessionManager;
@@ -400,7 +400,7 @@ class MonitoringManagerData {
         this.removeMonitorEventName = removeMonitorEventName;
     }
 }
-exports.default = FullLambdaService;
+exports.default = FullLambdaWeatherService;
 
 
 /***/ }),
@@ -413,7 +413,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Soap = __webpack_require__(18);
 const chalk = __webpack_require__(0);
 const MelbourneWeatherClient_1 = __webpack_require__(15);
-// TODO: There are a lot of optional settings we can set in this Factory.
 /**
  * Builds an async SOAP Client from the provided wsdl file.
  */
@@ -456,12 +455,12 @@ module.exports = require("socket.io");
 Object.defineProperty(exports, "__esModule", { value: true });
 const SocketIo = __webpack_require__(5);
 const chalk = __webpack_require__(0);
-const FullLambdaService_1 = __webpack_require__(3);
+const FullLambdaWeatherService_1 = __webpack_require__(3);
 const MelbourneWeatherClientFactory_1 = __webpack_require__(4);
 console.log(chalk.cyan('Starting server...'));
 const io = SocketIo.listen(8080);
 const weatherClientFactory = new MelbourneWeatherClientFactory_1.MelbourneWeatherClientFactory();
-const service = new FullLambdaService_1.FullLambdaService(io, weatherClientFactory);
+const service = new FullLambdaWeatherService_1.FullLambdaWeatherService(io, weatherClientFactory);
 service.run();
 
 
@@ -853,7 +852,9 @@ const TemperatureData_1 = __webpack_require__(11);
 const WeatherLocationData_1 = __webpack_require__(2);
 const LocationCache_1 = __webpack_require__(7);
 /**
- * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
+ * A client designed to retrieve data from the SOAP MelbourneWeather2 API. Supports limited in memory
+ * caching to limit the number of calls to the SOAP client. The client DOES NOT handle connections to the
+ * SOAP client itself.
  */
 class MelbourneWeatherClient {
     // Default constructor.
@@ -872,13 +873,22 @@ class MelbourneWeatherClient {
             return error;
         });
     }
-    retrieveWeatherLocationData(location, getRainfall = true, getTemperature = true, forceRefresh = true) {
+    retrieveWeatherLocationData(location, // The weather data's associated location.
+        getRainfall = true, // Whether we want to get the rainfall data for this location.
+        getTemperature = true, // Whether we want to get the temperature data for this location.
+        forceRefresh = true // Whether we want to retrieve the data regardless of whether it's cached.
+    ) {
         if (!getRainfall && !getTemperature) {
+            // Obviously the caller shouldn't bother calling this method if don't actually want to get any
+            // meaningful data.
             throw new Error('getRainfall and getTemperature were both false');
         }
+        // We're going to use this to wait for all requests later on.
         const dataPromises = [];
+        // We're going to use these currently undefined variables to populate the weather data later on.
         let temperatureData;
         let rainfallData;
+        // Okay, let's see if we can grab ourselve's some cached data.
         if (!forceRefresh) {
             let cachedWeatherData;
             cachedWeatherData = this.locationCache.get(location);
@@ -887,6 +897,7 @@ class MelbourneWeatherClient {
                 temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
             }
         }
+        // Now let's check if we should make actual calls to the SOAP client.
         if (getTemperature) {
             if (temperatureData === undefined) {
                 const temperatureRequestPromise = this.retrieveTemperatureData(new TemperatureRequestData_1.TemperatureRequestData(location))

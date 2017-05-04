@@ -20,7 +20,7 @@ const defaultWeatherPollingInterval: number = 5000;
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
  * try-catches and methods seperated over multiple lines.
  */
-class FullLambdaService {
+class FullLambdaWeatherService {
   // We use this for building a weather client
   // We decided to pass in the weather client's factory because we intend on giving this class the 
   // responsibility of retrying the weather client building.
@@ -366,5 +366,5 @@ class MonitoringManagerData {
   }
 }
 
-export {FullLambdaService};
-export default FullLambdaService;
+export {FullLambdaWeatherService};
+export default FullLambdaWeatherService;
