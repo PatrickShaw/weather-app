@@ -11,6 +11,10 @@ import SocketKeys from '../../socket.io/socket-keys';
 /**
  * Decides how the current state of the frontend application is manipulated, which, in turn, causes a 
  * re-render of certain components in the DOM.
+ * This is a recommended design pattern provided by Redux (as an example for when you don't use the Redux library) 
+ * and React.
+ * The class acts as a controller in that it coordinates the events of view objects and the iteraction to the 
+ * backend API.
  */
 class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
@@ -18,6 +22,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
 
   constructor(props: {}) {
     super(props);
+    // Start the state off with a bunch of empty lists.
     this.state = new AppState([], new Map<string, WeatherLocationData>(), false);
   }
 
@@ -39,6 +44,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       }
     }();
 
+    // Create on click monitor listeners
     this.onLocationsListRainfallItemClicked = this.createOnChangeMonitorListener(
       socket, SocketKeys.addRainfallMonitor, SocketKeys.removeRainfallMonitor
     );
@@ -46,6 +52,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       socket, SocketKeys.addTemperatureMonitor, SocketKeys.removeTemperatureMonitor
     );
 
+    // Initialise the socket end points for each type of monitor
     this.initialiseMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addRainfallMonitor, 
@@ -65,13 +72,13 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     );
 
     socket.on(SocketKeys.successfulServerSetup, (connectedToServer: boolean) => {
+      // Remove the 'waiting for client connection' view once the server has set itself up.
       // Assign MelbourneWeather2 successful connection status.
       console.log(`Successful connection to server: ${connectedToServer}`);
       this.setState({ connectedToServer });
     });
 
     socket.on(SocketKeys.retrievedLocations, (locations: string[]) => {
-      console.log(locations);
       // We were given a list of locations. Let React know that we may need to re-render.
       this.setState({ locations });
     });
@@ -118,7 +125,9 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     filterWeatherLocationData: (location: string, weatherData: WeatherLocationData) => WeatherLocationData
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
+      // First, make sure we didn't receive an error.
       if (addMonitorResponse.error == null) {
+        // Good, we didn't receive an error, add the new weather data into our state's weather hash map.
         const newWeatherData: WeatherLocationData = addMonitorResponse.data;
         const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
         weatherDataMap.set(newWeatherData.location, newWeatherData);
@@ -129,22 +138,29 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     });
     
     socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<MonitorMetadata>) => {
+      // Make sure we didn't receive an error when we tried to remove the monitor
       if (removeMonitorResponse.error == null) {
+        // We didn't receive an error so remove that data.
         const removedMonitor = removeMonitorResponse.data;
         const weatherDataMap: Map<string, WeatherLocationData> = this.state.weatherDataMap;
         const originalWeatherData: WeatherLocationData | undefined = weatherDataMap.get(removedMonitor.location);
         if (originalWeatherData != null) {
+          // Filter out the data associated with the monitor we removed.
           const newWeatherData: WeatherLocationData = 
             filterWeatherLocationData(originalWeatherData.location, originalWeatherData);
           if (newWeatherData.rainfallData == null && newWeatherData.temperatureData == null) {
-            console.log('DELETE!');
+            // Okay we don't actually have any meaningful data in this weather object anymore.
+            // Let's delete the data so we render an empty piece of weather data.
             weatherDataMap.delete(newWeatherData.location);
           } else {
-           console.log('SET!');
-           weatherDataMap.set(newWeatherData.location, newWeatherData);
+            // We removed part of the weather data but there's still some 
+            // meaningful information in it. Just set the new weather data into the hash map.
+            weatherDataMap.set(newWeatherData.location, newWeatherData);
           }
+          // At this point we've definately changed on the weather data map.
+          // Let React know it's time to re-render.
+          this.setState({ weatherDataMap });
         }
-        this.setState({ weatherDataMap });
       } else {
         console.error(removeMonitorResponse.error);
       }

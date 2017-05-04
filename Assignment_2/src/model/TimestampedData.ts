@@ -1,3 +1,6 @@
+/**
+ * A piece of client data that holds a timestamp.
+ */
 abstract class TimestampedData {
   public readonly timestamp: string;
 

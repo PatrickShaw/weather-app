@@ -1,9 +1,11 @@
 import {RequestError} from './RequestError';
 /**
- * Class used to hold response to be sent to frontend after a request from the frontend.
+ * Class used to hold response to be sent to consumers of the API after a request from the frontend.
  */
 class RequestResponse<T> {
+  // The data that's actually supposed to be sent from to from the API.
   public readonly data: T;
+  // The error provided to consumers of the API (if there was one).
   public readonly error: RequestError;
   constructor(data: T, error: RequestError) {
     this.data = data;
