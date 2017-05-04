@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import {OnClickObserver} from '../observers/OnClickObserver';
 
+import './GenericListItem.scss';
+
 interface GenericListItemProps {
   title: string;
   subtitle?: string;
@@ -18,9 +20,14 @@ class GenericListItem extends React.Component<GenericListItemProps, void> {
     const noSubtitle: boolean = this.props.subtitle == null;
     const titleStyle = noSubtitle ? 'txt-body-1' : 'txt-body-2';
     return (
-      <section className="pad-item-list" onClick={this.onListItemClickedBound}>
-        <h1 className={titleStyle}>{this.props.title}</h1>
-        {noSubtitle ? null : <h2 className="txt-body-1">{this.props.subtitle}</h2>}
+      <section className="list-item-container" onClick={this.onListItemClickedBound}>
+        <div className="titles pad-item-list">
+          <h1 className={titleStyle}>{this.props.title}</h1>
+          {noSubtitle ? null : <h2 className="txt-body-1">{this.props.subtitle}</h2>}
+        </div>
+        <div className="remaining-items">
+          {this.props.children}
+        </div>
       </section>
     );
   }

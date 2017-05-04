@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -127,12 +127,12 @@ exports.default = WeatherLocationData;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = __webpack_require__(0);
-const LocationMonitoringManager_1 = __webpack_require__(11);
-const RequestError_1 = __webpack_require__(8);
-const RequestResponse_1 = __webpack_require__(9);
-const SessionMonitoringManager_1 = __webpack_require__(12);
+const LocationMonitoringManager_1 = __webpack_require__(12);
+const RequestError_1 = __webpack_require__(9);
+const RequestResponse_1 = __webpack_require__(10);
+const SessionMonitoringManager_1 = __webpack_require__(13);
 const WeatherLocationData_1 = __webpack_require__(2);
-const socket_keys_1 = __webpack_require__(13);
+const socket_keys_1 = __webpack_require__(14);
 // TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
 // allows for dependency injection where you pass in req parameters.
 // 300000 milliseconds = 5 mins.
@@ -346,6 +346,7 @@ class FullLambdaService {
         return locationsList;
     }
     retrieveAllMonitoredWeatherData() {
+        process.stdout.write('');
         this.weatherClient.retrieveWeatherLocationDataList(this.getAllMonitoredLocationsList())
             .then((weatherLocationDataList) => {
             this.onWeatherLocationDataRetrieved(weatherLocationDataList);
@@ -404,7 +405,7 @@ exports.default = FullLambdaService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const TestWeatherClient_1 = __webpack_require__(14);
+const TestWeatherClient_1 = __webpack_require__(15);
 /**
  * Creates offline test enviornment test clients
  */
@@ -423,25 +424,37 @@ exports.default = TestWeatherClientFactory;
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = require("socket.io");
+module.exports = require("http");
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io");
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SocketIo = __webpack_require__(5);
 const chalk = __webpack_require__(0);
+const Http = __webpack_require__(5);
+const SocketIo = __webpack_require__(6);
 const FullLambdaService_1 = __webpack_require__(3);
 const TestWeatherClientFactory_1 = __webpack_require__(4);
-console.log(chalk.cyan('Starting test server...'));
-new FullLambdaService_1.FullLambdaService(SocketIo.listen(8080), new TestWeatherClientFactory_1.TestWeatherClientFactory()).run();
+console.log(chalk.cyan('Starting server...'));
+const server = Http.createServer();
+server.listen(8080);
+const io = SocketIo(server);
+const weatherClientFactory = new TestWeatherClientFactory_1.TestWeatherClientFactory();
+const service = new FullLambdaService_1.FullLambdaService(io, weatherClientFactory);
+service.run();
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -462,7 +475,7 @@ exports.default = RainfallData;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -482,7 +495,7 @@ exports.default = RequestError;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -502,7 +515,7 @@ exports.default = RequestResponse;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -523,7 +536,7 @@ exports.default = TemperatureData;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -554,6 +567,9 @@ class LocationMonitoringManager {
         }
         return locationsSet;
     }
+    /**
+     * Adds a monitored location from the manager
+     */
     addMonitorLocation(monitor) {
         if (!this.monitoredLocations.has(monitor.location)) {
             this.monitoredLocations.set(monitor.location, monitor);
@@ -562,6 +578,9 @@ class LocationMonitoringManager {
             }
         }
     }
+    /**
+     * Removes a monitored location from the manager
+     */
     removeMonitoredLocation(monitor) {
         if (this.monitoredLocations.has(monitor.location)) {
             this.monitoredLocations.delete(monitor.location);
@@ -570,15 +589,27 @@ class LocationMonitoringManager {
             }
         }
     }
+    /**
+     * Adds an on add monitored location observer to the manager.
+     */
     addOnAddedMonitoredLocationObserver(observer) {
         this.onAddedMonitoredLocationObservers.add(observer);
     }
+    /**
+     * Removes an on add monitored location observer from the manager.
+     */
     removeOnAddedMonitoredLocationObserver(observer) {
         this.onAddedMonitoredLocationObservers.delete(observer);
     }
+    /**
+     * Adds an on remove monitored location observer from the manager.
+     */
     addOnRemovedMonitoredLocationObserver(observer) {
         this.onRemovedMonitoredLocationObservers.add(observer);
     }
+    /**
+     * Removes an on remove monitored location observer from the manager.
+     */
     removeOnRemovedMonitoredLocationObserver(observer) {
         this.onRemovedMonitoredLocationObservers.delete(observer);
     }
@@ -588,7 +619,7 @@ exports.default = LocationMonitoringManager;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -695,7 +726,6 @@ class SessionMonitoringManager {
         // Go through each key in the location count.
         for (const location of this.sessionMonitoringLocationCounts.keys()) {
             const monitoringCount = this.sessionMonitoringLocationCounts.get(location);
-            console.log(`${location} has ${monitoringCount} sessions monitoring it.`);
             if (monitoringCount !== undefined) {
                 if (monitoringCount > 0) {
                     monitoredLocations.add(location);
@@ -715,7 +745,7 @@ exports.default = SessionMonitoringManager;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -742,15 +772,15 @@ exports.default = keys;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const WeatherLocationData_1 = __webpack_require__(2);
-const RainfallData_1 = __webpack_require__(7);
-const TemperatureData_1 = __webpack_require__(10);
+const RainfallData_1 = __webpack_require__(8);
+const TemperatureData_1 = __webpack_require__(11);
 /**
  * Sometimes the SOAP API is down so we needed to create an extra client so that we could use offline dummy data
  * while we wait for the SOAP API to turn on again.
@@ -761,7 +791,7 @@ class TestWeatherClient {
         this.pollCount = 0;
         setInterval(() => {
             this.pollCount += 1;
-        }, 500);
+        }, 50);
     }
     createDummyRainfallData(location, forceRefresh) {
         return new RainfallData_1.RainfallData(`Rainfall ${location}, ${this.pollCount} (Forced refresh: ${forceRefresh})`, `Rainfall timestamp ${new Date().toString()}`);

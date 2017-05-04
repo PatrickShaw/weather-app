@@ -15,7 +15,7 @@ class TestWeatherClient implements WeatherClient {
       () => {
         this.pollCount += 1;
       }, 
-      500
+      50
     );
   }
   private createDummyRainfallData(location: string, forceRefresh: boolean): RainfallData {

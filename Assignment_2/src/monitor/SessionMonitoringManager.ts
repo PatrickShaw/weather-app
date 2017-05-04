@@ -123,7 +123,6 @@ class SessionMonitoringManager {
     // Go through each key in the location count.
     for (const location of this.sessionMonitoringLocationCounts.keys()) {
       const monitoringCount: number | undefined = this.sessionMonitoringLocationCounts.get(location);
-      console.log(`${location} has ${monitoringCount} sessions monitoring it.`);
       if (monitoringCount !== undefined) {
         if (monitoringCount > 0) {
           monitoredLocations.add(location);

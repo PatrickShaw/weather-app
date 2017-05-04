@@ -302,6 +302,7 @@ class FullLambdaService {
   }
 
   private retrieveAllMonitoredWeatherData(): void {
+    process.stdout.write('');
     this.weatherClient.retrieveWeatherLocationDataList(this.getAllMonitoredLocationsList())
       .then((weatherLocationDataList) => {
         this.onWeatherLocationDataRetrieved(weatherLocationDataList);

@@ -45,6 +45,9 @@ class LocationMonitoringManager {
     return locationsSet;
   }
 
+  /**
+   * Adds a monitored location from the manager
+   */
   public addMonitorLocation(monitor: MonitorMetadata): void {
     if (!this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.set(monitor.location, monitor);
@@ -54,6 +57,9 @@ class LocationMonitoringManager {
     }
   }
 
+  /**
+   * Removes a monitored location from the manager
+   */
   public removeMonitoredLocation(monitor: MonitorMetadata): void {
     if (this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.delete(monitor.location);
@@ -63,18 +69,30 @@ class LocationMonitoringManager {
     }
   }
 
+  /**
+   * Adds an on add monitored location observer to the manager.
+   */
   public addOnAddedMonitoredLocationObserver(observer: OnAddedMonitoredLocationObserver): void {
     this.onAddedMonitoredLocationObservers.add(observer);
   }
 
+  /**
+   * Removes an on add monitored location observer from the manager.
+   */
   public removeOnAddedMonitoredLocationObserver(observer: OnAddedMonitoredLocationObserver): void {
     this.onAddedMonitoredLocationObservers.delete(observer);
   }
 
+  /**
+   * Adds an on remove monitored location observer from the manager.
+   */
   public addOnRemovedMonitoredLocationObserver(observer: OnRemovedMonitoredLocationObserver): void {
     this.onRemovedMonitoredLocationObservers.add(observer);
   }
 
+  /**
+   * Removes an on remove monitored location observer from the manager.
+   */
   public removeOnRemovedMonitoredLocationObserver(observer: OnRemovedMonitoredLocationObserver): void {
     this.onRemovedMonitoredLocationObservers.delete(observer);
   }
