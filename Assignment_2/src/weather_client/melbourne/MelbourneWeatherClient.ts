@@ -9,7 +9,9 @@ import { WeatherClient } from '../WeatherClient';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { LocationCache } from '../../cache/LocationCache';
 /**
- * Creates a client, designed for the MelbourneWeather2 web service which listeners can be added to.
+ * A client designed to retrieve data from the SOAP MelbourneWeather2 API. Supports limited in memory 
+ * caching to limit the number of calls to the SOAP client. The client DOES NOT handle connections to the 
+ * SOAP client itself.
  */
 class MelbourneWeatherClient implements WeatherClient {
   // Instance variables.
@@ -37,17 +39,22 @@ class MelbourneWeatherClient implements WeatherClient {
   }
   
   public retrieveWeatherLocationData(
-    location: string, 
-    getRainfall: boolean = true, 
-    getTemperature: boolean = true,
-    forceRefresh: boolean = true
+    location: string, // The weather data's associated location.
+    getRainfall: boolean = true, // Whether we want to get the rainfall data for this location.
+    getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
+    forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
     if (!getRainfall && !getTemperature) {
+      // Obviously the caller shouldn't bother calling this method if don't actually want to get any
+      // meaningful data.
       throw new Error('getRainfall and getTemperature were both false');
     }
+    // We're going to use this to wait for all requests later on.
     const dataPromises: Array<Promise<RainfallData | TemperatureData>> = [];
+    // We're going to use these currently undefined variables to populate the weather data later on.
     let temperatureData: TemperatureData;
     let rainfallData: RainfallData;
+    // Okay, let's see if we can grab ourselve's some cached data.
     if (!forceRefresh) {
       let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
@@ -56,6 +63,7 @@ class MelbourneWeatherClient implements WeatherClient {
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
       }
     }
+    // Now let's check if we should make actual calls to the SOAP client.
     if (getTemperature) {
       if (temperatureData === undefined) {
         const temperatureRequestPromise: Promise<TemperatureData> = 

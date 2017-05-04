@@ -4,10 +4,15 @@ import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 import './LocationItem.scss';
 interface LocationItemProps {
+  // The location associated with the LocationItem
   location: string;
-  rainfallMonitorSelected: boolean;
-  temperatureMonitorSelected: boolean;
+  // Whether the rainfall monitor has been selected for this item.
+  rainfallMonitorSelected: boolean; 
+  // Whether the temperature monitor ahs been selected for this item.
+  temperatureMonitorSelected: boolean; 
+  // Specifies what happens when the rainfall monitor button is clicked.
   onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
+  // Specifies what happens when the temperature monitor button is clicked.
   onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
@@ -16,6 +21,8 @@ interface LocationItemProps {
  * Contains listeners for when inner rain and temperature monitor buttons are clicked.
  */
 class LocationItem extends React.Component<LocationItemProps, void> {
+  // The bound versions of the original click methods.
+  // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
   private onRainfallMonitorButtonClickedBound: any;
   private onTemperatureMonitorButtonClickedBound: any;
   constructor(props: LocationItemProps) {
@@ -24,6 +31,9 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     this.onTemperatureMonitorButtonClickedBound = this.onTemperatureMonitorButtonClicked.bind(this);
   }
 
+  /**
+   * The unbound method that triggers the rainfall monitor click observer to fire.
+   */
   private onRainfallMonitorButtonClicked(
     event: React.MouseEvent<HTMLElement>
   ): void {
@@ -35,6 +45,9 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     }
   }
 
+  /**
+   * The unbound method that triggers the temperature monitor click observer to fire.
+   */
   private onTemperatureMonitorButtonClicked(
     event: React.MouseEvent<HTMLElement>
   ): void {

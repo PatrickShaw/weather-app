@@ -5,8 +5,6 @@ import { MelbourneWeatherClient } from './MelbourneWeatherClient';
 import { MelbourneWeatherSoapServiceStub } from './MelbourneWeatherSoapServiceStub';
 import { WeatherClientFactory } from '../WeatherClientFactory';
 
-// TODO: There are a lot of optional settings we can set in this Factory.
-
 /**
  * Builds an async SOAP Client from the provided wsdl file.
  */
