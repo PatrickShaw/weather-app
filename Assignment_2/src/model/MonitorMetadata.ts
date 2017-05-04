@@ -8,6 +8,9 @@ class MonitorMetadata {
     this.location = location;
   }
 
+  public toString(): string {
+    return this.location;
+  }
 }
 export {MonitorMetadata};
 export default MonitorMetadata;

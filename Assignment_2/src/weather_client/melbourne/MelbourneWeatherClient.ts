@@ -51,15 +51,13 @@ class MelbourneWeatherClient implements WeatherClient {
     if (!forceRefresh) {
       let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
-      if (cachedWeatherData === undefined) {
+      if (cachedWeatherData !== undefined) {
         rainfallData = getRainfall ? cachedWeatherData.rainfallData : null;
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
       }
     }
     if (getTemperature) {
-      if (temperatureData !== undefined) {
-        temperatureData = cachedWeatherData.temperatureData;
-      } else {
+      if (temperatureData === undefined) {
         const temperatureRequestPromise: Promise<TemperatureData> = 
           this.retrieveTemperatureData(new TemperatureRequestData(location))
             .then((retrievedTemperatureData) => {
@@ -75,9 +73,7 @@ class MelbourneWeatherClient implements WeatherClient {
       }
     }
     if (getRainfall) {
-      if (rainfallData !== undefined) {
-        rainfallData = cachedWeatherData.rainfallData;
-      } else {
+      if (rainfallData === undefined) {
         const rainfallRequestPromise: Promise<RainfallData> = 
           this.retrieveRainfallData(new RainfallRequestData(location))
             .then((retrievedRainfallData) => {
