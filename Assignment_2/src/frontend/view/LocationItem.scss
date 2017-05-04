@@ -1,0 +1,13 @@
+@import "../theme/full-lambda-colors";
+.monitor-options > * {
+  display: block;
+}
+.monitor-options {
+  display: none;
+}
+.monitor-options.visible {
+  display: block; 
+}
+.selected {
+  color: $color-good;
+}

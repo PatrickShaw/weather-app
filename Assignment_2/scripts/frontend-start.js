@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'development';
 const chalk = require('chalk')
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const webpackDebugConfig = require('../config/webpack.config.frontend.debug');
+const webpackDebugConfig = require('../config/webpack.config.frontend');
 const paths = require('../config/paths');
 console.log(chalk.cyan("Creating Webpack development server configuration..."));
 const useHttps = process.env.HTTPS === 'true';

@@ -1,0 +1,16 @@
+@import '../theme/full-lambda-dimens';
+.list-item-container {
+  display: flex;
+  align-items: center;
+}
+.titles {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.remaining-items {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.remaining-items > * {
+  margin-right: $layout-padding-lg;
+}

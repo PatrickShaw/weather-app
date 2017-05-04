@@ -9,7 +9,7 @@ class WeatherLocationData {
   public readonly rainfallData?: RainfallData;
   public readonly temperatureData?: TemperatureData;
 
-  constructor(location: string, rainfallData: RainfallData, temperatureData: TemperatureData) {
+  constructor(location: string, rainfallData?: RainfallData, temperatureData?: TemperatureData) {
     this.location = location;
     this.rainfallData = rainfallData;
     this.temperatureData = temperatureData;

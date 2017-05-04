@@ -6,6 +6,7 @@
 idea
 .vscode
 node_modules
+npm-debug.log
 */npm-debug.log
 */npm-debug.log.*
 Assignment_2/build/*

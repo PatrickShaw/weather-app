@@ -1,12 +1,10 @@
 import './theme/full-lambda-theme.scss';
-import 'reflect-metadata';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { WeatherPageContainer } from './controller/WeatherPageContainer';
 
-import {Routes} from './routes/Routes';
-
-// Render HTML page based on routes (only has index page).
+// Attach our React components to the 'root' id in the HTML page.
 ReactDOM.render(
-  <Routes/>,
+  <WeatherPageContainer/>,
   document.getElementById('root') as HTMLElement
 );
