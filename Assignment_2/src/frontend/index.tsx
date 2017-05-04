@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { WeatherPageContainer } from './controller/WeatherPageContainer';
 
-// Render HTML page based on routes (only has index page).
+// Attach our React components to the 'root' id in the HTML page.
 ReactDOM.render(
   <WeatherPageContainer/>,
   document.getElementById('root') as HTMLElement
