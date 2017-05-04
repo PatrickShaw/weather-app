@@ -59,8 +59,8 @@ class MelbourneWeatherClient implements WeatherClient {
       let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
       if (cachedWeatherData !== undefined) {
-        rainfallData = getRainfall ? cachedWeatherData.rainfallData : null;
-        temperatureData = getTemperature ? cachedWeatherData.temperatureData : null;
+        rainfallData = getRainfall ? cachedWeatherData.rainfallData : undefined;
+        temperatureData = getTemperature ? cachedWeatherData.temperatureData : undefined;
       }
     }
     // Now let's check if we should make actual calls to the SOAP client.

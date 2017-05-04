@@ -21,7 +21,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     ) {
       const isFloatingPoint: boolean = !isNaN(parseFloat(this.props.weatherData.temperatureData.temperature));
       temperatureDataToRender = 
-        `${this.props.weatherData.temperatureData.temperature}${isFloatingPoint ? ' ℃' : ''}`;
+        `${this.props.weatherData.temperatureData.temperature}` +
+        `${isFloatingPoint ? ' ℃' : ''} ` + 
+        `(${this.props.weatherData.temperatureData.timestamp})`;
     } else {
       temperatureDataToRender = dataMissingMessage;
     }
@@ -33,7 +35,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     ) {
       const isFloatingPoint: boolean = !isNaN(parseFloat(this.props.weatherData.rainfallData.rainfall));
       rainfallDataToRender = 
-        `${this.props.weatherData.rainfallData.rainfall}${isFloatingPoint ? ' mm' : ''}`;
+        `${this.props.weatherData.rainfallData.rainfall}` +
+        `${isFloatingPoint ? ' mm' : ''} ` + 
+        `(${this.props.weatherData.rainfallData.timestamp})`;
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
