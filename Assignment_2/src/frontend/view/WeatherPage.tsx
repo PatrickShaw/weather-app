@@ -13,7 +13,9 @@ interface WeatherPageProps {
   onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
   appCurrentState: AppState; 
 }
-
+/**
+ * Specifies the markup for the actual weather page itself.
+ */
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   public render(): JSX.Element {
     return (

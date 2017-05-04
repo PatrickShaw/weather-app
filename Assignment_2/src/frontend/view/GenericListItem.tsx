@@ -9,7 +9,10 @@ interface GenericListItemProps {
   subtitle?: string;
   onClickObserver?: OnClickObserver;
 }
-
+/**
+ * A list item that can be used in a generic sense. Use this as a list and you'll get certain 
+ * material ui design aspects for free.
+ */
 class GenericListItem extends React.Component<GenericListItemProps, void> {
   private onListItemClickedBound: any;
   constructor(props: GenericListItemProps) {

@@ -16,7 +16,9 @@ import SocketKeys from '../socket.io/socket-keys';
 // 300000 milliseconds = 5 mins.
 const defaultWeatherPollingInterval: number = 5000;
 /**
- * Controller class instantiated by the node server.
+ * Controller class instantiated by the node server. This specifies the core logic specified in 
+ * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
+ * try-catches and methods seperated over multiple lines.
  */
 class FullLambdaService {
   // We use this for building a weather client
@@ -69,8 +71,8 @@ class FullLambdaService {
   }
   
   /**
-   * We need to setup the websocket end points so that consumers of the API
-   * Ez pez
+   * We need to setup the websocket end points so that consumers of the API can actually communicate with 
+   * the API itself. This method does just that.
    */
   private initialiseSocketEndpoints(): void {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
@@ -93,6 +95,8 @@ class FullLambdaService {
 
       socket.on('disconnect', () => {
         console.log(`Session ended: ${sessionId}`);
+        // Once a session has ended we need to remove it from our records so that the API doesn't try 
+        // emit data to the disconnected socket.
         for (const monitoringManager of this.monitoringDataList) {
           monitoringManager.sessionManager.removeMonitoringSession(sessionId);
         }
@@ -125,6 +129,7 @@ class FullLambdaService {
             = this.rainfallMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
           const temperatureLocationMonitor: LocationMonitoringManager 
             = this.temperatureMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId);
+          // Time to get the data from the weather client and emit to the socket who added the monitor
           this.weatherClient.retrieveWeatherLocationData(
             monitor.location,
             rainfallLocationManager.getMonitoredLocations().has(monitor.location), 

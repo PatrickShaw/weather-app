@@ -3,10 +3,15 @@ import * as React from 'react';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
+  // The weather data that will be used to populate the monitoring item card with information.
   weatherData: WeatherLocationData;
 }
+/**
+ * Component that populates a card with weather data information.
+ */
 class MonitoringItem extends React.Component<MonitoringItemProps, void> {
   public render(): JSX.Element {
+    // First we're going to figure out what strings to render for contents of the card.
     const dataMissingMessage = 'N/A';
     let temperatureDataToRender: string;
     if (
@@ -32,6 +37,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
+    // Now we're going to specify the markup for the card itself.
     return (
       <section className="pad-item-list">
         <h1 className="txt-body-2">{this.props.weatherData.location}</h1>

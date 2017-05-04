@@ -11,6 +11,10 @@ interface LocationItemProps {
   onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
+/**
+ * A list item that specifically handles a side bar location item.
+ * Contains listeners for when inner rain and temperature monitor buttons are clicked.
+ */
 class LocationItem extends React.Component<LocationItemProps, void> {
   private onRainfallMonitorButtonClickedBound: any;
   private onTemperatureMonitorButtonClickedBound: any;

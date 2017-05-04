@@ -1,9 +1,15 @@
 import { MonitorMetadata } from '../model/MonitorMetadata';
 
+/**
+ * Represents an observer who's method is called when a monitored location is added to a location manager.
+ */
 interface OnAddedMonitoredLocationObserver {
   onAddedMonitoredLocation(monitor: MonitorMetadata): void;
 }
 
+/**
+ * Represents an observer who's method is called when a monitored location is removed from a location manager.
+ */
 interface OnRemovedMonitoredLocationObserver {
   onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
 }

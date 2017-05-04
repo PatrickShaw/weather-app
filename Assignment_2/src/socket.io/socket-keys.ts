@@ -1,3 +1,7 @@
+/**
+ * Just a bunch of event key names so that we can use so that managing event names isn't 
+ * difficult.
+ */
 const keys = {
   // Adds a rainfall monitor
   addRainfallMonitor: 'add_rainfall_monitor',

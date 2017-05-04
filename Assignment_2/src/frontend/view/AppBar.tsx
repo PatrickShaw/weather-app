@@ -6,7 +6,9 @@ interface ActionBarProps {
   title: string;
   subtitle: string;
 }
-
+/**
+ * The action bar for Full Lambda
+ */
 class ActionBar extends React.Component<ActionBarProps, void> {
   public render(): JSX.Element {
     return (
