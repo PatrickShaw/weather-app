@@ -32,18 +32,18 @@ class LocationItem extends React.Component<LocationItemProps, void> {
 
   public render(): JSX.Element {
     return (
-      <div >
-        <div className="ripple">
+      <div>
+        <div className="ripple location-item">
           <GenericListItem title={this.props.location}/>
         </div>
         <div className="monitor-options">
-          <div className={this.props.rainfallMonitorSelected ? 'ripple' : 'ripple scrim'}>
+          <div className={this.props.rainfallMonitorSelected ? 'ripple selected' : 'ripple'}>
             <GenericListItem 
               onClickObserver={this.onRainfallItemClickObserver}
               title={this.props.rainfallMonitorSelected ? 'Remove rainfall monitor' : 'Add rainfall monitor'}
             />
           </div>
-          <div className={this.props.temperatureMonitorSelected ? 'ripple' : 'ripple scrim'}>
+          <div className={this.props.temperatureMonitorSelected ? 'ripple selected' : 'ripple'}>
             <GenericListItem 
               onClickObserver={this.onTemperatureItemClickObserver}
               title={this.props.temperatureMonitorSelected ? 'Remove temperature monitor' : 'Add temperature monitor'}

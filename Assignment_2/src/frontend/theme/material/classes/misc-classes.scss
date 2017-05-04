@@ -11,11 +11,14 @@
   background: $scrim-dark-4;
   transition: background 0.5s;
 }
-.selected {
+.ripple.selected {
   background: $scrim-dark-2;
 }
-.selected:hover {
+.ripple.selected:hover {
   background: $scrim-dark-3;
+}
+.ripple.selected:active {
+  background: $scrim-dark-4;
 }
 .card {
   box-shadow: 0 2px 6px 0px $shadow-dark; 
