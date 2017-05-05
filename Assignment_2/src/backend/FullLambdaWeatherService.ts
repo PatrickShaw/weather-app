@@ -14,7 +14,7 @@ import { WeatherLocationData } from '../model/WeatherLocationData';
 // allows for dependency injection where you pass in req parameters.
 
 // 300000 milliseconds = 5 mins.
-const defaultWeatherPollingInterval: number = 30000;
+const defaultWeatherPollingInterval: number = 300000;
 /**
  * Controller class instantiated by the node server. This specifies the core logic specified in 
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
