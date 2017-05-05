@@ -6,7 +6,7 @@ Images of the sequence diagram can be found in `./images`, pdf versions can be f
 
 ## Backend
 
-<img src="UML/Class_Diagrams/images/backend.png" >
+<img src="/UML/Class_Diagrams/images/backend.png" >
 
 ## Frontend
 
