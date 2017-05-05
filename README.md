@@ -31,8 +31,8 @@
 **Note:** You MUST wait for the backend's compilation to finish before running `npm run frontend-start`. This is an issue with having two Webpack builds running at the same time in the same folder with similar configurations. It is assumed that a solution to this problem is out of scope for this assignment.
 
 ## UML Diagrams
-- [Class diagrams](/UML/ClassDiagramREADME.md)
-- [Sequence diagrams](/UML/SequenceDiagramREADME.md)
+- [Class diagrams](/UML/Class_Diagrams/README.md)
+- [Sequence diagrams](/UML/Sequence_Diagrams/README.md)
 
 ## Why do we have a backend server
 We use [Node.js](https://nodejs.org/en/) to provide our own API to frontend applications, as opposed to the frontend application communicating with the SOAP client directly. Despite the added latency, there are a plethora of reasons for doing this:
