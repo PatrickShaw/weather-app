@@ -21,24 +21,24 @@ An admin starts the backend server running `npm run backend-start`.
 
 We show this as a use case as it gives a good high level over view of the entire system including the loop to get weather data every 5 minutes.
 
-<img src="UML/Sequence_Diagrams/images/ServerStart.png" >
+<img src="/UML/Sequence_Diagrams/images/ServerStart.png" >
 
 ### Use case: GetWeatherDataOnInterval
 
 Get weather data for all monitored locations at 5 minute intervals.
-<img src="UML/Sequence_Diagrams/images/GetWeatherDataOnInterval.png" >
+<img src="/UML/Sequence_Diagrams/images/GetWeatherDataOnInterval.png" >
 
 ### Use case: AddRainFallMonitor
 User clicks on the rain button to add a monitor for that a location.
 
 **Frontend - Button gets clicked, sends message to backend.**
 
-<img src="UML/Sequence_Diagrams/images/AddRainFallMonitor_Start_Frontend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_Start_Frontend.png" >
 
 **Backend - received message, gets data from weather client and returns it to frontend.**
 
-<img src="UML/Sequence_Diagrams/images/AddRainFallMonitor_Mid_Backend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_Mid_Backend.png" >
 
 **Frontend - received new data, re-renders.**
 
-<img src="UML/Sequence_Diagrams/images/AddRainFallMonitor_End_Frontend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_End_Frontend.png" >
