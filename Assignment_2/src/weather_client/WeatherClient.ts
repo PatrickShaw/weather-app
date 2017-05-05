@@ -8,10 +8,12 @@ import { WeatherLocationData } from '../model/WeatherLocationData';
  * client so we can test our application without being connected to the internet.
  */
 interface WeatherClient {
+  
   /**
    * Retrieves all locations from the weather client.
    */
   retrieveLocations(): Promise<string[]>;
+  
   /**
    * Retrieves a single piece of weather data according to a provided location.
    */
@@ -21,6 +23,7 @@ interface WeatherClient {
     getTemperature: boolean, // Whether we or not we want to retrieve temperature data.
     forceRefresh: boolean // Whether we want to force the retrieval of the weather data.
   ): Promise<WeatherLocationData>;
+  
   /**
    * Retrieves all weather data associated with the provided locations list.
    */

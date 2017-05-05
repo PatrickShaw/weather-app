@@ -1,13 +1,14 @@
 import * as chalk from 'chalk';
 
+import { LocationCache } from '../../cache/LocationCache';
 import { MelbourneWeatherSoapServiceStub } from './MelbourneWeatherSoapServiceStub';
 import { RainfallData } from '../../model/RainfallData';
 import { RainfallRequestData } from './RainfallRequestData';
-import { TemperatureRequestData } from './TemperatureRequestData';
 import { TemperatureData } from '../../model/TemperatureData';
+import { TemperatureRequestData } from './TemperatureRequestData';
 import { WeatherClient } from '../WeatherClient';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import { LocationCache } from '../../cache/LocationCache';
+
 /**
  * A client designed to retrieve data from the SOAP MelbourneWeather2 API. Supports limited in memory 
  * caching to limit the number of calls to the SOAP client. The client DOES NOT handle connections to the 
@@ -63,6 +64,7 @@ class MelbourneWeatherClient implements WeatherClient {
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : undefined;
       }
     }
+    const cacheEntryCorrect: boolean = rainfallData !== undefined && temperatureData !== undefined;
     // Now let's check if we should make actual calls to the SOAP client.
     if (getTemperature) {
       if (temperatureData === undefined) {
@@ -104,7 +106,7 @@ class MelbourneWeatherClient implements WeatherClient {
             rainfallData,
             temperatureData
         );
-        if (this.locationCache.has(weatherData)) {
+        if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
           this.locationCache.updateLocation(weatherData);
         } else {
           this.locationCache.addLocation(weatherData);
