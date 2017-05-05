@@ -9,6 +9,10 @@ class TemperatureData extends TimestampedData {
     super(timestamp);
     this.temperature = temperature;
   }
+
+  public toString(): string {
+    return `${this.temperature} at time ${this.timestamp}`;
+  }
 }
 
 export {TemperatureData};
