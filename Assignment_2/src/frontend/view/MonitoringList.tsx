@@ -1,17 +1,19 @@
+import './MonitoringList.scss';
+
 import * as React from 'react';
 
 import { MonitoringItem } from './MonitoringItem';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import './MonitoringList.scss';
+
 interface MonitoringListProps {
   // The list of all locations.
   // We actually use this to keep the weatherDataMap items in alphabetical order when render.
   // This means that the complexity of finding what to render is O(locations.length) instead of 
   // O(weatherDataMap.size) but for this assignment the difference minimal and the optimization is 
   // considered out of scope.
-  locations: string[];
+  readonly locations: string[];
   // The map of locations to their associated WeatherLocationDAta
-  weatherDataMap: Map<string, WeatherLocationData>;
+  readonly weatherDataMap: Map<string, WeatherLocationData>;
 }
 
 /**

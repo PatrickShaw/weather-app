@@ -3,8 +3,8 @@ import './AppBar.scss';
 import * as React from 'react';
 
 interface ActionBarProps {
-  title: string;
-  subtitle: string;
+  readonly title: string;
+  readonly subtitle: string;
 }
 /**
  * The action bar for Full Lambda

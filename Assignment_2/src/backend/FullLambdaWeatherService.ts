@@ -36,7 +36,7 @@ class FullLambdaWeatherService {
   // Contains all locations retrieved from weather client.
   private melbourneWeatherLocations: string[];
   // Specifies whether we have successfully made a connection to the weather client.
-  private successfulClientSetup: boolean;
+  private successfulWeatherClientSetup: boolean;
   // Our client that we retrieve weather data from. 
   private weatherClient: WeatherClient;
 
@@ -46,7 +46,7 @@ class FullLambdaWeatherService {
     weatherInterval: number = defaultWeatherPollingInterval
   ) {
     // Weather client hasn't been built yet so this is false.
-    this.successfulClientSetup = false;
+    this.successfulWeatherClientSetup = false;
     // Locations will be empty for now, better than nothing.
     this.melbourneWeatherLocations = [];
     this.io = io;
@@ -103,7 +103,7 @@ class FullLambdaWeatherService {
       });
 
       // Emit to front end whether the SOAP Client was successfully created.
-      socket.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
+      socket.emit(SocketKeys.successfulServerSetup, this.successfulWeatherClientSetup);
     });
   }
 
@@ -163,7 +163,7 @@ class FullLambdaWeatherService {
       try {
         // Note: | means can be type_a or type_b where type_a | type_b.
         const locationMonitoringManager: LocationMonitoringManager | undefined = 
-        sessionManager.getLocationMonitorManagerForSession(sessionId);
+          sessionManager.getLocationMonitorManagerForSession(sessionId);
         if (locationMonitoringManager) {
           console.log(
             `Session ID ${chalk.magenta(sessionId)} ` +
@@ -354,8 +354,8 @@ class FullLambdaWeatherService {
     // Initialise the socket.io events
     this.initialiseSocketEndpoints();
     // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
-    this.successfulClientSetup = true;
-    this.io.sockets.emit(SocketKeys.successfulServerSetup, this.successfulClientSetup);
+    this.successfulWeatherClientSetup = true;
+    this.io.sockets.emit(SocketKeys.successfulServerSetup, this.successfulWeatherClientSetup);
     // Get locations from SOAP client in melbourneWeatherClient.
     weatherClient.retrieveLocations().then((locations: string[]) => {
       this.onAllLocationsRetrieved(locations);

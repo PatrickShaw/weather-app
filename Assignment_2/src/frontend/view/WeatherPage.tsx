@@ -9,12 +9,15 @@ import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
 
 interface WeatherPageProps {
-  onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
-  onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
-  appCurrentState: AppState; 
+  // Instance variable.
+  readonly onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
+  readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
+  readonly appCurrentState: AppState; 
 }
+
 /**
  * Specifies the markup for the actual weather page itself.
+ * Takes in OnLocationItemClickedObservers from parent component.
  */
 class WeatherPage extends React.Component<WeatherPageProps, void> {
   public render(): JSX.Element {
