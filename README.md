@@ -30,6 +30,10 @@
 
 **Note:** You MUST wait for the backend's compilation to finish before running `npm run frontend-start`. This is an issue with having two Webpack builds running at the same time in the same folder with similar configurations. It is assumed that a solution to this problem is out of scope for this assignment.
 
+## UML Diagrams
+- [Class diagrams](/UML/ClassDiagramREADME.md)
+- [Sequence diagrams](/UML/SequenceDiagramREADME.md)
+
 ## Why do we have a backend server
 We use [Node.js](https://nodejs.org/en/) to provide our own API to frontend applications, as opposed to the frontend application communicating with the SOAP client directly. Despite the added latency, there are a plethora of reasons for doing this:
  - **Removes frontend polling all-together:** Polling is inefficient and poorly scales with high frequency polling (a potential change to the requirements in stage 2). By adding rolling our own API, we are able to leverage [WebSocket](https://en.wikipedia.org/wiki/WebSocket) which removes the need for frontend clients to poll all together. This is far more efficient when compared to high frequency polling.
