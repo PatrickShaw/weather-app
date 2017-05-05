@@ -32,7 +32,7 @@
 
 ## UML Diagrams
 - [Class diagrams](/UML/ClassDiagramREADME.md)
-- [Sequence diagrams README](/UML/SequenceDiagramREADME.md)
+- [Sequence diagrams](/UML/SequenceDiagramREADME.md)
 
 ## Why do we have a backend server
 We use [Node.js](https://nodejs.org/en/) to provide our own API to frontend applications, as opposed to the frontend application communicating with the SOAP client directly. Despite the added latency, there are a plethora of reasons for doing this:

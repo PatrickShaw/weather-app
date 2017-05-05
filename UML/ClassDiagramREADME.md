@@ -10,5 +10,5 @@ Images of the sequence diagram can be found in `./images`, pdf versions can be f
 
 ## Frontend
 
-Classes used 
+<img src="/UML/Class_Diagrams/images/frontend.png" >
 
