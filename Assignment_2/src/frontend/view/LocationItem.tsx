@@ -1,19 +1,21 @@
+import './LocationItem.scss';
+
 import * as React from 'react';
 
 import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-import './LocationItem.scss';
+
 interface LocationItemProps {
   // The location associated with the LocationItem
-  location: string;
+  readonly location: string;
   // Whether the rainfall monitor has been selected for this item.
-  rainfallMonitorSelected: boolean; 
+  readonly rainfallMonitorSelected: boolean; 
   // Whether the temperature monitor ahs been selected for this item.
-  temperatureMonitorSelected: boolean; 
+  readonly temperatureMonitorSelected: boolean; 
   // Specifies what happens when the rainfall monitor button is clicked.
-  onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
+  readonly onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
   // Specifies what happens when the temperature monitor button is clicked.
-  onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
+  readonly onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
 /**
@@ -38,6 +40,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     event: React.MouseEvent<HTMLElement>
   ): void {
     if (this.props.onRainfallMonitorClickedObserver != null) {
+      // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
       this.props.onRainfallMonitorClickedObserver.onItemClicked(
         this.props.location, 
         this.props.rainfallMonitorSelected
@@ -52,6 +55,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     event: React.MouseEvent<HTMLElement>
   ): void {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
+      // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
       this.props.onTemperatureMonitorClickedObserver.onItemClicked(
         this.props.location, 
         this.props.temperatureMonitorSelected

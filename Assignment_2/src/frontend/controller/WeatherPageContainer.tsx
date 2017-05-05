@@ -1,19 +1,20 @@
-import * as SocketIo from 'socket.io-client';
 import * as React from 'react';
+import * as SocketIo from 'socket.io-client';
+
 import { AppState } from '../model/AppState';
+import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 import { RequestResponse } from '../../model/RequestResponse';
-import { MonitorMetadata } from '../../model/MonitorMetadata';
-import { WeatherPage } from '../view/WeatherPage';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
 import SocketKeys from '../../socket.io/socket-keys';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { WeatherPage } from '../view/WeatherPage';
 
 /**
  * Decides how the current state of the frontend application is manipulated, which, in turn, causes a 
  * re-render of certain components in the DOM.
  * This is a recommended design pattern provided by Redux (as an example for when you don't use the Redux library) 
  * and React.
- * The class acts as a controller in that it coordinates the events of view objects and the iteraction to the 
+ * The class acts as a controller in that it coordinates the events of view objects and the interaction to the 
  * backend API.
  */
 class WeatherPageContainer extends React.Component<{}, AppState> {
@@ -52,8 +53,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       socket, SocketKeys.addTemperatureMonitor, SocketKeys.removeTemperatureMonitor
     );
 
-    // Initialise the socket end points for each type of monitor
-    this.initialiseMonitoringSocketEndPoint(
+    // Initialize the socket end points for each type of monitor
+    this.initializeMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addRainfallMonitor, 
       SocketKeys.removeRainfallMonitor,
@@ -62,7 +63,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
       }
     );
     
-    this.initialiseMonitoringSocketEndPoint(
+    this.initializeMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addTemperatureMonitor, 
       SocketKeys.removeTemperatureMonitor,
@@ -118,7 +119,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     }();
   }
 
-  private initialiseMonitoringSocketEndPoint(
+  private initializeMonitoringSocketEndPoint(
     socket: SocketIOClient.Socket,
     addMonitorEvent: string,
     removeMonitorEvent: string,

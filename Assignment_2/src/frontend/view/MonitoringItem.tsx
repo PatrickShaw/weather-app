@@ -4,8 +4,9 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
-  weatherData: WeatherLocationData;
+  readonly weatherData: WeatherLocationData;
 }
+
 /**
  * Component that populates a card with weather data information.
  */

@@ -1,21 +1,23 @@
 import * as React from 'react';
 
 import { LocationItem } from './LocationItem';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface LocationListProps {
   // A list of all locations.
-  locations: string[];
+  readonly locations: string[];
   // A map of locations to their associated weather data.
-  weatherDataMap: Map<string, WeatherLocationData>;
+  readonly weatherDataMap: Map<string, WeatherLocationData>;
   // An observer that specifies what happens when a rainfall monitor button is clicked.
-  onRainfallItemClickedObserver?: OnLocationItemClickedObserver;
+  readonly onRainfallItemClickedObserver?: OnLocationItemClickedObserver;
   // An observer that specifies what happens when a temperature monitor button is clicked.
-  onTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
+  readonly onTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
 }
+
 /**
  * A simple list wrapper that populates a list with LocationItems according to a map of weather data.
+ * Takes in OnLocationItemClickedObserver from parent component.
  */
 class LocationList extends React.Component<LocationListProps, void> {
   public render(): JSX.Element {
