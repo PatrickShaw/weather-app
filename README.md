@@ -52,6 +52,8 @@ than is absolutely necessary"*. Our server acts as a cache for the SOAP service'
  - **Linters:** [TSLint](https://palantir.github.io/tslint/)
  - **Git patterns:** See *Git guidelines*
  - **Language:** American English
+ - **Sequence diagram guidelines:** [IBM Sequence diagram](https://www.ibm.com/developerworks/rational/library/3101.html)
+
 ### Current loggin guidelines
 - **Green text:** successful
 - **Red text:** error information
