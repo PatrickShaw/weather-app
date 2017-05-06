@@ -5,7 +5,7 @@ import { FullLambdaWeatherService } from './FullLambdaWeatherService';
 import { TestWeatherClientFactory } from '../weather_client/test/TestWeatherClientFactory';
 console.log(chalk.cyan('Starting server...'));
 const server = Http.createServer();
-server.listen(8080);
+server.listen(process.env.PORT || 8080);
 const io: SocketIO.Server = SocketIo(server);
 const weatherClientFactory: TestWeatherClientFactory = new TestWeatherClientFactory();
 const service: FullLambdaWeatherService = new FullLambdaWeatherService(
