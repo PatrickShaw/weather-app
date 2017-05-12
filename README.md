@@ -1,4 +1,6 @@
 # FIT3077 Full Lambda Assignment 2
+Please mark Assignment 2 stage 1 from the last commit of Friday 5th May 232f1abdad97543f05df36e5e22f7d212067cb9a, we've isolated this in it's own branch `Assignment2-Stage1`
+
 ## Student details
 ### Patrick Shaw
 - **Student email:** psha67@student.monash.edu
