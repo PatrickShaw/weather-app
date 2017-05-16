@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import {ActionBar} from './AppBar';
 import {AppState} from '../model/AppState';
+import {LineChart} from './LineChart';
 import {LocationList} from './LocationList';
 import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
@@ -20,6 +21,7 @@ interface WeatherPageProps {
  * Takes in OnLocationItemClickedObservers from parent component.
  */
 class WeatherPage extends React.Component<WeatherPageProps, void> {
+  
   public render(): JSX.Element {
     return (
       <div className="weather-page">
@@ -40,6 +42,11 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           </aside>
           <main className="monitoring-container">
             <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
+             <div>
+              <LineChart
+              location={'test'}
+              />
+            </div>
             <div className="monitoring-list-container">
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 
