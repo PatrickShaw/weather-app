@@ -1,7 +1,7 @@
-import { WeatherClient } from '../WeatherClient';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { RainfallData } from '../../model/RainfallData';
 import { TemperatureData } from '../../model/TemperatureData';
+import { WeatherClient } from '../WeatherClient';
+import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 /**
  * Sometimes the SOAP API is down so we needed to create an extra client so that we could use offline dummy data 
@@ -18,14 +18,14 @@ class TestWeatherClient implements WeatherClient {
       50
     );
   }
-  private createDummyRainfallData(location: string, forceRefresh: boolean): RainfallData {
+  protected createDummyRainfallData(location: string, forceRefresh: boolean): RainfallData {
     return new RainfallData(
       `Rainfall ${location}, ${this.pollCount} (Forced refresh: ${forceRefresh})`,
       `Rainfall timestamp ${new Date().toString()}`
     );
   }
 
-  private createDummyTemperatureData(location: string, forceRefresh: boolean): TemperatureData {
+  protected createDummyTemperatureData(location: string, forceRefresh: boolean): TemperatureData {
     return new TemperatureData(
       `Temperature ${location}, ${this.pollCount} (Forced refresh: ${forceRefresh})`,
       `Temperature timestamp ${new Date().toString()}`
