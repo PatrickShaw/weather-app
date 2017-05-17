@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import {LineChart} from './LineChart';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
@@ -57,6 +58,13 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
           <h2 className="txt-body-1">
             Temperature: {temperatureDataToRender}
           </h2> : null
+        }
+        {
+          <div>
+              <LineChart
+              location={'test'}
+              />
+          </div>
         }
       </section>
     );
