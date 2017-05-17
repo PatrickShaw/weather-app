@@ -3,75 +3,48 @@ import * as React from 'react';
 import { Line } from 'react-chartjs';
 
 interface LineChartProps {
-  readonly location: string;
-  // Timestamps:
-  // Rainfall info:
-  // Temp info
+  // Datapassed in.
+  timestampLabels: string[];
+  temperatureDataPoints: Array<number|null>;
+  rainfallDataPoints: Array<number|null>;
 }
 
 
 class LineChart extends React.Component<LineChartProps, void> {
-  constructor(props: LineChartProps) {
-    super(props);
-  }
 
   public render(): JSX.Element {
-    const dataLabels: string[] = ['apple', 'pear', 'tomato'];
-    const dataValues: number[] = [
-      100,
-      22,
-      3
-    ];
-
-    const data =  {
+    // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
+    
+    console.log('Chart values ----');
+    console.log(this.props.timestampLabels);
+    console.log(this.props.rainfallDataPoints);
+    console.log(this.props.temperatureDataPoints);
+    const data = {
+      labels: this.props.timestampLabels,
       datasets: [
         {
-          fillColor: ['rgba(0,10,220,0.5)',
-                      'rgba(220,0,10,0.5)',
-                      'rgba(220,0,0,0.5)',
-                      'rgba(120,250,120,0.5)', 
-                      'rgba(120,250,120,0.5)' ],
-          strokeColor: 'rgba(220,220,220,0.8)',
-          highlightFill: 'rgba(220,220,220,0.75)',
-          highlightStroke: 'rgba(220,220,220,1)',
-          borderWidth: 1,
-          data: dataValues
+          label: 'Rainfall',
+          fillColor: 'rgba(0,0,0,0)',
+          strokeColor: 'rgba(0,0,255,1)',
+          data: this.props.rainfallDataPoints
         },
         {
-          fillColor: ['rgba(0,10,220,0.5)',
-                      'rgba(220,0,10,0.5)',
-                      'rgba(220,0,0,0.5)',
-                      'rgba(120,250,120,0.5)', 
-                      'rgba(120,250,120,0.5)' ],
-          strokeColor: 'rgba(220,220,220,0.8)',
-          highlightFill: 'rgba(220,220,220,0.75)',
-          highlightStroke: 'rgba(220,220,220,1)',
-          borderWidth: 1,
-          data: [100, 50, 70]
+          label: 'Temperature',
+          fillColor: 'rgba(0,0,0,0)',
+          strokeColor: 'rgba(255,0,0,1)',
+          data: this.props.temperatureDataPoints
         }
-        
-
-      ],
-      labels: dataLabels
+      ]
     };
 
-    const chartOptions = {
-      scales: {
-        xAxes: [{
-          stacked: true
-        }]
-      }
-    };
+    // const chartOptions = {
+    // };
    
     return (
-      <section className='list-item-container'>
-        <div className='weather-page'>
-        <Line 
-          data={data}
-          chartOptions={chartOptions}
-              />
-        </div>
-      </section>
+      <Line 
+        data={data}
+        // chartOptions={chartOptions}
+      />
     );
   }
 }
