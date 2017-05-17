@@ -3,7 +3,7 @@ import './MonitoringList.scss';
 import * as React from 'react';
 
 import { MonitoringItem } from './MonitoringItem';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { MonitoringData } from '../model/MonitoringData';
 
 interface MonitoringListProps {
   // The list of all locations.
@@ -13,7 +13,7 @@ interface MonitoringListProps {
   // considered out of scope.
   readonly locations: string[];
   // The map of locations to their associated WeatherLocationDAta
-  readonly weatherDataMap: Map<string, WeatherLocationData>;
+  readonly weatherDataMap: Map<string, MonitoringData>;
 }
 
 /**
@@ -21,16 +21,16 @@ interface MonitoringListProps {
  */
 class MonitoringList extends React.Component<MonitoringListProps, void> {
   public render(): JSX.Element {  
-    console.log(Object.keys(this.props.weatherDataMap));
-    console.log(this.props.weatherDataMap);
+    // console.log(Object.keys(this.props.weatherDataMap));
+    // console.log(this.props.weatherDataMap);
     return (
-      <section className="monitoring-list">
+      <section className='monitoring-list'>
         {
           this.props.locations.map((location, locationIndex) => {
-            const weatherData: WeatherLocationData | undefined = this.props.weatherDataMap.get(location);
+            const weatherData: MonitoringData | undefined = this.props.weatherDataMap.get(location);
             return (
-              weatherData ?
-              <div key={location} className="card monitoring-item-card">
+              weatherData && weatherData.weatherDataList.length > 0 ?
+              <div key={location} className='card monitoring-item-card'>
                 <MonitoringItem weatherData={weatherData}/>
               </div>
               : null
