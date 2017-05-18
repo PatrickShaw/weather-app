@@ -1,14 +1,14 @@
 import * as React from 'react';
 
 import { LocationItem } from './LocationItem';
+import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-import { MonitoringData } from '../model/MonitoringData';
 
 interface LocationListProps {
   // A list of all locations.
   readonly locations: string[];
   // A map of locations to their associated weather data.
-  readonly weatherDataMap: Map<string, MonitoringData>;
+  readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // An observer that specifies what happens when a rainfall monitor button is clicked.
   readonly onRainfallItemClickedObserver?: OnLocationItemClickedObserver;
   // An observer that specifies what happens when a temperature monitor button is clicked.
@@ -26,7 +26,7 @@ class LocationList extends React.Component<LocationListProps, void> {
         {
           // Go through each item in the map and create a LocationItem html markup from it.
           this.props.locations.map((location, locationIndex) => {
-            const weatherData: MonitoringData | undefined = this.props.weatherDataMap.get(location);
+            const weatherData: MonitoredLocationInformation | undefined = this.props.weatherDataMap.get(location);
             let rainfallSelected: boolean = false;
             let temperatureSelected: boolean = false;
             if (weatherData) {

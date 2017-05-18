@@ -1,22 +1,25 @@
-import * as React from 'react';
 import * as Chart from 'chart.js';
+import * as React from 'react';
+
 import { Line } from 'react-chartjs-2';
-import { MonitoringData } from '../model/MonitoringData';
+import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 
 interface LineChartProps {
-  monitoringData: MonitoringData;
+  monitoredLocationInformation: MonitoredLocationInformation;
 }
-
 
 class LineChart extends React.Component<LineChartProps, void> {
   public render(): JSX.Element {
     const rainfallDataPoints: Array<number | null> = [];
     const temperatureDataPoints: Array<number | null> = []; 
     const timestampDataPoints: string[] = [];
-    for (const weatherData of this.props.monitoringData.weatherDataList) {
+    // Loop for all pieces of weatherData (makes up graph data points).
+    for (const weatherData of this.props.monitoredLocationInformation.weatherDataList) {
       let timeStamp: string | undefined;
+
       let rainfallPoint: number | null = null;
-      if (this.props.monitoringData.monitorRainfall) {        
+      if (this.props.monitoredLocationInformation.monitorRainfall) {        
+        // Show rainfall on graph.
         if (weatherData.rainfallData != null && weatherData.rainfallData.rainfall != null) {
           rainfallPoint = parseFloat(weatherData.rainfallData.rainfall);
           if (isNaN(rainfallPoint)) {
@@ -25,23 +28,32 @@ class LineChart extends React.Component<LineChartProps, void> {
           timeStamp = weatherData.rainfallData.timestamp;
         }
       }
-      rainfallDataPoints.push(rainfallPoint);
+      rainfallDataPoints.push(rainfallPoint);  // Can be null, if null breaks graph being joint.
+
       let temperaturePoint: number | null = null;
-      if (this.props.monitoringData.monitorTemperature) {
+      if (this.props.monitoredLocationInformation.monitorTemperature) {
+        // Show temperature on graph.
         if (weatherData.temperatureData != null && weatherData.temperatureData.temperature != null) {
           temperaturePoint = parseFloat(weatherData.temperatureData.temperature);
           if (isNaN(temperaturePoint)) {
             temperaturePoint = null;
           }
-          timeStamp = weatherData.temperatureData.timestamp;
+          timeStamp = weatherData.temperatureData.timestamp;  
         }
       }
-      temperatureDataPoints.push(temperaturePoint);
+      temperatureDataPoints.push(temperaturePoint);  // Can be null, if null breaks graph being joint.
+      
+      // Note: Assumed for a single weather data location, if a rainfall or temp is provided then 
+      // the timestamp must not be null.
+      // Additionally at least one of temp or rainfall data must be provided so getting to here
+      // means that timeStamp should not be null.
       if (timeStamp == null) {
+        console.log('Timestamp is null');
         timeStamp = 'N/A';
       }
       timestampDataPoints.push(timeStamp);
     }
+    
     // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
     const data: Chart.LinearChartData = {
       labels: timestampDataPoints,
