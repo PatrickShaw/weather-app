@@ -55,53 +55,74 @@ class LineChart extends React.Component<LineChartProps, void> {
     }
     
     // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
+    // 
     const data: Chart.LinearChartData = {
       labels: timestampDataPoints,
       datasets: [
         {
           label: 'Rainfall',
           fill: false,          
-          backgroundColor: 'rgba(255, 171, 0, 0.4)',
-          borderColor: 'rgb(255, 171, 0)',
+          backgroundColor: 'rgba(0, 0, 240, 0.75)',
+          borderColor: 'rgb(0, 0, 240)',
           borderCapStyle: 'butt',
           borderDash: [],
           borderDashOffset: 0.0,
           borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(255, 171, 0)',
+          pointBorderColor: 'rgb(0, 0, 240)',
           pointBackgroundColor: '#fff',
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: 'rgb(255, 171, 0)',
-          pointHoverBorderColor: 'rgb(220,220,220)',
-          pointHoverBorderWidth: 2,
+          pointBorderWidth: 0,
+          pointHoverRadius: 3,
+          pointHoverBackgroundColor: 'rgb(0, 0, 240)',
+          pointHoverBorderColor: 'rgb(0, 0, 240)',
+          pointHoverBorderWidth: 1,
           pointRadius: 1,
-          pointHitRadius: 10,
+          pointHitRadius: 5,
           data: rainfallDataPoints
         },
         {
           label: 'Temperature',
           fill: false,
           lineTension: 0.1,
-          backgroundColor: 'rgba(33, 150, 243, 0.4)',
-          borderColor: 'rgb(33, 150, 243)',
+          backgroundColor: 'rgba(240, 0, 0, 0.75)',
+          borderColor: 'rgb(240, 0, 0)',
           borderCapStyle: 'butt',
           borderDash: [],
           borderDashOffset: 0.0,
           borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(33, 150, 243)',
+          pointBorderColor: 'rgb(240, 0, 0)',
           pointBackgroundColor: '#fff',
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: 'rgb(33, 150, 243)',
-          pointHoverBorderColor: 'rgb(220,220,220)',
-          pointHoverBorderWidth: 2,
+          pointBorderWidth: 0,
+          pointHoverRadius: 3,
+          pointHoverBackgroundColor: 'rgb(240, 0, 0)',
+          pointHoverBorderColor: 'rgb(240, 0, 0)',
+          pointHoverBorderWidth: 1,
           pointRadius: 1,
-          pointHitRadius: 10,
+          pointHitRadius: 5,
           data: temperatureDataPoints
         }
       ]
     };
-    return <Line data={data}/>;
+    // TODO: Set axis labels, configure graph so looks nicer.
+    const options: Chart.options = {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation : false,
+      scales: {
+        xAxes: [{
+            ticks: {
+                autoSkip: true,
+                maxRotation: 0,
+                minRotation: 0,
+                autoSkipPadding: 10
+            }
+          }]
+        }
+    };
+    
+    return <Line 
+            data={data}
+            options={options}
+    />;
   }
 }
 

@@ -80,6 +80,8 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
         }
         {
           <div>
+            <br/>
+            <br/>
               <LineChart
                 monitoredLocationInformation={this.props.weatherData}
               />
