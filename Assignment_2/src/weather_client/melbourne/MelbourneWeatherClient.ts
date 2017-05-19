@@ -39,12 +39,17 @@ class MelbourneWeatherClient implements WeatherClient {
     });
   }
   
+  // Only retrieve weather location data for a single location.
   public retrieveWeatherLocationData(
     location: string, // The weather data's associated location.
     getRainfall: boolean = true, // Whether we want to get the rainfall data for this location.
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
+
+    if (location == null) {
+      throw new Error('Location was null in retrieveWeatherLocationData');
+    }
     if (!getRainfall && !getTemperature) {
       // Obviously the caller shouldn't bother calling this method if don't actually want to get any
       // meaningful data.
@@ -56,6 +61,7 @@ class MelbourneWeatherClient implements WeatherClient {
     let temperatureData: TemperatureData;
     let rainfallData: RainfallData;
     // Okay, let's see if we can grab ourselve's some cached data.
+    
     if (!forceRefresh) {
       let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
@@ -64,6 +70,7 @@ class MelbourneWeatherClient implements WeatherClient {
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : undefined;
       }
     }
+
     const cacheEntryCorrect: boolean = rainfallData !== undefined && temperatureData !== undefined;
     // Now let's check if we should make actual calls to the SOAP client.
     if (getTemperature) {
@@ -78,6 +85,7 @@ class MelbourneWeatherClient implements WeatherClient {
               console.error(chalk.bgRed('Error: retrieveTemperatureData()'));
               console.error(chalk.red(error.message));
               console.error(chalk.red(error.stack));
+              throw error;
             });
         dataPromises.push(temperatureRequestPromise);
       }
@@ -94,6 +102,7 @@ class MelbourneWeatherClient implements WeatherClient {
               console.error(chalk.bgRed('Error: retrieveRainfallData()'));
               console.error(chalk.red(error.message));
               console.error(chalk.red(error.stack));
+              throw error;
             });
         dataPromises.push(rainfallRequestPromise);
       }
@@ -108,12 +117,14 @@ class MelbourneWeatherClient implements WeatherClient {
         );
         if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
           this.locationCache.updateLocation(weatherData);
-        } else {
+        } else if (!this.locationCache.has(weatherData)) {
           this.locationCache.addLocation(weatherData);
+
         }
         return weatherData;
       }).catch((error) => {
-        console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+        console.error(chalk.bgRed(`Error: retrieveWeatherDataLocation 
+          >> Promise.all(compileWeatherLocationDataPromises)`));
         console.error(chalk.red(error.message));
         console.error(chalk.red(error.stack));
       });
@@ -127,6 +138,9 @@ class MelbourneWeatherClient implements WeatherClient {
     const weatherPromises: Array<Promise<WeatherLocationData>> = [];
     // For each location, get temp and rainfall data.
     locations.forEach((location: string, locationIndex: number) => {
+      if (location == null) {
+        console.log(chalk.red(`Location is null: ${location}`));
+      }
       weatherPromises.push(this.retrieveWeatherLocationData(location));
     });
     return Promise.all(weatherPromises);
@@ -150,6 +164,7 @@ class MelbourneWeatherClient implements WeatherClient {
         console.error(chalk.bgRed('Error: getRainfall()'));
         console.error(chalk.red(error.message));
         console.error(chalk.red(error.stack));
+        throw error;
       });
   }
 
@@ -169,6 +184,7 @@ class MelbourneWeatherClient implements WeatherClient {
           console.error(chalk.bgRed('Error: getTemperature()'));
           console.error(chalk.red(error.message));
           console.error(chalk.red(error.stack));
+          throw error;
         });
   }
 }

@@ -1,62 +1,111 @@
 import * as React from 'react';
 
+import {LineChart} from './LineChart';
+import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
+import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
-  readonly weatherData: WeatherLocationData;
+  readonly monitoredLocationInformation: MonitoredLocationInformation;
+  readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
 /**
  * Component that populates a card with weather data information.
  */
 class MonitoringItem extends React.Component<MonitoringItemProps, void> {
+
   public render(): JSX.Element {
+    // Only called when the weatherData to show has changed.
     // First we're going to figure out what strings to render for contents of the card.
     const dataMissingMessage = 'N/A';
     let temperatureDataToRender: string;
+    let rainfallDataToRender: string;
+    let temperatureDataPoint: number|null = null;
+    let rainfallDataPoint: number|null = null;
+    let temperatureTimestamp: string|null = null;
+    let rainfallTimestamp: string|null = null;
+    const currentWeatherData: WeatherLocationData = this.props.monitoredLocationInformation.weatherDataList[
+      this.props.monitoredLocationInformation.weatherDataList.length - 1];
+      
     if (
-      this.props.weatherData.temperatureData != null && 
-      this.props.weatherData.temperatureData.temperature != null &&
-      this.props.weatherData.temperatureData.temperature !== ''
+      this.props.monitoredLocationInformation.monitorTemperature &&
+      currentWeatherData.temperatureData != null && 
+      currentWeatherData.temperatureData.temperature != null &&
+      currentWeatherData.temperatureData.temperature !== ''
     ) {
-      const isFloatingPoint: boolean = !isNaN(parseFloat(this.props.weatherData.temperatureData.temperature));
+      temperatureDataPoint = parseFloat(currentWeatherData.temperatureData.temperature);
+      temperatureTimestamp = currentWeatherData.temperatureData.timestamp;
+      const isFloatingPoint: boolean = !isNaN(temperatureDataPoint);
       temperatureDataToRender = 
-        `${this.props.weatherData.temperatureData.temperature}` +
+        `${currentWeatherData.temperatureData.temperature}` +
         `${isFloatingPoint ? ' ℃' : ''} ` + 
-        `(${this.props.weatherData.temperatureData.timestamp})`;
+        `(${currentWeatherData.temperatureData.timestamp})`;      
     } else {
       temperatureDataToRender = dataMissingMessage;
     }
-    let rainfallDataToRender: string;
+
     if (
-      this.props.weatherData.rainfallData != null && 
-      this.props.weatherData.rainfallData.rainfall != null && 
-      this.props.weatherData.rainfallData.rainfall !== ''
+      currentWeatherData.rainfallData != null && 
+      currentWeatherData.rainfallData.rainfall != null && 
+      currentWeatherData.rainfallData.rainfall !== ''
     ) {
-      const isFloatingPoint: boolean = !isNaN(parseFloat(this.props.weatherData.rainfallData.rainfall));
+      rainfallDataPoint = parseFloat(currentWeatherData.rainfallData.rainfall);
+      rainfallTimestamp = currentWeatherData.rainfallData.timestamp;
+      const isFloatingPoint: boolean = !isNaN(rainfallDataPoint);
       rainfallDataToRender = 
-        `${this.props.weatherData.rainfallData.rainfall}` +
+        `${currentWeatherData.rainfallData.rainfall}` +
         `${isFloatingPoint ? ' mm' : ''} ` + 
-        `(${this.props.weatherData.rainfallData.timestamp})`;
+        `(${currentWeatherData.rainfallData.timestamp})`;
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
+   // Keeps track of values tracked.
+    // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
+    // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
     // Now we're going to specify the markup for the card itself.
+    const that: MonitoringItem = this;
     return (
+      // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section className="pad-item-list">
-        <h1 className="txt-body-2">{this.props.weatherData.location}</h1>
+        <div >
+          <h1 className="txt-body-2 align-card-head">{currentWeatherData.location}</h1>
+          
+          <button
+            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+              that.props.monitoredLocationInformation.weatherDataList[0].location
+            )}
+            className="graph-button align-card-head"
+            disabled={false}
+            >
+            Graph
+            <img src="https://image.flaticon.com/icons/png/128/118/118738.png" width="10px" >
+            </img>
+          </button>
+        </div>
+        <br/>
         {
-          this.props.weatherData.rainfallData ? 
+          this.props.monitoredLocationInformation.monitorRainfall ? 
           <h2 className="txt-body-1">
             Rainfall: {rainfallDataToRender}
           </h2> : null
         }
         {
-          this.props.weatherData.temperatureData ? 
+          this.props.monitoredLocationInformation.monitorTemperature ? 
           <h2 className="txt-body-1">
             Temperature: {temperatureDataToRender}
           </h2> : null
+        }
+        <br/>
+        
+        {
+          this.props.monitoredLocationInformation.monitorGraph ?
+            <div>
+                <LineChart
+                  monitoredLocationInformation={this.props.monitoredLocationInformation}
+                />
+            </div> : null
         }
       </section>
     );

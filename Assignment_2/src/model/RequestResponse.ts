@@ -11,6 +11,12 @@ class RequestResponse<T> {
     this.data = data;
     this.error = error;
   }
+
+  public toString(): string {
+    const err: string = this.error ? `Message: ${this.error.message}, Stack: ${this.error.stackMessage}` : 'No error';
+    const data: string = this.data ? this.data.toString() : 'No data';
+    return `Error: ${err}, Data: ${data}`;
+  } 
 }
 
 export {RequestResponse};

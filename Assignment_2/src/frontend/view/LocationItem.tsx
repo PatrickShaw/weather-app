@@ -16,6 +16,8 @@ interface LocationItemProps {
   readonly onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
   // Specifies what happens when the temperature monitor button is clicked.
   readonly onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
+  // Specifies what happens when graph toggle button clicked.
+  readonly onGraphMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
 /**
@@ -27,12 +29,17 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
   private onRainfallMonitorButtonClickedBound: any;
   private onTemperatureMonitorButtonClickedBound: any;
+  private onGraphMonitorButtonClickedBound: any;
   constructor(props: LocationItemProps) {
     super(props);
     this.onRainfallMonitorButtonClickedBound = this.onRainfallMonitorButtonClicked.bind(this);
     this.onTemperatureMonitorButtonClickedBound = this.onTemperatureMonitorButtonClicked.bind(this);
+    this.onGraphMonitorButtonClickedBound = this.onGraphMonitorButtonClicked.bind(this);
   }
 
+  private onGraphMonitorButtonClicked(): void {
+    console.log('Graph Monitor Button Clicked');
+  }
   /**
    * The unbound method that triggers the rainfall monitor click observer to fire.
    */
@@ -74,12 +81,14 @@ class LocationItem extends React.Component<LocationItemProps, void> {
             >
               Rain
             </button>
+
             <button 
               onClick={this.onTemperatureMonitorButtonClickedBound} 
               className={this.props.temperatureMonitorSelected ? 'selected' : ''}
             >
               Temp
             </button>
+        
           </GenericListItem>
         </div>
       </div>

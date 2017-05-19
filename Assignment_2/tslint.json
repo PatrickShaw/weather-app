@@ -4,6 +4,7 @@
     "tslint-react"
   ],
   "rules": {
+    "object-literal-sort-keys": false,
     "member-ordering": [
       false
     ],

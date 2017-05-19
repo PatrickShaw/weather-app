@@ -3,12 +3,13 @@ import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
 import { FullLambdaWeatherService } from './FullLambdaWeatherService';
-import { TestWeatherClientFactory } from '../weather_client/test/TestWeatherClientFactory';
+import { TestWeatherClientOnlyNumbersFactory } from '../weather_client/test/TestWeatherClientOnlyNumbersFactory';
+
 console.log(chalk.cyan('Starting server...'));
 const server = Http.createServer();
-server.listen(process.env.PORT || 8080);
+server.listen(8080);
 const io: SocketIO.Server = SocketIo(server);
-const weatherClientFactory: TestWeatherClientFactory = new TestWeatherClientFactory();
+const weatherClientFactory: TestWeatherClientOnlyNumbersFactory = new TestWeatherClientOnlyNumbersFactory();
 const service: FullLambdaWeatherService = new FullLambdaWeatherService(
   io, 
   weatherClientFactory
