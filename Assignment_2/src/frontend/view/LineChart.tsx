@@ -62,18 +62,18 @@ class LineChart extends React.Component<LineChartProps, void> {
         {
           label: 'Rainfall',
           fill: false,          
-          backgroundColor: 'rgba(0, 0, 240, 0.75)',
-          borderColor: 'rgb(0, 0, 240)',
+          backgroundColor: 'rgba(33, 150, 243, 0.75)',
+          borderColor: 'rgb(33, 150, 243)',
           borderCapStyle: 'butt',
           borderDash: [],
           borderDashOffset: 0.0,
           borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(0, 0, 240)',
+          pointBorderColor: 'rgb(33, 150, 243)',
           pointBackgroundColor: '#fff',
           pointBorderWidth: 0,
           pointHoverRadius: 3,
-          pointHoverBackgroundColor: 'rgb(0, 0, 240)',
-          pointHoverBorderColor: 'rgb(0, 0, 240)',
+          pointHoverBackgroundColor: 'rgb(33, 150, 243)',
+          pointHoverBorderColor: 'rgb(33, 150, 243)',
           pointHoverBorderWidth: 1,
           pointRadius: 1,
           pointHitRadius: 5,
@@ -83,18 +83,18 @@ class LineChart extends React.Component<LineChartProps, void> {
           label: 'Temperature',
           fill: false,
           lineTension: 0.1,
-          backgroundColor: 'rgba(240, 0, 0, 0.75)',
-          borderColor: 'rgb(240, 0, 0)',
+          backgroundColor: 'rgba(255, 171, 0, 0.75)',
+          borderColor: 'rgb(255, 171, 0)',
           borderCapStyle: 'butt',
           borderDash: [],
           borderDashOffset: 0.0,
           borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(240, 0, 0)',
+          pointBorderColor: 'rgb(255, 171, 0)',
           pointBackgroundColor: '#fff',
           pointBorderWidth: 0,
           pointHoverRadius: 3,
-          pointHoverBackgroundColor: 'rgb(240, 0, 0)',
-          pointHoverBorderColor: 'rgb(240, 0, 0)',
+          pointHoverBackgroundColor: 'rgb(255, 171, 0)',
+          pointHoverBorderColor: 'rgb(255, 171, 0)',
           pointHoverBorderWidth: 1,
           pointRadius: 1,
           pointHitRadius: 5,
@@ -104,9 +104,6 @@ class LineChart extends React.Component<LineChartProps, void> {
     };
     // TODO: Set axis labels, configure graph so looks nicer.
     const options: Chart.options = {
-      responsive: true,
-      maintainAspectRatio: true,
-      animation : false,
       scales: {
         xAxes: [{
             ticks: {
@@ -119,10 +116,12 @@ class LineChart extends React.Component<LineChartProps, void> {
         }
     };
     
-    return <Line 
-            data={data}
-            options={options}
-    />;
+    return (
+      <Line 
+          data={data}
+          options={options}
+      />
+    );
   }
 }
 
