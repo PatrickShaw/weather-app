@@ -49,9 +49,11 @@ class LineChart extends React.Component<LineChartProps, void> {
       // means that timeStamp should not be null.
       if (timeStamp == null) {
         console.log('Timestamp is null');
-        timeStamp = 'N/A';
+        // timeStamp = 'N/A';
+      } else {
+        // Parse timestamp.
+        timestampDataPoints.push(timeStamp);
       }
-      timestampDataPoints.push(timeStamp);
     }
     
     // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
@@ -111,9 +113,11 @@ class LineChart extends React.Component<LineChartProps, void> {
                 maxRotation: 0,
                 minRotation: 0,
                 autoSkipPadding: 10
-            }
+            },
+            type: 'time',
+            
           }]
-        }
+      }
     };
     
     return (

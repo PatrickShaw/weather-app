@@ -58,13 +58,9 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // TODO: Rename it?
     this.onMonitoringListGraphItemClicked = new class implements OnMonitoringItemClickedObserver {
       public onItemClicked(location: string) {
-        console.log(`onMonitoringListGraphItemClicked >> Location: ${location}}`);
         const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
           that.state.weatherDataMap.get(location);
         if (monitoredLocationInformation != null) { 
-          console.log(`onMonitoringListGraphItemClicked >> 
-            Graph old status: ${monitoredLocationInformation.monitorGraph}
-            Graph new status: ${!monitoredLocationInformation.monitorGraph}`);
           const newMonitoredLocationInformation: MonitoredLocationInformation = new MonitoredLocationInformation(
             monitoredLocationInformation.weatherDataList, 
             monitoredLocationInformation.monitorRainfall,
@@ -224,7 +220,6 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     const monitor: MonitorMetadata = new MonitorMetadata(location);
     if (selected) {
       // We're unselecting a location so emit to remove the monitor
-      console.log(`----~~~~~~ RemoveMonitorEvent, location: ${monitor.location}~~~~~-----`);
       socket.emit(removeMonitorEvent, monitor);
     } else {
       // We're selecting a location so emit to add the monitor
@@ -240,9 +235,6 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
       // First, make sure we didn't receive an error
-      console.log('RequestResponse: ~~~');
-      console.log(addMonitorResponse);
-      console.log('~~~~~~~~~~');
       if (addMonitorResponse.error == null) {
         // Good, we didn't receive an error, add the new weather data into our state's weather hash map.
         const newWeatherData: WeatherLocationData = addMonitorResponse.data;
@@ -265,7 +257,6 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<WeatherLocationData>) => {
       // Make sure we didn't receive an error when we tried to remove the monitor
       if (removeMonitorResponse.error == null) {
-        console.log('removeMonitorEvent: No error');
         // Delete monitoring card here, make sure to do so in render part as well.
         const removedMonitor = removeMonitorResponse.data;
         const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;

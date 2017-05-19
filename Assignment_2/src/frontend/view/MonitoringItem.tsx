@@ -61,11 +61,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
-
-    console.log('Should show rainfall data: ' + this.props.monitoredLocationInformation.monitorRainfall);
-    console.log('Should show temperature data: ' + this.props.monitoredLocationInformation.monitorTemperature);
-
-    // Keeps track of values tracked.
+   // Keeps track of values tracked.
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
     // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
     // Now we're going to specify the markup for the card itself.

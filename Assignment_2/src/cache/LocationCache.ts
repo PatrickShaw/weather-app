@@ -17,12 +17,9 @@ class LocationCache {
    * Add a location to map, location must not already exist in map.
    */
   public addLocation(data: WeatherLocationData): void {
-    console.log(chalk.bgRed(`---- Adding location: ${data}`));
-    console.log(chalk.bgRed(`-- Location in data for addLocation: ${data.location}`));
     if (this.locationMap.has(data.location)) {
       throw new Error(`location ${data.location} already exists in cache`);
     }
-    console.log(chalk.bgRed(`Up to setting`));
     this.locationMap.set(data.location, data);
     console.log(chalk.green(`Added location ${data.location} to cache`));
   }

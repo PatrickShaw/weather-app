@@ -46,9 +46,6 @@ class MelbourneWeatherClient implements WeatherClient {
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
-    console.log(chalk.bgGreen(`~~~~~~~~ In retrieveWeatherLocationData ~~~~~~~~~~~`));
-    console.log(chalk.bgGreen(`~ force refresh: ${forceRefresh}`));
-    console.log(chalk.bgYellow(`Should I get rainfall: ${getRainfall}, Should I get temp: ${getTemperature}`));
 
     if (location == null) {
       throw new Error('Location was null in retrieveWeatherLocationData');
@@ -74,13 +71,10 @@ class MelbourneWeatherClient implements WeatherClient {
       }
     }
 
-    console.log(chalk.blue(`Location: ${location}, Force Refresh: ${forceRefresh} 
-      Should get rainfall: ${getRainfall}, Should get temp: ${getTemperature}`));
     const cacheEntryCorrect: boolean = rainfallData !== undefined && temperatureData !== undefined;
     // Now let's check if we should make actual calls to the SOAP client.
     if (getTemperature) {
       if (temperatureData === undefined) {
-        console.log(chalk.blue('Calling retrieveTemperatureData'));
         const temperatureRequestPromise: Promise<TemperatureData> = 
           this.retrieveTemperatureData(new TemperatureRequestData(location))
             .then((retrievedTemperatureData) => {
@@ -98,7 +92,6 @@ class MelbourneWeatherClient implements WeatherClient {
     }
     if (getRainfall) {
       if (rainfallData === undefined) {
-        console.log(chalk.blue('Calling retrieveRainfallData'));
         const rainfallRequestPromise: Promise<RainfallData> = 
           this.retrieveRainfallData(new RainfallRequestData(location))
             .then((retrievedRainfallData) => {
@@ -122,17 +115,10 @@ class MelbourneWeatherClient implements WeatherClient {
             rainfallData,
             temperatureData
         );
-        console.log('------ HERE -----, does weather data exist: ' + weatherData);
         if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
-          console.log(chalk.bgGreen(`------Check Update Location Cache-----: ${weatherData}`));
           this.locationCache.updateLocation(weatherData);
-          console.log(chalk.bgGreen(`------End Update Location Cache-----: ${weatherData}`));
-
         } else if (!this.locationCache.has(weatherData)) {
-          console.log(chalk.bgGreen(`------Check Add to Location Cache-----: ${weatherData}`));
           this.locationCache.addLocation(weatherData);
-          console.log(chalk.bgGreen(`------End Add to Location Cache-----: ${weatherData}`));
-
 
         }
         return weatherData;
