@@ -47,9 +47,10 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
     return this.weatherService.getWeather(new SoapRequest<string>(location))
         .then((response: SoapResponse<string[]>) => {
           const data: string[] = response.return;
+          // TODO: Make celcius
           const timestamp: string = data[0];
-          const rainfall: string = data[1];
-          const temperature: string = data[2];
+          const rainfall: string = data[2];
+          const temperature: string = data[1];
           return new WeatherLocationData(
             location, 
             new RainfallData(rainfall, timestamp), 
