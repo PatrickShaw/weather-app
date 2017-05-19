@@ -60,8 +60,8 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       rainfallDataToRender = dataMissingMessage;  
     }
 
-    console.log('Should show rainfall data: ' + currentWeatherData.rainfallData);
-    console.log('Should show temperature data: ' + currentWeatherData.temperatureData);
+    console.log('Should show rainfall data: ' + this.props.monitoredLocationInformation.monitorRainfall);
+    console.log('Should show temperature data: ' + this.props.monitoredLocationInformation.monitorTemperature);
 
     // Keeps track of values tracked.
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
