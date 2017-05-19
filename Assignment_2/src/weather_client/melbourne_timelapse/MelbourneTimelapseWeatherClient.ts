@@ -1,5 +1,5 @@
-import * as chalk from 'chalk';
-
+import { SoapResponse } from '../../model/SoapResponse';
+import { SoapRequest } from '../../model/SoapRequest';
 import { MelbourneTimelapseWeatherSoapServiceStub } from './MelbourneTimelapseWeatherSoapServiceStub';
 import { RainfallData } from '../../model/RainfallData';
 import { TemperatureData } from '../../model/TemperatureData';
@@ -44,30 +44,18 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
       // meaningful data.
       throw new Error('getRainfall and getTemperature were both false');
     }
-    // We're going to use this to wait for all requests later on.
-    const dataPromises: Array<Promise<string[]>> = [];
-    dataPromises.push(
-      this.weatherService.getWeather(location)
-        .then((data) => {
-          console.log(data);
-          return data;
-        })
-    );
-    // Now let's check if we should make actual calls to the SOAP client.
-    // Wait for both getRainfall() and getTemperature() promises to resolve.
-    return Promise.all(dataPromises)
-      .then((responses) => {
-        const weatherData: WeatherLocationData = new WeatherLocationData(
-            location,
-            new RainfallData('TODO', 'TODO'),
-            new TemperatureData('TODO', 'TODO')
-        );
-        return weatherData;
-      }).catch((error) => {
-        console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
-        console.error(chalk.red(error.message));
-        console.error(chalk.red(error.stack));
-      });
+    return this.weatherService.getWeather(new SoapRequest<string>(location))
+        .then((response: SoapResponse<string[]>) => {
+          const data: string[] = response.return;
+          const timestamp: string = data[0];
+          const rainfall: string = data[1];
+          const temperature: string = data[2];
+          return new WeatherLocationData(
+            location, 
+            new RainfallData(rainfall, timestamp), 
+            new TemperatureData(temperature, timestamp)
+          );
+        });
   }
 
   /**
