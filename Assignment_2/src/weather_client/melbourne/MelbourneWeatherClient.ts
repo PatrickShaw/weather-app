@@ -46,6 +46,9 @@ class MelbourneWeatherClient implements WeatherClient {
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
+    if (location == null) {
+      throw new Error('Location was null in retrieveWeatherLocationData');
+    }
     if (!getRainfall && !getTemperature) {
       // Obviously the caller shouldn't bother calling this method if don't actually want to get any
       // meaningful data.
@@ -137,6 +140,9 @@ class MelbourneWeatherClient implements WeatherClient {
     const weatherPromises: Array<Promise<WeatherLocationData>> = [];
     // For each location, get temp and rainfall data.
     locations.forEach((location: string, locationIndex: number) => {
+      if (location == null) {
+        console.log(chalk.red(`Location is null: ${location}`));
+      }
       weatherPromises.push(this.retrieveWeatherLocationData(location));
     });
     return Promise.all(weatherPromises);

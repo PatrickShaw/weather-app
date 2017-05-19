@@ -63,6 +63,7 @@ class FullLambdaWeatherService {
       SocketKeys.addTemperatureMonitor,
       SocketKeys.removeTemperatureMonitor
     );
+    
     this.monitoringDataList = [
       this.rainfallMonitoringData,
       this.temperatureMonitoringData
@@ -107,7 +108,8 @@ class FullLambdaWeatherService {
       socket.emit(SocketKeys.successfulServerSetup, this.successfulWeatherClientSetup);
     });
   }
-
+  
+  // Initialized for rainfall and temperature (called twice).
   private initializeMonitorSocketEvent(
     socket: SocketIO.Socket,
     addEventName: string, 

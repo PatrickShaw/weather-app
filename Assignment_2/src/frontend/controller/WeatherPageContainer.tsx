@@ -35,19 +35,21 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
-    this.onLocationsListRainfallItemClicked = new class implements OnLocationItemClickedObserver {
-      public onItemClicked(location: string, selected: boolean): void {
-        // The backend speaks in MonitorMetadata objects, so create one.
-        const monitor: MonitorMetadata = new MonitorMetadata(location);
-        if (selected) {
-          // We're unselecting a location so emit to remove the monitor
-          socket.emit(SocketKeys.removeRainfallMonitor, monitor);
-        } else {
-          // We're selecting a location so emit to add the monitor
-          socket.emit(SocketKeys.addRainfallMonitor, monitor);
-        }
-      }
-    }();
+
+    // TODO(patrick): Confirm this should not be here.
+    // this.onLocationsListRainfallItemClicked = new class implements OnLocationItemClickedObserver {
+    //   public onItemClicked(location: string, selected: boolean): void {
+    //     // The backend speaks in MonitorMetadata objects, so create one.
+    //     const monitor: MonitorMetadata = new MonitorMetadata(location);
+    //     if (selected) {
+    //       // We're unselecting a location so emit to remove the monitor
+    //       socket.emit(SocketKeys.removeRainfallMonitor, monitor);
+    //     } else {
+    //       // We're selecting a location so emit to add the monitor
+    //       socket.emit(SocketKeys.addRainfallMonitor, monitor);
+    //     }
+    //   }
+    // }();
 
     // Create on click monitor listeners
     
@@ -119,14 +121,20 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     this.initializeMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addRainfallMonitor, 
-      SocketKeys.removeRainfallMonitor
+      SocketKeys.removeRainfallMonitor,
+      // (removedLocation: string, weatherData: WeatherLocationData) => {
+      //   return new WeatherLocationData(removedLocation, undefined, weatherData.temperatureData);
+      // }
     );
     
     // Initialize the socket end points for temperature monitor.
     this.initializeMonitoringSocketEndPoint(
       socket, 
       SocketKeys.addTemperatureMonitor, 
-      SocketKeys.removeTemperatureMonitor
+      SocketKeys.removeTemperatureMonitor,
+      // (removedLocation: string, weatherData: WeatherLocationData) => {
+      //   return new WeatherLocationData(removedLocation, weatherData.rainfallData, undefined);
+      // }
     );
 
     socket.on(SocketKeys.successfulServerSetup, (connectedToServer: boolean) => {
@@ -195,7 +203,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
   private initializeMonitoringSocketEndPoint(
     socket: SocketIOClient.Socket,
     addMonitorEvent: string,
-    removeMonitorEvent: string
+    removeMonitorEvent: string,
+    // filterWeatherLocationData: (location: string, weatherData: WeatherLocationData) => WeatherLocationData
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
       // First, make sure we didn't receive an error
@@ -223,9 +232,22 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     
     socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<WeatherLocationData>) => {
       // Make sure we didn't receive an error when we tried to remove the monitor
-      if (removeMonitorResponse.error != null) {
-        console.error(removeMonitorResponse.error);
-      }
+      if (removeMonitorResponse.error == null) {
+        // const removedMonitor = removeMonitorResponse.data;
+        // const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
+        // const monitoredLocationInformation: MonitoredLocationInformation | null = 
+        //   weatherDataMap.get(removedMonitor.location);
+        // if (monitoredLocationInformation != null) {
+        //   const currentWeatherData: WeatherLocationData = monitoredLocationInformation.weatherDataList[
+        //   monitoredLocationInformation.weatherDataList.length - 1];
+        // const newWeatherData: WeatherLocationData = 
+        // new WeatherLocationData(removedMonitor.location, undefined, undefined);
+          console.log('removeMonitorEvent: No error');
+        } else {
+          // Log error.
+          console.error(removeMonitorResponse.error);
+        }
+  
       // TODO: This? Why don't we remove the monitor part here.
       // Remove on backend, just re-render?
     });
