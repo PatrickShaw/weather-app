@@ -233,20 +233,27 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     socket.on(removeMonitorEvent, (removeMonitorResponse: RequestResponse<WeatherLocationData>) => {
       // Make sure we didn't receive an error when we tried to remove the monitor
       if (removeMonitorResponse.error == null) {
-        // const removedMonitor = removeMonitorResponse.data;
-        // const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
-        // const monitoredLocationInformation: MonitoredLocationInformation | null = 
-        //   weatherDataMap.get(removedMonitor.location);
-        // if (monitoredLocationInformation != null) {
-        //   const currentWeatherData: WeatherLocationData = monitoredLocationInformation.weatherDataList[
-        //   monitoredLocationInformation.weatherDataList.length - 1];
-        // const newWeatherData: WeatherLocationData = 
-        // new WeatherLocationData(removedMonitor.location, undefined, undefined);
-          console.log('removeMonitorEvent: No error');
+        console.log('removeMonitorEvent: No error');
+        // Delete monitoring card here, make sure to do so in render part as well.
+        const removedMonitor = removeMonitorResponse.data;
+        const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
+        const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
+          weatherDataMap.get(removedMonitor.location);
+        if (monitoredLocationInformation != null) {
+          if (!monitoredLocationInformation.monitorRainfall && !monitoredLocationInformation.monitorTemperature) {
+            // Nothing to monitor, data for this isn't getting fetched from backend.
+            // Delete card by deleting info form weatherDataMap.
+            weatherDataMap.delete(removedMonitor.location);
+            // Re-render.
+            this.setState({ weatherDataMap });
+          } // Implicit else: Has meaningful data in card, don't remove.
         } else {
-          // Log error.
-          console.error(removeMonitorResponse.error);
+          console.error(`Error: monitoredLocationInformation could not be found for ${removedMonitor}`);
         }
+      } else {
+        // Log error.
+        console.error(removeMonitorResponse.error);
+      }
   
       // TODO: This? Why don't we remove the monitor part here.
       // Remove on backend, just re-render?
