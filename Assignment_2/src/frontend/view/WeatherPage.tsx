@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import {ActionBar} from './AppBar';
 import {AppState} from '../model/AppState';
+import {GoogleWeatherMap} from './GoogleWeatherMap';
 import {LocationList} from './LocationList';
 import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
@@ -43,6 +44,12 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           </aside>
           <main className="monitoring-container">
             <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
+            <div height="1000px" width="2000px"> 
+               <GoogleWeatherMap
+                something={'hi'}
+               />
+            </div>
+           
             <div className="monitoring-list-container">
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 

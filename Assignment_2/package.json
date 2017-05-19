@@ -23,9 +23,12 @@
     "backend-start": "node scripts/backend-start.js"
   },
   "dependencies": {
+    "@mapbox/point-geometry": "^0.1.0",
     "@types/google-maps": "^3.2.0",
     "chalk": "^1.1.3",
     "chart.js": "^2.5.0",
+    "google-map-react": "^0.24.0",
+    "point-geometry": "^0.1.0",
     "react": "^15.5.4",
     "react-chartjs-2": "^2.1.0",
     "react-dom": "^15.5.4",
