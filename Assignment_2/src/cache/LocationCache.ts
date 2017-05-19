@@ -1,4 +1,5 @@
 import * as chalk from 'chalk';
+
 import { WeatherLocationData } from '../model/WeatherLocationData';
 /**
  * Provides caching mechanism so new frontend sessions that connect can display monitors instantly.
@@ -15,6 +16,7 @@ class LocationCache {
    * Add a location to map, location must not already exist in map.
    */
   public addLocation(data: WeatherLocationData): void {
+    console.log('---- Adding location: ' + data.location);
     if (this.locationMap.has(data.location)) {
       throw new Error(`location ${location} already exists in cache`);
     }

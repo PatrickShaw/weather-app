@@ -6,7 +6,7 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
-  readonly weatherData: MonitoredLocationInformation;
+  readonly monitoredLocationInformation: MonitoredLocationInformation;
 }
 
 /**
@@ -24,10 +24,11 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     let rainfallDataPoint: number|null = null;
     let temperatureTimestamp: string|null = null;
     let rainfallTimestamp: string|null = null;
-    const currentWeatherData: WeatherLocationData = this.props.weatherData.weatherDataList[0];
-
+    const currentWeatherData: WeatherLocationData = this.props.monitoredLocationInformation.weatherDataList[
+      this.props.monitoredLocationInformation.weatherDataList.length - 1];
+      
     if (
-      this.props.weatherData.monitorTemperature &&
+      this.props.monitoredLocationInformation.monitorTemperature &&
       currentWeatherData.temperatureData != null && 
       currentWeatherData.temperatureData.temperature != null &&
       currentWeatherData.temperatureData.temperature !== ''
@@ -58,22 +59,26 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
-    
+
+    console.log('Should show rainfall data: ' + currentWeatherData.rainfallData);
+    console.log('Should show temperature data: ' + currentWeatherData.temperatureData);
+
     // Keeps track of values tracked.
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
     // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
     // Now we're going to specify the markup for the card itself.
     return (
+      // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section className="pad-item-list">
         <h1 className="txt-body-2">{currentWeatherData.location}</h1>
         {
-          currentWeatherData.rainfallData ? 
+          this.props.monitoredLocationInformation.monitorRainfall ? 
           <h2 className="txt-body-1">
             Rainfall: {rainfallDataToRender}
           </h2> : null
         }
         {
-          currentWeatherData.temperatureData ? 
+          this.props.monitoredLocationInformation.monitorTemperature ? 
           <h2 className="txt-body-1">
             Temperature: {temperatureDataToRender}
           </h2> : null
@@ -83,7 +88,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
             <br/>
             <br/>
               <LineChart
-                monitoredLocationInformation={this.props.weatherData}
+                monitoredLocationInformation={this.props.monitoredLocationInformation}
               />
           </div>
         }

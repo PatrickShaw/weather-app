@@ -39,12 +39,16 @@ class MelbourneWeatherClient implements WeatherClient {
     });
   }
   
+  // Only retrieve weather location data for a single location.
   public retrieveWeatherLocationData(
     location: string, // The weather data's associated location.
     getRainfall: boolean = true, // Whether we want to get the rainfall data for this location.
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
+    if (location == null) {
+      throw new Error('Location was null in retrieveWeatherLocationData');
+    }
     if (!getRainfall && !getTemperature) {
       // Obviously the caller shouldn't bother calling this method if don't actually want to get any
       // meaningful data.
@@ -64,10 +68,14 @@ class MelbourneWeatherClient implements WeatherClient {
         temperatureData = getTemperature ? cachedWeatherData.temperatureData : undefined;
       }
     }
+
+    console.log(chalk.blue(`Location: ${location}, Force Refresh: ${forceRefresh} 
+      Should get rainfall: ${getRainfall}, Should get temp: ${getTemperature}`));
     const cacheEntryCorrect: boolean = rainfallData !== undefined && temperatureData !== undefined;
     // Now let's check if we should make actual calls to the SOAP client.
     if (getTemperature) {
       if (temperatureData === undefined) {
+        console.log(chalk.blue('Calling retrieveTemperatureData'));
         const temperatureRequestPromise: Promise<TemperatureData> = 
           this.retrieveTemperatureData(new TemperatureRequestData(location))
             .then((retrievedTemperatureData) => {
@@ -78,12 +86,14 @@ class MelbourneWeatherClient implements WeatherClient {
               console.error(chalk.bgRed('Error: retrieveTemperatureData()'));
               console.error(chalk.red(error.message));
               console.error(chalk.red(error.stack));
+              throw error;
             });
         dataPromises.push(temperatureRequestPromise);
       }
     }
     if (getRainfall) {
       if (rainfallData === undefined) {
+        console.log(chalk.blue('Calling retrieveRainfallData'));
         const rainfallRequestPromise: Promise<RainfallData> = 
           this.retrieveRainfallData(new RainfallRequestData(location))
             .then((retrievedRainfallData) => {
@@ -94,6 +104,7 @@ class MelbourneWeatherClient implements WeatherClient {
               console.error(chalk.bgRed('Error: retrieveRainfallData()'));
               console.error(chalk.red(error.message));
               console.error(chalk.red(error.stack));
+              throw error;
             });
         dataPromises.push(rainfallRequestPromise);
       }
@@ -106,9 +117,11 @@ class MelbourneWeatherClient implements WeatherClient {
             rainfallData,
             temperatureData
         );
+        console.log('------ HERE -----, does weather data exist: ' + weatherData);
         if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
           this.locationCache.updateLocation(weatherData);
         } else {
+          console.log('------Check Add to Location Cache-----: ' + weatherData);
           this.locationCache.addLocation(weatherData);
         }
         return weatherData;
@@ -127,6 +140,9 @@ class MelbourneWeatherClient implements WeatherClient {
     const weatherPromises: Array<Promise<WeatherLocationData>> = [];
     // For each location, get temp and rainfall data.
     locations.forEach((location: string, locationIndex: number) => {
+      if (location == null) {
+        console.log(chalk.red(`Location is null: ${location}`));
+      }
       weatherPromises.push(this.retrieveWeatherLocationData(location));
     });
     return Promise.all(weatherPromises);
@@ -150,6 +166,7 @@ class MelbourneWeatherClient implements WeatherClient {
         console.error(chalk.bgRed('Error: getRainfall()'));
         console.error(chalk.red(error.message));
         console.error(chalk.red(error.stack));
+        throw error;
       });
   }
 
@@ -169,6 +186,7 @@ class MelbourneWeatherClient implements WeatherClient {
           console.error(chalk.bgRed('Error: getTemperature()'));
           console.error(chalk.red(error.message));
           console.error(chalk.red(error.stack));
+          throw error;
         });
   }
 }
