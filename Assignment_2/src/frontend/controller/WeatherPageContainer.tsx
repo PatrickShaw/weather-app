@@ -198,11 +198,16 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     removeMonitorEvent: string
   ): void {
     socket.on(addMonitorEvent, (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
-      // First, make sure we didn't receive an error.
+      // First, make sure we didn't receive an error
+      console.log('RequestResponse: ~~~');
+      console.log(addMonitorResponse);
+      console.log('~~~~~~~~~~');
       if (addMonitorResponse.error == null) {
         // Good, we didn't receive an error, add the new weather data into our state's weather hash map.
         const newWeatherData: WeatherLocationData = addMonitorResponse.data;
         const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
+        // newWeatherData.location should exist.
+
         const monitoringData: MonitoredLocationInformation | undefined = weatherDataMap.get(newWeatherData.location);
         if (monitoringData != null) {
           weatherDataMap.set(newWeatherData.location, monitoringData);

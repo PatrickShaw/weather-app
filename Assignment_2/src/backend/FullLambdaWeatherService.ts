@@ -14,7 +14,7 @@ import { WeatherLocationData } from '../model/WeatherLocationData';
 // allows for dependency injection where you pass in req parameters.
 
 // 300000 milliseconds = 5 mins.
-const defaultWeatherPollingInterval: number = 3000;
+const defaultWeatherPollingInterval: number = 30000;
 /**
  * Controller class instantiated by the node server. This specifies the core logic specified in 
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
@@ -91,6 +91,7 @@ class FullLambdaWeatherService {
           monitoringManager.removeMonitorEventName,
           monitoringManager.sessionManager
         );
+        console.log('Socket - addMonitorEventName: ' + monitoringManager.addMonitorEventName);
       }
 
       socket.on('disconnect', () => {
@@ -114,6 +115,7 @@ class FullLambdaWeatherService {
     sessionManager: SessionMonitoringManager
   ) {
     const sessionId = socket.id;
+    // Triggered when frontend emits socket.emit(addMonitorEvent, monitor);
     socket.on(addEventName, (monitor: MonitorMetadata) => {
       try {
         // Frontend sessions wants to monitor another location.
@@ -137,7 +139,10 @@ class FullLambdaWeatherService {
             temperatureLocationMonitor.getMonitoredLocations().has(monitor.location),
             false
           ).then((weatherLocationData) => {
-            socket.emit(addEventName, new RequestResponse(weatherLocationData, null));
+            console.log(chalk.bgBlue(`Emitting addEventName: data: ${weatherLocationData}`));
+            const responseObject: RequestResponse<WeatherLocationData> = new RequestResponse(weatherLocationData, null);
+            console.log(chalk.bgMagenta(`Emitting as: ${responseObject}`));
+            socket.emit(addEventName, responseObject);
           }).catch((error) => {
             console.error(chalk.red(error.message));
             console.error(chalk.red(error.stack));
@@ -158,6 +163,7 @@ class FullLambdaWeatherService {
       }
     });
     
+    // Triggered when frontend emits socket.emit(removeMonitorEvent, monitor);
     socket.on(removeEventName, (monitor: MonitorMetadata) => {
       // monitor is a string that is a location.
       // Frontend emitted remove_monitor with MonitorMetadata.
@@ -351,7 +357,7 @@ class FullLambdaWeatherService {
     // This lets any consumers of the API know that we reset the server
     this.io.sockets.emit(SocketKeys.retrievedLocations, []);
     this.io.sockets.emit(SocketKeys.replaceWeatherData, []);
-    // Initialise the socket.io events
+    // Initialize the socket.io events
     this.initializeSocketEndpoints();
     // When SOAP Client is resolved which returns melbourneWeatherClient from an async call.
     this.successfulWeatherClientSetup = true;

@@ -24,8 +24,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     let rainfallDataPoint: number|null = null;
     let temperatureTimestamp: string|null = null;
     let rainfallTimestamp: string|null = null;
-    const currentWeatherData: WeatherLocationData = this.props.weatherData.weatherDataList[0];
-
+    const currentWeatherData: WeatherLocationData = this.props.weatherData.weatherDataList[
+      this.props.weatherData.weatherDataList.length - 1];
+    console.log('Rendering a monitor card.');
     if (
       this.props.weatherData.monitorTemperature &&
       currentWeatherData.temperatureData != null && 
@@ -58,7 +59,10 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     } else {
       rainfallDataToRender = dataMissingMessage;  
     }
-    
+
+    console.log('Should show rainfall data: ' + currentWeatherData.rainfallData);
+    console.log('Should show temperature data: ' + currentWeatherData.temperatureData);
+
     // Keeps track of values tracked.
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
     // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
