@@ -12,7 +12,7 @@ class LineChart extends React.Component<LineChartProps, void> {
   public render(): JSX.Element {
     const rainfallDataPoints: Array<number | null> = [];
     const temperatureDataPoints: Array<number | null> = []; 
-    const timestampDataPoints: string[] = [];
+    const timestampDataPoints: Date[] = [];
     // Loop for all pieces of weatherData (makes up graph data points).
     for (const weatherData of this.props.monitoredLocationInformation.weatherDataList) {
       let timeStamp: string | undefined;
@@ -52,7 +52,19 @@ class LineChart extends React.Component<LineChartProps, void> {
         // timeStamp = 'N/A';
       } else {
         // Parse timestamp.
-        timestampDataPoints.push(timeStamp);
+        // String date of form: 24/07/2015 12:58:45
+        const tokens: string[] = timeStamp.split(' ');
+        const yearTokens: string[] = tokens[0].split('/');
+        const hoursMinsSecondsTokens: string[] = tokens[1].split(':');
+        const date = new Date();
+        date.setFullYear(+yearTokens[2], +yearTokens[1], +yearTokens[0]);
+        date.setHours(+hoursMinsSecondsTokens[0]);
+        date.setMinutes(+hoursMinsSecondsTokens[1]);
+        date.setSeconds(+hoursMinsSecondsTokens[2]);
+        date.setMilliseconds(0);
+        
+        console.log(`Timestamp string: ${timeStamp}, date object: ${date}`);
+        timestampDataPoints.push(date);
       }
     }
     
@@ -105,6 +117,7 @@ class LineChart extends React.Component<LineChartProps, void> {
       ]
     };
     // TODO: Set axis labels, configure graph so looks nicer.
+    // TODO: Fine tune dates.
     const options: Chart.options = {
       scales: {
         xAxes: [{
@@ -115,6 +128,9 @@ class LineChart extends React.Component<LineChartProps, void> {
                 autoSkipPadding: 10
             },
             type: 'time',
+             displayFormats: {
+              'day': 'MMM DD'
+             }
             
           }]
       }
