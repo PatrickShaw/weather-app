@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
+import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 
 interface MonitoringListProps {
   // The list of all locations.
@@ -14,6 +15,7 @@ interface MonitoringListProps {
   readonly locations: string[];
   // The map of locations to their associated MonitoredLocationInformation.
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
+  readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
 /**
@@ -33,7 +35,10 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
             return (
               monitoredLocationInformation && monitoredLocationInformation.weatherDataList.length > 0 ?
               <div key={location} className="card monitoring-item-card">
-                <MonitoringItem monitoredLocationInformation={monitoredLocationInformation}/>
+                <MonitoringItem 
+                  monitoredLocationInformation={monitoredLocationInformation}
+                  onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
+                />
               </div>
               : null
             );

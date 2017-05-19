@@ -11,11 +11,18 @@ class MonitoredLocationInformation {
   public readonly weatherDataList: WeatherLocationData[];
   public readonly monitorRainfall: boolean;
   public readonly monitorTemperature: boolean;
+  public readonly monitorGraph: boolean;
 
-  constructor(weatherDataList: WeatherLocationData[], monitorRainfall: boolean, monitorTemperature: boolean) {
+  constructor(
+    weatherDataList: WeatherLocationData[],
+    monitorRainfall: boolean,
+    monitorTemperature: boolean,
+    monitorGraph: boolean = false
+  ) {
     this.weatherDataList = weatherDataList;
     this.monitorRainfall = monitorRainfall;
     this.monitorTemperature = monitorTemperature;
+    this.monitorGraph = monitorGraph;
   }
   
 }

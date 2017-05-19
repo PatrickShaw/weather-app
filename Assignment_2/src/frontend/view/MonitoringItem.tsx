@@ -2,11 +2,13 @@ import * as React from 'react';
 
 import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
+import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
+  readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
 /**
@@ -67,10 +69,26 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
     // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
     // Now we're going to specify the markup for the card itself.
+    const that: MonitoringItem = this;
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section className="pad-item-list">
-        <h1 className="txt-body-2">{currentWeatherData.location}</h1>
+        <div >
+          <h1 className="txt-body-2 align-card-head">{currentWeatherData.location}</h1>
+          
+          <button
+            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+              that.props.monitoredLocationInformation.weatherDataList[0].location
+            )}
+            className="graph-button align-card-head"
+            disabled={false}
+            >
+            Graph
+            <img src="https://image.flaticon.com/icons/png/128/118/118738.png" width="10px" >
+            </img>
+          </button>
+        </div>
+        <br/>
         {
           this.props.monitoredLocationInformation.monitorRainfall ? 
           <h2 className="txt-body-1">
@@ -83,14 +101,15 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
             Temperature: {temperatureDataToRender}
           </h2> : null
         }
+        <br/>
+        
         {
-          <div>
-            <br/>
-            <br/>
-              <LineChart
-                monitoredLocationInformation={this.props.monitoredLocationInformation}
-              />
-          </div>
+          this.props.monitoredLocationInformation.monitorGraph ?
+            <div>
+                <LineChart
+                  monitoredLocationInformation={this.props.monitoredLocationInformation}
+                />
+            </div> : null
         }
       </section>
     );

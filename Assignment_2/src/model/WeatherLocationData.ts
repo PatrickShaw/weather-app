@@ -18,7 +18,7 @@ class WeatherLocationData {
   public toString(): string {
     const temp: string = this.temperatureData ? this.temperatureData.toString() : 'undefined';
     const rainfall: string = this.rainfallData ? this.rainfallData.toString() : 'undefined';
-    return `Location: ${this.location}, Rainfall: ${temp}, Temperature: ${rainfall}`;
+    return `Location: ${this.location}, Rainfall: ${rainfall}, Temperature: ${temp}`;
   }
 }
 

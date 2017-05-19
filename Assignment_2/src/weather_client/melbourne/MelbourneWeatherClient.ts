@@ -46,6 +46,10 @@ class MelbourneWeatherClient implements WeatherClient {
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
   ) {
+    console.log(chalk.bgGreen(`~~~~~~~~ In retrieveWeatherLocationData ~~~~~~~~~~~`));
+    console.log(chalk.bgGreen(`~ force refresh: ${forceRefresh}`));
+    console.log(chalk.bgYellow(`Should I get rainfall: ${getRainfall}, Should I get temp: ${getTemperature}`));
+
     if (location == null) {
       throw new Error('Location was null in retrieveWeatherLocationData');
     }
@@ -60,6 +64,7 @@ class MelbourneWeatherClient implements WeatherClient {
     let temperatureData: TemperatureData;
     let rainfallData: RainfallData;
     // Okay, let's see if we can grab ourselve's some cached data.
+    
     if (!forceRefresh) {
       let cachedWeatherData: WeatherLocationData | undefined;
       cachedWeatherData = this.locationCache.get(location);
@@ -119,14 +124,21 @@ class MelbourneWeatherClient implements WeatherClient {
         );
         console.log('------ HERE -----, does weather data exist: ' + weatherData);
         if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
+          console.log(chalk.bgGreen(`------Check Update Location Cache-----: ${weatherData}`));
           this.locationCache.updateLocation(weatherData);
-        } else {
-          console.log('------Check Add to Location Cache-----: ' + weatherData);
+          console.log(chalk.bgGreen(`------End Update Location Cache-----: ${weatherData}`));
+
+        } else if (!this.locationCache.has(weatherData)) {
+          console.log(chalk.bgGreen(`------Check Add to Location Cache-----: ${weatherData}`));
           this.locationCache.addLocation(weatherData);
+          console.log(chalk.bgGreen(`------End Add to Location Cache-----: ${weatherData}`));
+
+
         }
         return weatherData;
       }).catch((error) => {
-        console.error(chalk.bgRed('Error: Promise.all(compileWeatherLocationDataPromises)'));
+        console.error(chalk.bgRed(`Error: retrieveWeatherDataLocation 
+          >> Promise.all(compileWeatherLocationDataPromises)`));
         console.error(chalk.red(error.message));
         console.error(chalk.red(error.stack));
       });

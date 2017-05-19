@@ -5,6 +5,7 @@ import { AppState } from '../model/AppState';
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
+import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { RequestResponse } from '../../model/RequestResponse';
 import SocketKeys from '../../socket.io/socket-keys';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
@@ -23,6 +24,7 @@ import { WeatherPage } from '../view/WeatherPage';
 class WeatherPageContainer extends React.Component<{}, AppState> {
   private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
   private onLocationsListTemperatureItemClicked: OnLocationItemClickedObserver;
+  private onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
 
   constructor(props: {}) {
     super(props);
@@ -52,6 +54,33 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // }();
 
     // Create on click monitor listeners
+
+    // TODO: Rename it?
+    this.onMonitoringListGraphItemClicked = new class implements OnMonitoringItemClickedObserver {
+      public onItemClicked(location: string) {
+        console.log(`onMonitoringListGraphItemClicked >> Location: ${location}}`);
+        const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
+          that.state.weatherDataMap.get(location);
+        if (monitoredLocationInformation != null) { 
+          console.log(`onMonitoringListGraphItemClicked >> 
+            Graph old status: ${monitoredLocationInformation.monitorGraph}
+            Graph new status: ${!monitoredLocationInformation.monitorGraph}`);
+          const newMonitoredLocationInformation: MonitoredLocationInformation = new MonitoredLocationInformation(
+            monitoredLocationInformation.weatherDataList, 
+            monitoredLocationInformation.monitorRainfall,
+            monitoredLocationInformation.monitorTemperature,
+            !monitoredLocationInformation.monitorGraph
+          );
+          // Update WeatherDataMap.
+          that.state.weatherDataMap.set(location, newMonitoredLocationInformation);
+          that.setState({ weatherDataMap: that.state.weatherDataMap });  // Make react re-render.
+          
+        } else {
+          console.error(`Error: monitoredLocationInformation could not be found for ${location}`);
+        }
+      }
+
+    }();
     
     // Observer that is triggered when rainfall button is clicked for a location.
     // Either toggles it on or off.
@@ -69,7 +98,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
           newData = new MonitoredLocationInformation(
             originalData.weatherDataList, 
             !selected,
-            originalData.monitorTemperature
+            originalData.monitorTemperature,
+            originalData.monitorGraph
           );
         }
 
@@ -100,7 +130,8 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
           newData = new MonitoredLocationInformation(
             originalData.weatherDataList, 
             originalData.monitorRainfall,
-            !selected
+            !selected,
+            originalData.monitorGraph
           );
         }
         that.state.weatherDataMap.set(location, newData);
@@ -193,6 +224,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     const monitor: MonitorMetadata = new MonitorMetadata(location);
     if (selected) {
       // We're unselecting a location so emit to remove the monitor
+      console.log(`----~~~~~~ RemoveMonitorEvent, location: ${monitor.location}~~~~~-----`);
       socket.emit(removeMonitorEvent, monitor);
     } else {
       // We're selecting a location so emit to add the monitor
@@ -269,6 +301,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
           appCurrentState={this.state}
           onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
           onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
+          onMonitoringListGraphItemClicked={this.onMonitoringListGraphItemClicked}
         />
       ) : 
       (
