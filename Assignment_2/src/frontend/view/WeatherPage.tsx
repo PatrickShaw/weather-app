@@ -43,12 +43,11 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             />
           </aside>
           <main className="monitoring-container">
-            <header><h1 className="txt-subheading title-section">Monitored location dashboard</h1></header>
-            <div height="1000px" width="2000px"> 
+            <header><h1 className="txt-subheading title-section"
+            >Monitored location dashboard</h1></header>
                <GoogleWeatherMap
                 something={'hi'}
                />
-            </div>
            
             <div className="monitoring-list-container">
               <MonitoringList 
