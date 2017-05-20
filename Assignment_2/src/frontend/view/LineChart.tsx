@@ -1,6 +1,6 @@
-import * as Chart from 'chart.js';
 import * as React from 'react';
 
+import * as moment from 'moment';
 import { Line } from 'react-chartjs-2';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 
@@ -15,7 +15,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     const timestampDataPoints: Date[] = [];
     // Loop for all pieces of weatherData (makes up graph data points).
     for (const weatherData of this.props.monitoredLocationInformation.weatherDataList) {
-      let timeStamp: string | undefined;
+      let timestamp: string | undefined;
 
       let rainfallPoint: number | null = null;
       if (this.props.monitoredLocationInformation.monitorRainfall) {        
@@ -25,7 +25,7 @@ class LineChart extends React.Component<LineChartProps, void> {
           if (isNaN(rainfallPoint)) {
             rainfallPoint = null;
           }
-          timeStamp = weatherData.rainfallData.timestamp;
+          timestamp = weatherData.rainfallData.timestamp;
         }
       }
       rainfallDataPoints.push(rainfallPoint);  // Can be null, if null breaks graph being joint.
@@ -38,7 +38,7 @@ class LineChart extends React.Component<LineChartProps, void> {
           if (isNaN(temperaturePoint)) {
             temperaturePoint = null;
           }
-          timeStamp = weatherData.temperatureData.timestamp;  
+          timestamp = weatherData.temperatureData.timestamp;  
         }
       }
       temperatureDataPoints.push(temperaturePoint);  // Can be null, if null breaks graph being joint.
@@ -47,30 +47,24 @@ class LineChart extends React.Component<LineChartProps, void> {
       // the timestamp must not be null.
       // Additionally at least one of temp or rainfall data must be provided so getting to here
       // means that timeStamp should not be null.
-      if (timeStamp == null) {
-        console.log('Timestamp is null');
-        // timeStamp = 'N/A';
-      } else {
+      if (timestamp != null) {
         // Parse timestamp.
         // String date of form: 24/07/2015 12:58:45
-        const tokens: string[] = timeStamp.split(' ');
-        const yearTokens: string[] = tokens[0].split('/');
-        const hoursMinsSecondsTokens: string[] = tokens[1].split(':');
-        const date = new Date();
-        date.setFullYear(+yearTokens[2], +yearTokens[1], +yearTokens[0]);
-        date.setHours(+hoursMinsSecondsTokens[0]);
-        date.setMinutes(+hoursMinsSecondsTokens[1]);
-        date.setSeconds(+hoursMinsSecondsTokens[2]);
-        date.setMilliseconds(0);
-        
-        console.log(`Timestamp string: ${timeStamp}, date object: ${date}`);
-        timestampDataPoints.push(date);
+        const momentResult: moment.Moment = moment(timestamp, 'DD/MM/YYYY HH:mm:ss');
+        if (momentResult.isValid) {
+          const date: Date = momentResult.toDate();
+          timestampDataPoints.push(date);
+        } else {
+          console.error(`Failed to parse ${timestamp}`);
+        }
+      } else {
+        console.error('Timestamp was null.');
       }
     }
     
     // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
     // 
-    const data: Chart.LinearChartData = {
+    const data = {
       labels: timestampDataPoints,
       datasets: [
         {
@@ -118,7 +112,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     };
     // TODO: Set axis labels, configure graph so looks nicer.
     // TODO: Fine tune dates.
-    const options: Chart.options = {
+    const options = {
       scales: {
         xAxes: [{
             ticks: {
@@ -128,10 +122,9 @@ class LineChart extends React.Component<LineChartProps, void> {
                 autoSkipPadding: 10
             },
             type: 'time',
-             displayFormats: {
-              'day': 'MMM DD'
-             }
-            
+            displayFormats: {
+              day: 'MMM DD'
+            }
           }]
       }
     };

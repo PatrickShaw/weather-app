@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const webpackDebugConfig = require('../config/webpack.config.frontend');
 const paths = require('../config/paths');
-console.log(chalk.cyan("Creating Webpack development server configuration..."));
+console.log(chalk.cyan('Creating Webpack development server configuration...'));
 const useHttps = process.env.HTTPS === 'true';
 const protocolPrefix = useHttps ? 'https' : 'http'
 const host = process.env.HOST || 'localhost';
@@ -13,11 +13,11 @@ var compiler = webpack(
   webpackDebugConfig, 
   (error) => {
     if(error) {
-      console.error(chalk.red("An error occurred when configuring webpack compiler..."))
+      console.error(chalk.red('An error occurred when configuring webpack compiler...'))
       console.error(chalk.red(error));
       return;
     }
-    console.log(chalk.green("Webpack configuration complete"));
+    console.log(chalk.green('Webpack configuration complete'));
   }
 );
 var server = new WebpackDevServer(
@@ -38,10 +38,10 @@ var server = new WebpackDevServer(
     'clientLogLevel': 'none'
   }
 );
-console.log(chalk.cyan("Hosting server..."));
+console.log(chalk.cyan('Hosting server...'));
 server.listen(port, (err) => {
   if(err) {
-    console.error(chalk.red("An error occurred when hosting the server..."))
+    console.error(chalk.red('An error occurred when hosting the server...'))
     console.error(chalk.red(err));
     return;
   }

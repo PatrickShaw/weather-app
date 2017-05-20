@@ -1,14 +1,14 @@
-import './WeatherPage.scss';
+import "./WeatherPage.scss";
 
-import * as React from 'react';
+import * as React from "react";
 
-import {ActionBar} from './AppBar';
-import {AppState} from '../model/AppState';
-import {GoogleWeatherMap} from '../weather_map/GoogleWeatherMap';
-import {LocationList} from './LocationList';
-import {MonitoringList} from './MonitoringList';
-import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
-import {OnMonitoringItemClickedObserver} from '../observers/OnMonitoringItemClickedObserver';
+import {ActionBar} from "./AppBar";
+import {AppState} from "../model/AppState";
+import {GoogleWeatherMap} from "../weather_map/GoogleWeatherMap";
+import {LocationList} from "./LocationList";
+import {MonitoringList} from "./MonitoringList";
+import {OnLocationItemClickedObserver} from "../observers/OnLocationItemClickedObserver";
+import {OnMonitoringItemClickedObserver} from "../observers/OnMonitoringItemClickedObserver";
 
 interface WeatherPageProps {
   // Instance variable.
@@ -43,15 +43,17 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
               onTemperatureItemClickedObserver={this.props.onLocationTemperatureItemClickedObserver}
             />
           </aside>
+
           <main className="monitoring-container">
-            <header><h1 className="txt-subheading title-section"
-            >Monitored location dashboard</h1></header>
-            <div id="map"></div>
-               <GoogleWeatherMap
-                something={'hi'}
-                weatherDataMap={this.props.appCurrentState.weatherDataMap}
-               />
-           
+            <header>
+              <h1 className="txt-subheading title-section">
+                Monitored location dashboard
+              </h1>
+            </header>
+            <GoogleWeatherMap 
+              something={'hi'}                
+              weatherDataMap={this.props.appCurrentState.weatherDataMap}
+            />
             <div className="monitoring-list-container">
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 
