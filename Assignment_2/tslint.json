@@ -3,6 +3,9 @@
     "tslint:latest",
     "tslint-react"
   ],
+  "include": [
+        "src/*"
+  ], 
   "rules": {
     "object-literal-sort-keys": false,
     "member-ordering": [
