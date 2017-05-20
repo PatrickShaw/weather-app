@@ -1,3 +1,8 @@
+// /// <reference path="../../../../node_modules/@types/googlemaps/index.d.ts" />
+// /// <reference path="../../../node_modules/@types/googlemaps/index.d.ts" />
+// /// <reference path="../../../typings/globals/google.maps/index.d.ts" />
+
+
 declare module "@google/maps" {
   export interface CreateClientOptions {
     /**

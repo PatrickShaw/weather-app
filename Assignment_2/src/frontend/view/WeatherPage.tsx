@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import {ActionBar} from './AppBar';
 import {AppState} from '../model/AppState';
-import {GoogleWeatherMap} from './GoogleWeatherMap';
+import {GoogleWeatherMap} from '../weather_map/GoogleWeatherMap';
 import {LocationList} from './LocationList';
 import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
@@ -26,6 +26,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   
   public render(): JSX.Element {
     return (
+
       <div className="weather-page">
         <div className="page-heading">
           <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
@@ -45,8 +46,10 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           <main className="monitoring-container">
             <header><h1 className="txt-subheading title-section"
             >Monitored location dashboard</h1></header>
+            <div id="map"></div>
                <GoogleWeatherMap
                 something={'hi'}
+                weatherDataMap={this.props.appCurrentState.weatherDataMap}
                />
            
             <div className="monitoring-list-container">
