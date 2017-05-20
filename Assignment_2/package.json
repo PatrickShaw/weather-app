@@ -1,6 +1,6 @@
 {
   "name": "fit3077-assignment-2",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "contributors": [
     {
@@ -14,7 +14,11 @@
       "url": "https://github.com/darvid7"
     }
   ],
-  "license": "LGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Monash-University-FIT3077/fulllambda-Assignments"
+  },
+  "license": "MIT",
   "scripts": {
     "start": "concurrently --kill-others \"npm run backend-start\" \"npm run frontend-start\"",
     "backend-offline-start-chart-support": "node scripts/backend-offline-start-chart-support.js",
