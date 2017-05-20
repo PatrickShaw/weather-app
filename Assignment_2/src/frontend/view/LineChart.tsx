@@ -53,7 +53,6 @@ class LineChart extends React.Component<LineChartProps, void> {
         const momentResult: moment.Moment = moment(timestamp, 'DD/MM/YYYY HH:mm:ss');
         if (momentResult.isValid) {
           const date: Date = momentResult.toDate();
-          console.log(`Timestamp string: ${timestamp}, date object: ${date}`);
           timestampDataPoints.push(date);
         } else {
           console.error(`Failed to parse ${timestamp}`);
