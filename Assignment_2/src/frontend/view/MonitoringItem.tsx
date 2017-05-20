@@ -4,7 +4,7 @@ import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-
+import './MonitoringItem.scss';
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
@@ -68,31 +68,17 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section className='pad-item-list'>
-        <div >
-          <h1 className='txt-body-2 align-card-head'>{currentWeatherData.location}</h1>
-          
-          <button
-            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
-              that.props.monitoredLocationInformation.weatherDataList[0].location
-            )}
-            className='graph-button align-card-head'
-            disabled={false}
-          >
-            Graph
-            <img src='https://image.flaticon.com/icons/png/128/118/118738.png' width='10px' />
-          </button>
-        </div>
-        <br/>
+        <h1 className='txt-body-2 align-card-head'>{currentWeatherData.location}</h1>
         {
           this.props.monitoredLocationInformation.monitorRainfall ? 
           <h2 className='txt-body-1'>
-            Rainfall: {rainfallDataToRender}
+            <strong>Rainfall:</strong> {rainfallDataToRender}
           </h2> : null
         }
         {
           this.props.monitoredLocationInformation.monitorTemperature ? 
           <h2 className='txt-body-1'>
-            Temperature: {temperatureDataToRender}
+            <strong>Temperature:</strong> {temperatureDataToRender}
           </h2> : null
         }
         <br/>
@@ -105,6 +91,15 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
                 />
             </div> : null
         }
+        <button 
+            className='txt-color-primary'
+            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+              that.props.monitoredLocationInformation.weatherDataList[0].location
+            )}
+            disabled={false}
+        >
+          Graph <i className='material-icons'>&#xE5C5;</i>
+        </button>
       </section>
     );
   }

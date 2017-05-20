@@ -11,14 +11,10 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, void> {
 
   public render(): JSX.Element {
     return (
-      <div className='map'>
         <GoogleMap
           zoom={9}
           center={{lat: -37.81950134905335, lng: 144.98429111204815}}
-          
-        >
-        </GoogleMap>
-      </div>
+        />
     );
   }
   
