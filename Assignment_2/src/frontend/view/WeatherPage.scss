@@ -1,6 +1,6 @@
-@import "../theme/full-lambda-dimens";
-@import "../theme/full-lambda-colors";
-@import "../theme/full-lambda-text";
+@import '../theme/full-lambda-dimens';
+@import '../theme/full-lambda-colors';
+@import '../theme/full-lambda-text';
 $main-minimum-height: 600px;
 .weather-page {
  display: flex; 
@@ -14,7 +14,7 @@ $main-minimum-height: 600px;
   font-size: 200%;
 }
 
-.main-content {
+.main-con tent {
   display: flex;
   flex-direction: row;
   flex-grow: 1;

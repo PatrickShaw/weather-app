@@ -68,32 +68,31 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     const that: MonitoringItem = this;
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
-      <section className="pad-item-list">
+      <section className='pad-item-list'>
         <div >
-          <h1 className="txt-body-2 align-card-head">{currentWeatherData.location}</h1>
+          <h1 className='txt-body-2 align-card-head'>{currentWeatherData.location}</h1>
           
           <button
             onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
               that.props.monitoredLocationInformation.weatherDataList[0].location
             )}
-            className="graph-button align-card-head"
+            className='graph-button align-card-head'
             disabled={false}
-            >
+          >
             Graph
-            <img src="https://image.flaticon.com/icons/png/128/118/118738.png" width="10px" >
-            </img>
+            <img src='https://image.flaticon.com/icons/png/128/118/118738.png' width='10px' />
           </button>
         </div>
         <br/>
         {
           this.props.monitoredLocationInformation.monitorRainfall ? 
-          <h2 className="txt-body-1">
+          <h2 className='txt-body-1'>
             Rainfall: {rainfallDataToRender}
           </h2> : null
         }
         {
           this.props.monitoredLocationInformation.monitorTemperature ? 
-          <h2 className="txt-body-1">
+          <h2 className='txt-body-1'>
             Temperature: {temperatureDataToRender}
           </h2> : null
         }

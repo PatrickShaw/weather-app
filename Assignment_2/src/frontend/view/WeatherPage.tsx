@@ -26,14 +26,14 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   
   public render(): JSX.Element {
     return (
-      <div className="weather-page">
-        <div className="page-heading">
-          <ActionBar title="Melbourne Weather" subtitle="Full Lambda"/>
+      <div className='weather-page'>
+        <div className='page-heading'>
+          <ActionBar title='Melbourne Weather' subtitle='Full Lambda'/>
         </div>
-        <div className="main-content">
-          <aside className="sidebar">
+        <div className='main-content'>
+          <aside className='sidebar'>
             <header>
-              <h1 className="txt-subheading title-section">Locations</h1>
+              <h1 className='txt-subheading title-section'>Locations</h1>
             </header>
             <LocationList 
               locations={this.props.appCurrentState.locations} 
@@ -42,14 +42,14 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
               onTemperatureItemClickedObserver={this.props.onLocationTemperatureItemClickedObserver}
             />
           </aside>
-          <main className="monitoring-container">
-            <header><h1 className="txt-subheading title-section"
-            >Monitored location dashboard</h1></header>
-               <GoogleWeatherMap
-                something={'hi'}
-               />
-           
-            <div className="monitoring-list-container">
+          <main className='monitoring-container'>
+            <header>
+              <h1 className='txt-subheading title-section'>
+                Monitored location dashboard
+              </h1>
+            </header>
+            <GoogleWeatherMap something={'hi'}/>
+            <div className='monitoring-list-container'>
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
@@ -58,8 +58,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             </div>
           </main>
         </div>
-        <footer className="page-footer">
-          <p className="copyright">Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
+        <footer className='page-footer'>
+          <p className='copyright'>Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
         </footer>
       </div>
     );

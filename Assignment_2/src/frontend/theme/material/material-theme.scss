@@ -1,7 +1,7 @@
-@import "constants/text-constants";
-@import "classes/text-classes";
-@import "classes/layout-classes";
-@import "classes/misc-classes";
+@import 'constants/text-constants';
+@import 'classes/text-classes';
+@import 'classes/layout-classes';
+@import 'classes/misc-classes';
 * {
   font-family: Roboto, sans-serif;
   font-weight: $txt-weight-regular;

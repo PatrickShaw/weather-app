@@ -7,15 +7,15 @@ function createWebpackBackend(entryDirectory)
 {
     return {
         output: {
-            path: path.resolve(path.join('.', "backend-build")),
+            path: path.resolve(path.join('.', 'backend-build')),
             filename: 'backend-compiled-debug.js'
         },
         resolve: {
             extensions: ['.ts', 'tsx', '.js', '.jsx']
         },
         bail: true,
-        target: "node",
-        name: "Backend Server",
+        target: 'node',
+        name: 'Backend Server',
         entry: entryDirectory,
         externals: [nodeExternals()],
         devtool: 'source-map',

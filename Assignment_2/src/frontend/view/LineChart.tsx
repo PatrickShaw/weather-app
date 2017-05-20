@@ -1,4 +1,3 @@
-import * as Chart from 'chart.js';
 import * as React from 'react';
 
 import { Line } from 'react-chartjs-2';
@@ -70,7 +69,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     
     // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
     // 
-    const data: Chart.LinearChartData = {
+    const data = {
       labels: timestampDataPoints,
       datasets: [
         {
@@ -118,7 +117,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     };
     // TODO: Set axis labels, configure graph so looks nicer.
     // TODO: Fine tune dates.
-    const options: Chart.options = {
+    const options = {
       scales: {
         xAxes: [{
             ticks: {
@@ -128,10 +127,9 @@ class LineChart extends React.Component<LineChartProps, void> {
                 autoSkipPadding: 10
             },
             type: 'time',
-             displayFormats: {
-              'day': 'MMM DD'
-             }
-            
+            displayFormats: {
+              day: 'MMM DD'
+            }
           }]
       }
     };

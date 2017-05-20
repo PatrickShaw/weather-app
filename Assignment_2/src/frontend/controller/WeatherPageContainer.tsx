@@ -296,7 +296,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         />
       ) : 
       (
-        <h1 className="error">
+        <h1 className='error'>
             WeatherMelbourne2 WSDL connection unsuccessful. 
             Make sure your device is connected to the internet and 
             http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl is available.
