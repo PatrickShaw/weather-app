@@ -195,7 +195,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     }
     
     return (
-      <div >
+      <div>
         Test map above.
       </div>
     );

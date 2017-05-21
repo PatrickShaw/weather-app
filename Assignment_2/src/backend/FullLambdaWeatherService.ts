@@ -13,8 +13,6 @@ import { WeatherLocationData } from '../model/WeatherLocationData';
 // TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
 // allows for dependency injection where you pass in req parameters.
 
-// 300000 milliseconds = 5 mins.
-const defaultWeatherPollingInterval: number = 300000;
 /**
  * Controller class instantiated by the node server. This specifies the core logic specified in 
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 
@@ -43,7 +41,8 @@ class FullLambdaWeatherService {
   constructor(
     io: SocketIO.Server, 
     weatherClientFactory: WeatherClientFactory<WeatherClient>,
-    weatherInterval: number = defaultWeatherPollingInterval
+    // 300000 milliseconds = 5 mins.
+    weatherInterval: number = 300000
   ) {
     // Weather client hasn't been built yet so this is false.
     this.successfulWeatherClientSetup = false;

@@ -50,14 +50,14 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
                 Monitored location dashboard
               </h1>
             </header>
-            <section className='weather-map-container'>
+            <section className='weather-map-container' id='map'>
               <GoogleWeatherMap 
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
               />
             </section>
             <div className='weather-card-container'>
               <MonitoringList 
-                locations={this.props.appCurrentState.locations} 
+                locations={this.props.appCurrentState.locations}
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
                 onGraphToggleClickedObserver={this.props.onMonitoringListGraphItemClicked}
               />

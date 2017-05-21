@@ -12,6 +12,7 @@ const io: SocketIO.Server = SocketIo(server);
 const weatherClientFactory: TestWellFormattedWeatherClientFactory = new TestWellFormattedWeatherClientFactory();
 const service: FullLambdaWeatherService = new FullLambdaWeatherService(
   io, 
-  weatherClientFactory
+  weatherClientFactory,
+  3000
 );
 service.run();

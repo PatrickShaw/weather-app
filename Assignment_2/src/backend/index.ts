@@ -18,7 +18,8 @@ const weatherClientFactory: MelbourneTimelapseWeatherClientFactory = new Melbour
 
 const service: FullLambdaWeatherService = new FullLambdaWeatherService(
   io,
-  weatherClientFactory
+  weatherClientFactory,
+  3000
 );
 service.run();
 
