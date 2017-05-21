@@ -15,6 +15,7 @@ interface LocationMarkerInformation {
 }
 
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
+  private googleMap: google.maps.Map | null = null;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
@@ -23,20 +24,8 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   
   }
 
-  public onReady(mapProps, maps) {   
-    console.log('on ready called');
 
-    const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
-    console.log(latlang);
-    const pin = new google.maps.Marker({
-      position: latlang,
-      map: maps,
-      title: "test"
-    });
-    console.log(pin);
-
-  }
-  public getLocationInfo() {
+  public getLocationInfo(googleMap: google.maps.Map) {
     // Set up markers on google map.
     const geocoder: GeoCodingService = new GeoCodingService();
     // const locationsToProcess: LocationMarkerInformation[] = [];
@@ -77,46 +66,68 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       .then((response) => {
         // Note: google map typings in node_modles/@types/googlemaps. Not sure why vs code red underlines
         // google sometimes but Marker is still resolved.
-        // const locationPins: google.maps.Marker[] = [];
+        const locationPins: google.maps.Marker[] = [];
         // // // Place markers for all locations.
         
-        // for (const locInfo of this.state.locationInfo) {
-        //   // TODO: This is buggy, need to place Map instance in map.
-        //   const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
-        //   const pin = new google.maps.Marker({
-        //     position: latlang,
-        //     map: GoogleMap,
-        //     title: locInfo.formattedAddress
-        //   });
-        //   locationPins.push(pin);
-        // }
-        // console.log('Markers PLaced');
+        for (const locInfo of this.state.locationInfo) {
+          // TODO: This is buggy, need to place Map instance in map.
+          const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
+          const pin = new google.maps.Marker({
+            position: latlang,
+            map: googleMap,
+            title: locInfo.formattedAddress
+          });
+          locationPins.push(pin);
+        }
+        console.log('Markers PLaced');
       })  
       .catch((error) => {
         console.log(error);
       });
   }
-
+  // TODO: Remove markers, http://stackoverflow.com/questions/1544739/google-maps-api-v3-how-to-remove-all-markers
   public componentDidMount() {
-    const maps = new google.maps.Map(document.getElementById('map'), {
+    // Make a new google map
+    console.log('-- compontnet did mounbt');
+    const googleMap = new google.maps.Map(document.getElementById('map'), {
         center: {lat: -37.81950134905335, lng: 144.98429111204815},
         zoom: 9
     });
-    const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
+    this.googleMap = googleMap;
+    // const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
 
-    const pin = new google.maps.Marker({
-      position: latlang,
-      map: maps,
-      title: 'test'
-    });
-    console.log('CompontentDidMount');
-    console.log(pin);
+    // const pin = new google.maps.Marker({
+    //   position: latlang,
+    //   map: googleMap,
+    //   title: 'test'
+    // });
+    // const infowindow = new google.maps.InfoWindow({
+    //     position: {lat: -37.81950134905335, lng: 144.98429111204815},
+    //     content: 'intro',
+    // });
+    // console.log('infowindow');
+    // console.log(infowindow);
+    // console.log('CompontentDidMount');
+    // pin.addListener('mouseover', () => {
+    //   console.log('mouse over');
+    //   infowindow.open(googleMap);      
+    // });
+    
+    // pin.addListener('mouseout', () => {
+    //   infowindow.close();
+    // });
+    // console.log(pin);
   }
   
   public render(): JSX.Element {   
     // console.log('Render');
     // console.log(this.state.locationInfo);
     // this.getLocationInfo();
+    console.log('-- render called --');
+
+    if (this.googleMap !== null) {
+      this.getLocationInfo(this.googleMap);
+    }
     
     return (
       <div >
