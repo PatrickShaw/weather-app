@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "start": "concurrently --kill-others \"npm run backend-start\" \"npm run frontend-start\"",
-    "backend-offline-start-chart-support": "node scripts/backend-offline-start-chart-support.js",
+    "backend-offline-chart-support-start": "node scripts/backend-offline-chart-support-start.js",
     "backend-offline-start": "node scripts/backend-offline-start.js",
     "frontend-start": "node scripts/frontend-start.js",
     "backend-start": "node scripts/backend-start.js"

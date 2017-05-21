@@ -49,7 +49,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
               </h1>
             </header>
             <div className='weather-map-container'>
-              <GoogleWeatherMap/>
+              <GoogleWeatherMap something={'poop'}/>
             </div>
             <div className='weather-card-container'>
               <MonitoringList 
