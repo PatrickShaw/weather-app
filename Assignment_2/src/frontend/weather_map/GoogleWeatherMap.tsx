@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { GeoCodingService } from './utils/GeoCodingService';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
@@ -22,9 +21,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
-   
-    this.state = new WeatherMapState([]);
-  
+    this.state = new WeatherMapState([]);  
   }
 
 
@@ -99,11 +96,10 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     // Wait for all geocode promises to finish.
     Promise.all(geocodePromises)
       .then((response) => {
-        // Note: google map typings in node_modles/@types/googlemaps. Not sure why vs code red underlines
         // google sometimes but Marker is still resolved.
-        // const locationPins: google.maps.Marker[] = [];
-        // const locationHeatMap: google.maps.Circle[] = [];
-        // // // Place markers for all locations.
+        // const locationPins: Google.Marker[] = [];
+        // const locationHeatMap: Google.Circle[] = [];
+        // Place markers for all locations.
         
         for (const locInfo of this.state.locationInfo) {
           // TODO: This is buggy, need to place Map instance in map.
@@ -149,7 +145,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     });
     this.googleMap = googleMap;
     // max temp: 42.2
-    // const cityCircle = new google.maps.Circle({
+    // const cityCircle = new Google.Circle({
     //         strokeColor: '#FF0000',
     //         strokeOpacity: 0,
     //         strokeWeight: 0,
@@ -161,14 +157,14 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     //       });
     // console.log('finish drawing');
     // console.log(cityCircle);
-    // const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
+    // const latlang = new Google.LatLng(-37.81950134905335, 144.98429111204815);
 
-    // const pin = new google.maps.Marker({
+    // const pin = new Google.Marker({
     //   position: latlang,
     //   map: googleMap,
     //   title: 'test'
     // });
-    // const infowindow = new google.maps.InfoWindow({
+    // const infowindow = new Google.InfoWindow({
     //     position: {lat: -37.81950134905335, lng: 144.98429111204815},
     //     content: 'intro',
     // });

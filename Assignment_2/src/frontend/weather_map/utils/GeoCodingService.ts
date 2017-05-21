@@ -1,15 +1,14 @@
-import { GoogleMapsClient, createClient } from '@google/maps';
-
+import * as Google from '@google/maps';
 // This class and type script definitions adapted from 
 // github user: lukas-zech-software
 // https://gist.github.com/lukas-zech-software/a7e4a23a6833ec1abb1fc836138f7822
 
 class GeoCodingService {
 
-  private geoCoder: GoogleMapsClient;
+  private geoCoder;
 
   public constructor() {
-    this.geoCoder = createClient({
+    this.geoCoder = Google.createClient({
       // Google Places API key for forkme-mock account.
       key: 'AIzaSyBZOpO8-lc7tx9GJRdrFMzH9kqF5d-Y1RQ',
     });
@@ -47,7 +46,7 @@ class GeoCodingService {
 // // at GoogleWeatherMap.tsx:31
 // // at <anonymous>
 // console.log('test: ' + testLatitude);
-// const test: google.maps.GeocoderGeometry = jsonResult['geometry'];
+// const test: Google.maps.GeocoderGeometry = jsonResult['geometry'];
 // const x: () => number = test2['lat'];  
 // LatLng().lat() is a thing but can't access the fn lat(), 
 
