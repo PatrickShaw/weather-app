@@ -1,12 +1,10 @@
 import * as React from 'react';
 
 import { GeoCodingService } from './utils/GeoCodingService';
-import GoogleMap from 'google-map-react';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { WeatherMapState } from './WeatherMapState';
 
 interface GoogleWeatherMapProps {
-  something: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
 }
 
@@ -22,9 +20,22 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     super(props);
    
     this.state = new WeatherMapState([]);
-    
+  
   }
 
+  public onReady(mapProps, maps) {   
+    console.log('on ready called');
+
+    const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
+    console.log(latlang);
+    const pin = new google.maps.Marker({
+      position: latlang,
+      map: maps,
+      title: "test"
+    });
+    console.log(pin);
+
+  }
   public getLocationInfo() {
     // Set up markers on google map.
     const geocoder: GeoCodingService = new GeoCodingService();
@@ -37,6 +48,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       // A promise is returned by geocodeAddress().
       const geocodePromise: Promise<void> = geocoder.geocodeAddress(location + ', Melbourne, Australia')
         .then((results: google.maps.GeocoderResult[]) => {
+          console.log('Geocoder finished');
           const jsonResult: google.maps.GeocoderResult = results[0];
           // Parse out info we need.
           const formattedAddress: string = jsonResult.formatted_address;
@@ -65,40 +77,51 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       .then((response) => {
         // Note: google map typings in node_modles/@types/googlemaps. Not sure why vs code red underlines
         // google sometimes but Marker is still resolved.
-        const locationPins: google.maps.Marker[] = [];
-        // // Place markers for all locations.
+        // const locationPins: google.maps.Marker[] = [];
+        // // // Place markers for all locations.
         
-        for (const locInfo of this.state.locationInfo) {
-          // TODO: This is buggy, need to place Map instance in map.
-          const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
-          const pin = new google.maps.Marker({
-            position: latlang,
-            map: GoogleMap,
-            title: locInfo.formattedAddress
-          });
-          locationPins.push(pin);
-        }
-        console.log('Markers PLaced');
+        // for (const locInfo of this.state.locationInfo) {
+        //   // TODO: This is buggy, need to place Map instance in map.
+        //   const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
+        //   const pin = new google.maps.Marker({
+        //     position: latlang,
+        //     map: GoogleMap,
+        //     title: locInfo.formattedAddress
+        //   });
+        //   locationPins.push(pin);
+        // }
+        // console.log('Markers PLaced');
       })  
       .catch((error) => {
         console.log(error);
       });
   }
+
   public componentDidMount() {
+    const maps = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -37.81950134905335, lng: 144.98429111204815},
+        zoom: 9
+    });
+    const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
+
+    const pin = new google.maps.Marker({
+      position: latlang,
+      map: maps,
+      title: 'test'
+    });
     console.log('CompontentDidMount');
+    console.log(pin);
   }
+  
   public render(): JSX.Element {   
-    console.log('Render');
-    console.log(this.state.locationInfo);
-    this.getLocationInfo();
+    // console.log('Render');
+    // console.log(this.state.locationInfo);
+    // this.getLocationInfo();
     
     return (
-    <div className="map">
-      <GoogleMap
-        zoom={9}
-        center={{lat: -37.81950134905335, lng: 144.98429111204815}}
-      />      
-    </div>
+      <div >
+        Test map above.
+      </div>
     );
   }
   

@@ -15,7 +15,20 @@
     <title>Melbourne Weather - Full Lambda</title>
   </head>
   <body>
-    <div id="root"></div>
+  
+
+    <div id="root">
+    </div>
+
+
+    <script>
+      var map;
+      function initMap() {
+        console.log('initMapCalled');
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxhlLHBbuas8eMitNV0agVB-OHTWACS8A&callback=initMap"
+    async defer></script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -25,6 +38,7 @@
 
       To begin the development, run `npm start`.
       To create a production bundle, use `npm run build`.
+      
     -->
   </body>
 </html>

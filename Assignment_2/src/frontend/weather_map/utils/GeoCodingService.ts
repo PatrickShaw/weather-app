@@ -17,7 +17,7 @@ class GeoCodingService {
   }
 
   public geocodeAddress(addressToQuery: string): Promise<google.maps.GeocoderResult[]> {
-    console.log('Geocoder querying for: ' + addressToQuery);
+    // console.log('Geocoder querying for: ' + addressToQuery);
     const request: google.maps.GeocoderRequest = {
       address: addressToQuery
     };
@@ -26,13 +26,12 @@ class GeoCodingService {
       this.geoCoder.geocode(request, (error, response) => {
         // console.log('Request');
         // console.log(request);
-        // console.log('Response');
+        // console.log('GeoCoder Response');
         // console.log(response);
         
         if (error) {
           reject(error);
         }
-        console.log('resolving');
         resolve(response.json.results);
 
       });
