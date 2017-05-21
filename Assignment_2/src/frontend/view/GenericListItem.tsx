@@ -20,8 +20,8 @@ class GenericListItem extends React.Component<GenericListItemProps, void> {
     const noSubtitle: boolean = this.props.subtitle == null;
     const titleStyle = noSubtitle ? 'txt-body-1' : 'txt-body-2';
     return (
-      <section className='list-item-container'>
-        <div className='titles pad-item-list'>
+      <section className='list-item-container pad-item-list'>
+        <div className='titles'>
           <h1 className={titleStyle}>{this.props.title}</h1>
           {noSubtitle ? null : <h2 className='txt-body-1'>{this.props.subtitle}</h2>}
         </div>

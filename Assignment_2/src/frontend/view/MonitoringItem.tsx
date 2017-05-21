@@ -67,39 +67,49 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     const that: MonitoringItem = this;
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
-      <section className='pad-item-list'>
-        <h1 className='txt-body-2 align-card-head'>{currentWeatherData.location}</h1>
-        {
-          this.props.monitoredLocationInformation.monitorRainfall ? 
-          <h2 className='txt-body-1'>
-            <strong>Rainfall:</strong> {rainfallDataToRender}
-          </h2> : null
-        }
-        {
-          this.props.monitoredLocationInformation.monitorTemperature ? 
-          <h2 className='txt-body-1'>
-            <strong>Temperature:</strong> {temperatureDataToRender}
-          </h2> : null
-        }
-        <br/>
-        
-        {
+      <section>
+        <section className='worded-measurements'>
+          <h1 className='txt-heading align-card-head'>{currentWeatherData.location}</h1>
+          {
+            this.props.monitoredLocationInformation.monitorRainfall ? 
+            <h2 className='txt-body-1'>
+              <strong>Rainfall:</strong> {rainfallDataToRender}
+            </h2> : null
+          }
+          {
+            this.props.monitoredLocationInformation.monitorTemperature ? 
+            <h2 className='txt-body-1'>
+              <strong>Temperature:</strong> {temperatureDataToRender}
+            </h2> : null
+          }
+        </section>
+          {
           this.props.monitoredLocationInformation.monitorGraph ?
-            <div>
-                <LineChart
-                  monitoredLocationInformation={this.props.monitoredLocationInformation}
-                />
-            </div> : null
-        }
-        <button 
-            className='txt-color-primary'
-            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
-              that.props.monitoredLocationInformation.weatherDataList[0].location
-            )}
-            disabled={false}
-        >
-          Graph <i className='material-icons'>&#xE5C5;</i>
-        </button>
+            <section className='graph-container'>
+              <div>
+                  <LineChart
+                    monitoredLocationInformation={this.props.monitoredLocationInformation}
+                  />
+              </div> 
+            </section>
+          : null
+          }
+        <section className='buttons'>
+          <button 
+              className='txt-color-primary graph-buttuon'
+              onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+                that.props.monitoredLocationInformation.weatherDataList[0].location
+              )}
+              disabled={false}
+          >
+            <i className='material-icons'>
+              {
+                // The two strings represent the up and down arrows respectively
+                this.props.monitoredLocationInformation.monitorGraph ? '\uE5C7' : '\uE5C5'
+              }
+              </i>Graph 
+          </button>
+        </section>
       </section>
     );
   }

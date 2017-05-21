@@ -23,10 +23,6 @@ class LineChart extends React.Component<LineChartProps, void> {
       fill: false,          
       backgroundColor,
       borderColor: lineColor,
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
       pointBorderColor: lineColor,
       pointBackgroundColor: lineColor,
       data: dataPoints,
@@ -87,7 +83,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     
     const data = {
       labels: timestampDataPoints,
-      datasets: [
+      datasets: [ 
         this.createTrendline('Rainfall (mm)', 33, 150, 243, rainfallDataPoints),
         this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints)
       ]
@@ -103,8 +99,7 @@ class LineChart extends React.Component<LineChartProps, void> {
                 minRotation: 0,
                 autoSkipPadding: 8
             },
-            type: 'time',
-            unit: 'hour'
+            type: 'time'
           }]
       }
     };

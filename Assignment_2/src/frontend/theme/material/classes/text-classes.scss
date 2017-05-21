@@ -18,8 +18,6 @@
 .txt-subheading {
   font-weight: $txt-weight-subheading;
   font-size: $txt-size-subheading;
-  text-decoration: underline;
-
 }
 
 .txt-display-1 {
@@ -30,6 +28,7 @@
 .txt-display-2 {
   font-weight: $txt-weight-display-2;
   font-size: $txt-size-display-2;
+  line-height: $txt-line-height-display-2;
 }
 
 .txt-display-3 {

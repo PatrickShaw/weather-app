@@ -32,18 +32,23 @@ $txt-weight-display-3: $txt-weight-regular;
 /* Display 2 */
 $txt-size-display-2: 2.808em;
 $txt-weight-display-2: $txt-weight-regular;
+$txt-line-height-display-2: 7.455em;
 /* Display 1 */
 $txt-size-display-1: 2.122em;
 $txt-weight-display-1: $txt-weight-regular;
+$txt-line-height-display-1: 2.496em;
 /* Titles */
 $txt-weight-title: $txt-weight-medium;  
 $txt-size-title: 1.248em;
+$txt-line-height-title: 1.664em;
 /* Subtitles */
 $txt-weight-subheading: $txt-weight-regular;
 $txt-size-subheading: 0.998em;
+$txt-line-height-subheading: 1.863em;
 /* Body 1 */
 $txt-size-body-1-mobile: 0.874em;
 $txt-size-body-1-desktop: 0.811em;
+
 $txt-size-body-1: $txt-size-body-1-mobile;
 @media screen and (min-width: $width-desktop) {
   $txt-size-body-1: $txt-size-body-1-desktop;
@@ -57,6 +62,7 @@ $txt-size-body-2: $txt-size-body-2-mobile;
   $txt-size-body-2: $txt-size-body-2-desktop;
 }
 $txt-weight-body-2: $txt-weight-medium;
+$txt-line-height-body-2: 1.6135em;
 /* Caption */
 $txt-size-caption: 0.749em;
 $txt-weight-caption: $txt-weight-regular;

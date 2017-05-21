@@ -1,1 +1,21 @@
 @import '../theme/full-lambda-colors';
+@import '../theme/full-lambda-dimens';
+.graph-buttuon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.worded-measurements {
+  padding: $layout-padding-lg;
+}
+.graph-container {
+  padding-left: $layout-padding-lg;
+  padding-right: $layout-padding-lg;
+  padding-bottom: $layout-padding-lg; 
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: $layout-padding-md;
+  justify-content: flex-end;
+}

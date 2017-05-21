@@ -48,9 +48,6 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
                 Monitored location dashboard
               </h1>
             </header>
-            <div className='weather-map-container'>
-              <GoogleWeatherMap something={'poop'}/>
-            </div>
             <div className='weather-card-container'>
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 
