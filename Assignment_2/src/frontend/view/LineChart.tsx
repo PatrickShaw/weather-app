@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 import * as Chart from 'react-chartjs-2';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
+import './LineChart.scss';
 
 interface LineChartProps {
   monitoredLocationInformation: MonitoredLocationInformation;
@@ -91,6 +92,7 @@ class LineChart extends React.Component<LineChartProps, void> {
     // TODO: Set axis labels, configure graph so looks nicer.
     // TODO: Fine tune dates.
     const options = {
+      responsive: true, 
       scales: {
         xAxes: [{
             ticks: {
@@ -105,10 +107,12 @@ class LineChart extends React.Component<LineChartProps, void> {
     };
     
     return (
-      <Chart.Line 
-          data={data}
-          options={options}
-      />
+      <div className='chart-container'>
+        <Chart.Line 
+            data={data}
+            options={options}
+        />
+      </div>
     );
   }
 }
