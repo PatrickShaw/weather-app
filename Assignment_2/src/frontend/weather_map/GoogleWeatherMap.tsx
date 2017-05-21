@@ -3,187 +3,191 @@ import * as React from 'react';
 import { GeoCodingService } from './utils/GeoCodingService';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import { WeatherMapState } from './WeatherMapState';
 
 interface GoogleWeatherMapProps {
-  readonly id: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
-  // readonly locationList: string[];
 }
 
-interface LocationMarkerInformation {
-  latitude: number;
-  longitude: number;
-  formattedAddress: string;
-  temp: number|null;
-  rainfall: number|null;
+class LocationMarkerInformation {
+  public readonly latlng: google.maps.LatLng;
+  public readonly formattedAddress: string;
+  public readonly marker: google.maps.Marker;
+  public readonly circle: google.maps.Circle;
+  public readonly temperature?: number;
+  public readonly rainfall?: number;
+  constructor(
+    latlng: google.maps.LatLng,
+    formattedAddress: string,
+    marker: google.maps.Marker,
+    circle: google.maps.Circle,
+    temperature?: number,
+    rainfall?: number
+  ) { 
+    this.latlng = latlng;
+    this.formattedAddress = formattedAddress;
+    this.marker = marker;
+    this.circle = circle;
+    this.temperature = temperature;
+    this.rainfall = rainfall;
+  }
+}
+
+class WeatherMapState {
+  public readonly locationInfoMap: Map<string, LocationMarkerInformation | null>;
+  constructor(
+    locationInfo: Map<string, LocationMarkerInformation | null>
+  ) {
+    this.locationInfoMap = locationInfo;
+  }
 }
 
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
-  private googleMap: google.maps.Map | null = null;
+  private googleMap: google.maps.Map | null;
+  private geocoder;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
-    this.state = new WeatherMapState([]);  
+    this.googleMap = null;
+    this.state = new WeatherMapState(new Map<string, LocationMarkerInformation>());  
+    this.geocoder = new GeoCodingService();
   }
 
-  // Called once to get geocoding results.
-  public getLatLangFromLocation(locations: string[]) {  
-    // TODO: this.
-  }
-
-  public parseWeatherDataInfo(googleMap: google.maps.Map) {
-    // Set up markers on google maps.
-    const geocoder: GeoCodingService = new GeoCodingService();
-    // const locationsToProcess: LocationMarkerInformation[] = [];
-    // this.state.locationInfo = [];
-    // Reset location info.
-    this.state.setLocationInfo([]);
-    const geocodePromises: Array<Promise<any>> = [];
-    
-    for (const location of this.props.weatherDataMap.keys()) {
-      // A promise is returned by geocodeAddress().
-      const geocodePromise: Promise<void> = geocoder.geocodeAddress(location + ', Melbourne, Australia')
-        .then((results: google.maps.GeocoderResult[]) => {
-          // console.log('Geocoder finished');
-          const jsonResult: google.maps.GeocoderResult = results[0];
-          // Parse out info we need.
-          const formattedAddress: string = jsonResult.formatted_address;
-          const latLongString: string = JSON.stringify(jsonResult['geometry']['location']);
-          const latLongJson: JSON = JSON.parse(latLongString);
-          const latitude: number = latLongJson['lat'];
-          const longitude: number = latLongJson['lng'];
-          // console.log('WeatherDataMap Below');
-          // console.log(this.props.weatherDataMap);
-          // console.log('location: ' + location);
-          // console.log(this.props.weatherDataMap.get(location));
-          const monitoredLocationInfo: MonitoredLocationInformation | undefined = 
-            this.props.weatherDataMap.get(location);
-
-          let rainfall: number|null;
-          let temp: number|null;
-
-          if (monitoredLocationInfo !== undefined) {
-            const weatherData: WeatherLocationData = monitoredLocationInfo.weatherDataList[
-              monitoredLocationInfo.weatherDataList.length - 1];
-            if ((weatherData.rainfallData !== undefined) && 
-              (weatherData.rainfallData !== null)) {
-              rainfall = Number(weatherData.rainfallData.rainfall);
-            } else {
-              rainfall = null;
-            }
-
-            if ((weatherData.temperatureData !== undefined) && 
-              (weatherData.temperatureData !== null)) {
-              temp = Number(weatherData.temperatureData.temperature);
-            } else {
-              temp = null;
-            }
-          } else {
-            temp = null;
-            rainfall = null;
-          }
-          
-          // Make new object of type LocationMarkerInfo.
-          const locationInfo: LocationMarkerInformation = {
-            latitude,
-            longitude,
-            formattedAddress,
-            temp,
-            rainfall
-          };         
-          this.state.locationInfo.push(locationInfo);
-          // locationsToProcess.push(locationInfo);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      // Collect promises.
-      geocodePromises.push(geocodePromise);
-    }
-    // Wait for all geocode promises to finish.
-    Promise.all(geocodePromises)
-      .then((response) => {
-        this.state.clearCircles();
-        this.state.clearPins();
-
-        for (const locInfo of this.state.locationInfo) {
-          
-          // Only handle temp for now.
-          if (locInfo.temp == null) {
-            continue;
-          }
-
-          // TODO: This is buggy, need to place Map instance in map.
-          const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
-          const pin = new google.maps.Marker({
-            position: latlang,
-            map: googleMap,
-            title: locInfo.formattedAddress
-          });
-          this.state.locationPins.push(pin);
-        
-          // 42 is max temp in melbourne in 2016, opacity = location temp / 42 rounded to 2 decimal places.
-          const opacity: number = Math.round((locInfo.temp / 42) * 100 ) / 100;
-          
-          const heatCircle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0,
-            strokeWeight: 0,
-            fillColor: '#FF0000',
-            fillOpacity: opacity,
-            map: googleMap,
-            center: latlang,
-            radius: 10000
-          });
-          this.state.locationHeatMap.push(heatCircle);
-        }
-     
-      })  
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  // TODO: Remove markers, http://stackoverflow.com/questions/1544739/google-maps-api-v3-how-to-remove-all-markers
-  public componentDidMount() {
-    // Make a new google map
-    console.log('-- component did mount ---');
+  public componentDidMount(): void {
     const googleMap = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -37.81950134905335, lng: 144.98429111204815},
-        zoom: 8
+      center: {lat: -37.81950134905335, lng: 144.98429111204815},
+      zoom: 8
     });
     this.googleMap = googleMap;
+  }
 
-    //     position: {lat: -37.81950134905335, lng: 144.98429111204815},
-    //     content: 'intro',
-    // });
-    // console.log('infowindow');
-    // console.log(infowindow);
-    // console.log('CompontentDidMount');
-    // pin.addListener('mouseover', () => {
-    //   console.log('mouse over');
-    //   infowindow.open(googleMap);      
-    // });
-    
-    // pin.addListener('mouseout', () => {
-    //   infowindow.close();
-    // });
-    // console.log(pin);
+  public componentWillReceiveProps(nextProps: GoogleWeatherMapProps) {
+    for (const [locationKey, monitorData] of nextProps.weatherDataMap.entries()) {
+      // Check whether we're adding/updating or deleting a marker.
+      if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
+        let newLocationInfoPromise: Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle]>;
+        if (!this.state.locationInfoMap.has(locationKey)) {
+          // Using 'null' as a way of saying that something is going to populate this later. Hacky..
+          this.state.locationInfoMap.set(locationKey, null);
+          // We don't have location info for this location yet.
+          // Go get the lat lng of the location.
+          // Also add a new marker.
+          newLocationInfoPromise = this.geocoder.geocodeAddress(locationKey + ', Melbourne, Australia')
+            .then((results: google.maps.GeocoderResult[]) => {
+              // Parse the info we need.
+              const jsonResult: google.maps.GeocoderResult = results[0];
+              const formattedAddress: string = jsonResult.formatted_address;
+              const latLongString: string = JSON.stringify(jsonResult['geometry']['location']);
+              const latLongJson: JSON = JSON.parse(latLongString);
+              const latitude: number = latLongJson['lat'];
+              const longitude: number = latLongJson['lng'];
+              const latlng: google.maps.LatLng = new google.maps.LatLng(latitude, longitude);
+              // Create a pin for the newly monitored location.
+              const pin = new google.maps.Marker({
+                position: latlng,
+                title: formattedAddress
+              });              
+              const circle = new google.maps.Circle();
+              // Add it to the map.
+              circle.setMap(this.googleMap);
+              pin.setMap(this.googleMap);
+              // return the parsed data for use.
+              return [formattedAddress, latlng, pin, circle];
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          // Once again, null means something else is currently populating the entry.
+          if (this.state.locationInfoMap.get(locationKey) === null) {
+            continue;
+          }
+          // We already have the location information.
+          // We just want the lat lng so resolve it.
+          newLocationInfoPromise = 
+            new Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle]>((resolve, reject) => {
+              const locationInfo: LocationMarkerInformation | undefined | null 
+                = this.state.locationInfoMap.get(locationKey);
+              if (locationInfo != null) {
+                resolve([locationInfo.formattedAddress, locationInfo.latlng, locationInfo.marker, locationInfo.circle]);
+              } else {
+                // TODO: This can technically happen via race conditions.
+                reject('locationInfo was undefined');
+              }
+            });
+        }
+        newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle]) => {
+          // We have the data to build the marker information now.
+          let rainfallString: string | null;
+          let temperatureString: string | null;
+          if (monitorData.weatherDataList.length > 0) {
+            const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[0];
+            rainfallString = recentWeatherData.rainfallData == null 
+                ? null 
+                : recentWeatherData.rainfallData.rainfall;
+            temperatureString = recentWeatherData.temperatureData == null 
+                ? null 
+                : recentWeatherData.temperatureData.temperature;
+          } else {
+            rainfallString = null;
+            temperatureString = null;
+          }
+          // Calculate the opacity of the circle according to how much rainfall there is.
+          const rainfall: number | undefined 
+            = rainfallString == null ? undefined : Number.parseFloat(rainfallString);
+          const temperature: number | undefined 
+            = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
+          let opacity: number = 0.5;
+          if (rainfall != null) {
+            opacity = Math.max(0.2, Math.min(0.6, 0.2 + 0.4 * rainfall / 4.0));
+          }
+          // Calculate the background color of the circle according to how hot it is.
+          let heatColor = '#888888';
+          if (temperature != null) {
+            const redness = Math.max(0, Math.min(1, temperature / 42.0));
+            heatColor = `rgb(${40 + Math.round(redness * 170)}, 40, ${Math.round(40 + (1 - redness) * 170)})`;
+          }
+          // Now set the options of the circle.
+          // TODO: I thought this would re-render the circle but it doesn't.
+          circle.setOptions({
+            strokeColor: heatColor,
+            strokeOpacity: 0,
+            strokeWeight: 0,
+            fillColor: heatColor,
+            fillOpacity: opacity,
+            center: latlng,
+            radius: 10000
+          });
+          // Compile the data into a single object and set it to the info map.
+          const locationInfo: LocationMarkerInformation = new LocationMarkerInformation(
+            latlng, 
+            formattedAddress, 
+            pin, 
+            circle,
+            rainfall,
+            temperature
+          );
+          // Update the map.
+          this.state.locationInfoMap.set(locationKey, locationInfo);
+        });
+      } else {
+        if (this.state.locationInfoMap.has(locationKey)) {
+          // No longer monitoring this location so remove it from the map.
+          const locationInfo: LocationMarkerInformation | undefined | null
+            = this.state.locationInfoMap.get(locationKey);
+          if (locationInfo != null) {
+            locationInfo.marker.setMap(null);
+            locationInfo.circle.setMap(null);
+            this.state.locationInfoMap.delete(locationKey);
+            console.log(locationInfo);
+          }
+        }
+      }
+    }
   }
   
-  public render(): JSX.Element {   
-
-    console.log('-- RENDER() called --');
-
-    if (this.googleMap !== null) {
-    
-      this.parseWeatherDataInfo(this.googleMap);
-    }
-    
+  public render(): JSX.Element {       
     return (
-      <div>
-      </div>
+      <div id='map'/>
     );
   }
   

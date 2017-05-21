@@ -26,13 +26,13 @@ $gaps: $layout-padding-lg;
   flex-grow: 1;
 }
 .weather-card-container {
-  margin: $gaps;
+  margin: $layout-padding-xl;
 }
 .weather-map-container {
   height: 400px;
-  margin-left: $gaps;
-  margin-right: $gaps;
-  margin-bottom: $gaps;
+  margin-left: $layout-padding-xl;
+  margin-right: $layout-padding-xl;
+  margin-bottom: $layout-padding-xl;
 }
 
 .sidebar {
@@ -68,7 +68,3 @@ $gaps: $layout-padding-lg;
   color: $txt-color-secondary-light;
 }
 
-.monitoring-list-container {
-  margin-left: $layout-padding-xl;
-  margin-right: $layout-padding-xl;
-}

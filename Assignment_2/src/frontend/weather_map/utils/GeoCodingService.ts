@@ -22,17 +22,12 @@ class GeoCodingService {
     };
 
     return new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
-      this.geoCoder.geocode(request, (error, response) => {
-        // console.log('Request');
-        // console.log(request);
-        // console.log('GeoCoder Response');
-        // console.log(response);
-        
-        if (error) {
-          reject(error);
+      this.geoCoder.geocode(request, (error, response) => {        
+        if (error == null) {
+          resolve(response.json.results);
+        } else {
+          reject(error);  
         }
-        resolve(response.json.results);
-
       });
     });
 
