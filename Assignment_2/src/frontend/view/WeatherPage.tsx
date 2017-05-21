@@ -50,9 +50,9 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
                 Monitored location dashboard
               </h1>
             </header>
-            <div id="map"> A map should be here</div>
             <GoogleWeatherMap 
               weatherDataMap={this.props.appCurrentState.weatherDataMap}
+              locationList={this.props.appCurrentState.locations}
             />
             <div className='monitoring-list-container'>
               <MonitoringList 

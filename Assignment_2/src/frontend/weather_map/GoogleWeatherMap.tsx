@@ -7,6 +7,7 @@ import { WeatherMapState } from './WeatherMapState';
 
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
+  readonly locationList: string[];
 }
 
 interface LocationMarkerInformation {
@@ -27,8 +28,13 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   
   }
 
+  // Called once to get geocoding results.
+  public getLatLangFromLocation(locations: string[]) {  
+    // TODO: this.
+  }
 
   public parseWeatherDataInfo(googleMap: google.maps.Map) {
+    console.log('PARSE WEATHER DATA INFO CALLED!');
     // Set up markers on google maps.
     const geocoder: GeoCodingService = new GeoCodingService();
     // const locationsToProcess: LocationMarkerInformation[] = [];
@@ -36,11 +42,13 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     // Reset location info.
     this.state.setLocationInfo([]);
     const geocodePromises: Array<Promise<any>> = [];
-    for (const location of this.props.weatherDataMap.keys()) {    
+    
+    for (const location of this.props.weatherDataMap.keys()) {
+      console.log(location);    
       // A promise is returned by geocodeAddress().
       const geocodePromise: Promise<void> = geocoder.geocodeAddress(location + ', Melbourne, Australia')
         .then((results: google.maps.GeocoderResult[]) => {
-          console.log('Geocoder finished');
+          // console.log('Geocoder finished');
           const jsonResult: google.maps.GeocoderResult = results[0];
           // Parse out info we need.
           const formattedAddress: string = jsonResult.formatted_address;
@@ -48,10 +56,10 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const latLongJson: JSON = JSON.parse(latLongString);
           const latitude: number = latLongJson['lat'];
           const longitude: number = latLongJson['lng'];
-          console.log('WeatherDataMap Below');
-          console.log(this.props.weatherDataMap);
-          console.log('location: ' + location);
-          console.log(this.props.weatherDataMap.get(location));
+          // console.log('WeatherDataMap Below');
+          // console.log(this.props.weatherDataMap);
+          // console.log('location: ' + location);
+          // console.log(this.props.weatherDataMap.get(location));
           const monitoredLocationInfo: MonitoredLocationInformation | undefined = 
             this.props.weatherDataMap.get(location);
 
@@ -99,13 +107,21 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     // Wait for all geocode promises to finish.
     Promise.all(geocodePromises)
       .then((response) => {
+        console.log('INSIDE PROMISE ALL RESPONSES');
         // Note: google map typings in node_modles/@types/googlemaps. Not sure why vs code red underlines
         // google sometimes but Marker is still resolved.
         // const locationPins: google.maps.Marker[] = [];
         // const locationHeatMap: google.maps.Circle[] = [];
         // // // Place markers for all locations.
-        
+        this.state.clearCircles();
+        this.state.clearPins();
         for (const locInfo of this.state.locationInfo) {
+          
+          // Only handle temp for now.
+          if (locInfo.temp == null) {
+            continue;
+          }
+
           // TODO: This is buggy, need to place Map instance in map.
           const latlang = new google.maps.LatLng(locInfo.latitude, locInfo.longitude);
           const pin = new google.maps.Marker({
@@ -114,10 +130,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             title: locInfo.formattedAddress
           });
           this.state.locationPins.push(pin);
-          
-          if (locInfo.temp == null) {
-            continue;
-          }
+        
           // 42 is max temp in melbourne in 2016, opacity = location temp / 42 rounded to 2 decimal places.
           const opacity: number = Math.round((locInfo.temp / 42) * 100 ) / 100;
           
@@ -133,41 +146,23 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           });
           this.state.locationHeatMap.push(heatCircle);
         }
-        console.log('Markers PLaced');
+     
       })  
       .catch((error) => {
         console.log(error);
       });
   }
+
   // TODO: Remove markers, http://stackoverflow.com/questions/1544739/google-maps-api-v3-how-to-remove-all-markers
   public componentDidMount() {
     // Make a new google map
-    console.log('-- compontnet did mounbt');
+    console.log('-- component did mount ---');
     const googleMap = new google.maps.Map(document.getElementById('map'), {
         center: {lat: -37.81950134905335, lng: 144.98429111204815},
-        zoom: 9
+        zoom: 8
     });
     this.googleMap = googleMap;
-    // max temp: 42.2
-    // const cityCircle = new google.maps.Circle({
-    //         strokeColor: '#FF0000',
-    //         strokeOpacity: 0,
-    //         strokeWeight: 0,
-    //         fillColor: '#FF0000',
-    //         fillOpacity: 0.38,
-    //         map: googleMap,
-    //         center: {lat: -37.81950134905335, lng: 144.98429111204815},
-    //         radius: 10000
-    //       });
-    // console.log('finish drawing');
-    // console.log(cityCircle);
-    // const latlang = new google.maps.LatLng(-37.81950134905335, 144.98429111204815);
 
-    // const pin = new google.maps.Marker({
-    //   position: latlang,
-    //   map: googleMap,
-    //   title: 'test'
-    // });
     // const infowindow = new google.maps.InfoWindow({
     //     position: {lat: -37.81950134905335, lng: 144.98429111204815},
     //     content: 'intro',
@@ -187,19 +182,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }
   
   public render(): JSX.Element {   
-    // console.log('Render');
-    // console.log(this.state.locationInfo);
-    // this.getLocationInfo();
-    console.log('-- render called --');
+
+    console.log('-- RENDER() called --');
 
     if (this.googleMap !== null) {
-      this.state.clearCircles();
-      this.state.clearPins();
+    
       this.parseWeatherDataInfo(this.googleMap);
     }
     
     return (
-      <div >
+      <div id="map">
         Test map above.
       </div>
     );

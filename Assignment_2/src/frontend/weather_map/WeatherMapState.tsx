@@ -4,6 +4,7 @@ class WeatherMapState {
   public locationInfo: LocationMarkerInformation[];
   public locationPins: google.maps.Marker[] = [];
   public locationHeatMap: google.maps.Circle[] = [];
+  // public locationLatLangMap: Map<string, google.maps.LatLang>;
   
   constructor(locationInfo: LocationMarkerInformation[]) {
     this.locationInfo = locationInfo;
@@ -15,6 +16,7 @@ class WeatherMapState {
 
   public clearPins() {
     for (const pin of this.locationPins) {
+      // pin.setVisible(false);
       pin.setMap(null);
     }
     this.locationPins = [];
