@@ -14,16 +14,25 @@ $main-minimum-height: 600px;
   font-size: 200%;
 }
 
-.main-content {
+.main-content { 
   display: flex;
   flex-direction: row;
   flex-grow: 1;
 }
-
+$gaps: $layout-padding-lg;
 .monitoring-container {
   min-height: $main-minimum-height;
   background: $background-1-light;
   flex-grow: 1;
+}
+.weather-card-container {
+  margin: $gaps;
+}
+.weather-map-container {
+  height: 400px;
+  margin-left: $gaps;
+  margin-right: $gaps;
+  margin-bottom: $gaps;
 }
 
 .sidebar {

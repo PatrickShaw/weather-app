@@ -34,7 +34,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         <div className='main-content'>
           <aside className='sidebar'>
             <header>
-              <h1 className='txt-subheading title-section'>Locations</h1>
+              <h1 className='txt-subheading-1 title-section'>Locations</h1>
             </header>
             <LocationList 
               locations={this.props.appCurrentState.locations} 
@@ -46,23 +46,27 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 
           <main className='monitoring-container'>
             <header>
-              <h1 className='txt-subheading title-section'>
+              <h1 className='txt-subheading-1 title-section'>
                 Monitored location dashboard
               </h1>
             </header>
-            <GoogleWeatherMap 
-              weatherDataMap={this.props.appCurrentState.weatherDataMap}
-              locationList={this.props.appCurrentState.locations}
-            />
+           
             <div className='monitoring-list-container'>
+            <section className='weather-map-container' id='map' >
+              <GoogleWeatherMap
+                weatherDataMap={this.props.appCurrentState.weatherDataMap}
+              />
+            </section>
+            <div className='weather-card-container'>
               <MonitoringList 
-                locations={this.props.appCurrentState.locations} 
+                locations={this.props.appCurrentState.locations}
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
                 onGraphToggleClickedObserver={this.props.onMonitoringListGraphItemClicked}
               />
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
+      </div>
         <footer className='page-footer'>
           <p className='copyright'>Melbourne Weather © 2017 David Lei and Patrick Shaw</p>
         </footer>
@@ -71,6 +75,6 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
   }
 }
 
-// Note: Try Map id="map" later and return a div with id="map" in render, should work.
 export {WeatherPage};
 export default WeatherPage;
+

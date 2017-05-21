@@ -1,14 +1,34 @@
 import * as React from 'react';
 
 import * as moment from 'moment';
-import { Line } from 'react-chartjs-2';
+import * as Chart from 'react-chartjs-2';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
+import './LineChart.scss';
 
 interface LineChartProps {
   monitoredLocationInformation: MonitoredLocationInformation;
 }
 
 class LineChart extends React.Component<LineChartProps, void> {
+  private createTrendline(
+    label: string,
+    lineRedValue: number, 
+    lineGreenValue: number, 
+    lineBlueValue: number, 
+    dataPoints: Array<number | null>
+  ) {
+    const backgroundColor: string = `rgba(${lineRedValue}, ${lineGreenValue}, ${lineBlueValue}, 0.75)`;
+    const lineColor: string = `rgb(${lineRedValue}, ${lineGreenValue}, ${lineBlueValue})`;
+    return {
+      label,
+      fill: false,          
+      backgroundColor,
+      borderColor: lineColor,
+      pointBorderColor: lineColor,
+      pointBackgroundColor: lineColor,
+      data: dataPoints,
+    };
+  }
   public render(): JSX.Element {
     const rainfallDataPoints: Array<number | null> = [];
     const temperatureDataPoints: Array<number | null> = []; 
@@ -62,78 +82,37 @@ class LineChart extends React.Component<LineChartProps, void> {
       }
     }
     
-    // Note: RGBA is reg green blue alpha, alpha is opacity between 0.0 and 1.0, the higher is more solid.
-    // 
     const data = {
       labels: timestampDataPoints,
-      datasets: [
-        {
-          label: 'Rainfall',
-          fill: false,          
-          backgroundColor: 'rgba(33, 150, 243, 0.75)',
-          borderColor: 'rgb(33, 150, 243)',
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(33, 150, 243)',
-          pointBackgroundColor: '#fff',
-          pointBorderWidth: 0,
-          pointHoverRadius: 3,
-          pointHoverBackgroundColor: 'rgb(33, 150, 243)',
-          pointHoverBorderColor: 'rgb(33, 150, 243)',
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 5,
-          data: rainfallDataPoints
-        },
-        {
-          label: 'Temperature',
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: 'rgba(255, 171, 0, 0.75)',
-          borderColor: 'rgb(255, 171, 0)',
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: 'rgb(255, 171, 0)',
-          pointBackgroundColor: '#fff',
-          pointBorderWidth: 0,
-          pointHoverRadius: 3,
-          pointHoverBackgroundColor: 'rgb(255, 171, 0)',
-          pointHoverBorderColor: 'rgb(255, 171, 0)',
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 5,
-          data: temperatureDataPoints
-        }
+      datasets: [ 
+        this.createTrendline('Rainfall (mm)', 33, 150, 243, rainfallDataPoints),
+        this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints)
       ]
     };
     // TODO: Set axis labels, configure graph so looks nicer.
     // TODO: Fine tune dates.
     const options = {
+      responsive: true, 
       scales: {
         xAxes: [{
             ticks: {
                 autoSkip: true,
                 maxRotation: 0,
                 minRotation: 0,
-                autoSkipPadding: 10
+                autoSkipPadding: 8
             },
-            type: 'time',
-            displayFormats: {
-              day: 'MMM DD'
-            }
+            type: 'time'
           }]
       }
     };
     
     return (
-      <Line 
-          data={data}
-          options={options}
-      />
+      <div className='chart-container'>
+        <Chart.Line 
+            data={data}
+            options={options}
+        />
+      </div>
     );
   }
 }

@@ -1,3 +1,4 @@
+/// <reference path="../../node_modules/@types/googlemaps/index.d.ts" />
 import './theme/full-lambda-theme.scss';
 
 import * as React from 'react';

@@ -1,5 +1,4 @@
 import { LocationMarkerInformation } from './GoogleWeatherMap';
-
 class WeatherMapState {
   public locationInfo: LocationMarkerInformation[];
   public locationPins: google.maps.Marker[] = [];

@@ -3,32 +3,43 @@
 .txt-body-1 {
   font-weight: $txt-weight-body-1;
   font-size: $txt-size-body-1;
+  line-height: $txt-line-height-body-1;
 }
 
 .txt-body-2 {
   font-weight: $txt-weight-body-2;
   font-size: $txt-size-body-2;
+  line-height: $txt-line-height-body-2;
 }
 
 .txt-title {  
   font-weight: $txt-weight-title;
   font-size: $txt-size-title;
+  line-height: $txt-line-height-title;
 }
 
-.txt-subheading {
-  font-weight: $txt-weight-subheading;
-  font-size: $txt-size-subheading;
-  text-decoration: underline;
+.txt-subheading-2 {
+  font-weight: $txt-weight-subheading-2;
+  font-size: $txt-size-subheading-2;
+  line-height: $txt-line-height-subheading-2;
+}
+
+.txt-subheading-1 {
+  font-weight: $txt-weight-subheading-1;
+  font-size: $txt-size-subheading-1;
+  line-height: $txt-line-height-subheading-1;
 }
 
 .txt-display-1 {
   font-weight: $txt-weight-display-1;
   font-size: $txt-size-display-1;
+  line-height: $txt-line-height-display-1;
 }
 
 .txt-display-2 {
   font-weight: $txt-weight-display-2;
   font-size: $txt-size-display-2;
+  line-height: $txt-line-height-display-2;
 }
 
 .txt-display-3 {

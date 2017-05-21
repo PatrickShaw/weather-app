@@ -6,8 +6,9 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { WeatherMapState } from './WeatherMapState';
 
 interface GoogleWeatherMapProps {
+  readonly id: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
-  readonly locationList: string[];
+  // readonly locationList: string[];
 }
 
 interface LocationMarkerInformation {
@@ -23,9 +24,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
-   
-    this.state = new WeatherMapState([]);
-  
+    this.state = new WeatherMapState([]);  
   }
 
   // Called once to get geocoding results.
@@ -34,7 +33,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }
 
   public parseWeatherDataInfo(googleMap: google.maps.Map) {
-    console.log('PARSE WEATHER DATA INFO CALLED!');
     // Set up markers on google maps.
     const geocoder: GeoCodingService = new GeoCodingService();
     // const locationsToProcess: LocationMarkerInformation[] = [];
@@ -44,7 +42,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     const geocodePromises: Array<Promise<any>> = [];
     
     for (const location of this.props.weatherDataMap.keys()) {
-      console.log(location);    
       // A promise is returned by geocodeAddress().
       const geocodePromise: Promise<void> = geocoder.geocodeAddress(location + ', Melbourne, Australia')
         .then((results: google.maps.GeocoderResult[]) => {
@@ -107,14 +104,9 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     // Wait for all geocode promises to finish.
     Promise.all(geocodePromises)
       .then((response) => {
-        console.log('INSIDE PROMISE ALL RESPONSES');
-        // Note: google map typings in node_modles/@types/googlemaps. Not sure why vs code red underlines
-        // google sometimes but Marker is still resolved.
-        // const locationPins: google.maps.Marker[] = [];
-        // const locationHeatMap: google.maps.Circle[] = [];
-        // // // Place markers for all locations.
         this.state.clearCircles();
         this.state.clearPins();
+
         for (const locInfo of this.state.locationInfo) {
           
           // Only handle temp for now.
@@ -163,7 +155,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     });
     this.googleMap = googleMap;
 
-    // const infowindow = new google.maps.InfoWindow({
     //     position: {lat: -37.81950134905335, lng: 144.98429111204815},
     //     content: 'intro',
     // });
@@ -191,8 +182,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     }
     
     return (
-      <div id="map">
-        Test map above.
+      <div>
       </div>
     );
   }
