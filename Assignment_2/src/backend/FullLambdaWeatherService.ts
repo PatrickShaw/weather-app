@@ -237,7 +237,6 @@ class FullLambdaWeatherService {
     // });
 
     // Note: sockets.sockets is a Socket IO library attribute.
-    console.log(chalk.bgRed(`Session keys: ${Object.keys(this.io.sockets.sockets)}`));
     for (const sessionId of Object.keys(this.io.sockets.sockets)) {
       try {
         console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);

@@ -6,5 +6,6 @@ import { WeatherPageContainer } from './controller/WeatherPageContainer';
 // Attach our React components to the 'root' id in the HTML page.
 ReactDOM.render(
   <WeatherPageContainer/>,
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
+  null
 );

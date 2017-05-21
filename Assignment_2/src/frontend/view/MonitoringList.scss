@@ -1,16 +1,8 @@
 @import '../theme/full-lambda-dimens';
+$column-count: 3;
 $monitoring-list-gap: $layout-padding-lg;
 .monitoring-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: stretch;
-  flex-direction: row;
-  margin: -$monitoring-list-gap;
-}
-.monitoring-item-card {
-  flex-basis: 320px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin: calc(0.5 * #{$monitoring-list-gap});
+  display: grid;
+  grid-template-columns: repeat($column-count, 1fr);
+  grid-gap: $monitoring-list-gap;
 }

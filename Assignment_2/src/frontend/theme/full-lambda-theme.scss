@@ -1,5 +1,5 @@
-@import "material/material-theme";
-@import "full-lambda-colors";
+@import 'material/material-theme';
+@import 'full-lambda-colors';
 body {
   background: $color-dark;
 }
@@ -10,34 +10,13 @@ button {
   margin: 0;
   color: $color-accent;
   background: rgba(0,0,0,0);
-  padding-left: $layout-padding-lg;
-  padding-right: $layout-padding-lg;
+  margin-left: $layout-padding-md;
+  margin-right: $layout-padding-md;
+  padding-left: $layout-padding-md;
+  padding-right: $layout-padding-md;
   padding-top: $layout-padding-md;
   padding-bottom: $layout-padding-md;
   z-index: 1;
   border: 0;
-  transition: box-shadow 0.7s;
-}
-button:hover {
   border-radius: 2px;
-  box-shadow: 0px 2px 6px 0px $shadow-dark;
-}
-
-.graph-button {
-  @extend .ripple;
-  font-size: 10px;
-  font-weight: 400;
-  color: black;
-  padding-left: $layout-padding-sm;
-  padding-right: $layout-padding-sm;
-  padding-top: $layout-padding-sm;
-  padding-bottom: $layout-padding-sm;
-  z-index: 1;
-  border: 0;
-  transition: box-shadow 0.7s;
-}
-
-.align-card-head {
-  display:inline;
-  padding-right: $layout-padding-md;
 }

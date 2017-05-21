@@ -1,7 +1,7 @@
-import { SoapResponse } from '../../model/SoapResponse';
-import { SoapRequest } from '../../model/SoapRequest';
 import { MelbourneTimelapseWeatherSoapServiceStub } from './MelbourneTimelapseWeatherSoapServiceStub';
 import { RainfallData } from '../../model/RainfallData';
+import { SoapRequest } from '../../model/SoapRequest';
+import { SoapResponse } from '../../model/SoapResponse';
 import { TemperatureData } from '../../model/TemperatureData';
 import { WeatherClient } from '../WeatherClient';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
@@ -47,10 +47,11 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
     return this.weatherService.getWeather(new SoapRequest<string>(location))
         .then((response: SoapResponse<string[]>) => {
           const data: string[] = response.return;
-          // TODO: Make celcius
           const timestamp: string = data[0];
           const rainfall: string = data[2];
-          const temperature: string = data[1];
+          let temperature: string = data[1];
+          const tempCelsius: number = +temperature  - 273.15;
+          temperature = '' + tempCelsius;  // Converted to celsius.
           return new WeatherLocationData(
             location, 
             new RainfallData(rainfall, timestamp), 

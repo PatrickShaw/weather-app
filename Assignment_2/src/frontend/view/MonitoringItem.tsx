@@ -4,7 +4,7 @@ import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-
+import './MonitoringItem.scss';
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
@@ -15,7 +15,6 @@ interface MonitoringItemProps {
  * Component that populates a card with weather data information.
  */
 class MonitoringItem extends React.Component<MonitoringItemProps, void> {
-
   public render(): JSX.Element {
     // Only called when the weatherData to show has changed.
     // First we're going to figure out what strings to render for contents of the card.
@@ -68,45 +67,49 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
     const that: MonitoringItem = this;
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
-      <section className="pad-item-list">
-        <div >
-          <h1 className="txt-body-2 align-card-head">{currentWeatherData.location}</h1>
-          
-          <button
-            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
-              that.props.monitoredLocationInformation.weatherDataList[0].location
-            )}
-            className="graph-button align-card-head"
-            disabled={false}
-            >
-            Graph
-            <img src="https://image.flaticon.com/icons/png/128/118/118738.png" width="10px" >
-            </img>
-          </button>
-        </div>
-        <br/>
-        {
-          this.props.monitoredLocationInformation.monitorRainfall ? 
-          <h2 className="txt-body-1">
-            Rainfall: {rainfallDataToRender}
-          </h2> : null
-        }
-        {
-          this.props.monitoredLocationInformation.monitorTemperature ? 
-          <h2 className="txt-body-1">
-            Temperature: {temperatureDataToRender}
-          </h2> : null
-        }
-        <br/>
-        
-        {
+      <section>
+        <section className='worded-measurements'>
+          <h1 className='txt-heading align-card-head'>{currentWeatherData.location}</h1>
+          {
+            this.props.monitoredLocationInformation.monitorRainfall ? 
+            <h2 className='txt-body-1'>
+              <strong>Rainfall:</strong> {rainfallDataToRender}
+            </h2> : null
+          }
+          {
+            this.props.monitoredLocationInformation.monitorTemperature ? 
+            <h2 className='txt-body-1'>
+              <strong>Temperature:</strong> {temperatureDataToRender}
+            </h2> : null
+          }
+        </section>
+          {
           this.props.monitoredLocationInformation.monitorGraph ?
-            <div>
-                <LineChart
-                  monitoredLocationInformation={this.props.monitoredLocationInformation}
-                />
-            </div> : null
-        }
+            <section className='graph-container'>
+              <div>
+                  <LineChart
+                    monitoredLocationInformation={this.props.monitoredLocationInformation}
+                  />
+              </div> 
+            </section>
+          : null
+          }
+        <section className='buttons'>
+          <button 
+              className='txt-color-primary graph-buttuon'
+              onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+                that.props.monitoredLocationInformation.weatherDataList[0].location
+              )}
+              disabled={false}
+          >
+            <i className='material-icons'>
+              {
+                // The two strings represent the up and down arrows respectively
+                this.props.monitoredLocationInformation.monitorGraph ? '\uE5C7' : '\uE5C5'
+              }
+              </i>Graph 
+          </button>
+        </section>
       </section>
     );
   }
