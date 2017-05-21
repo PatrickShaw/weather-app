@@ -34,8 +34,8 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
               this.props.weatherDataMap.get(location);
             return (
               monitoredLocationInformation && monitoredLocationInformation.weatherDataList.length > 0 ?
-              <div>
-                <div key={location} className='card monitoring-item-card'>
+              <div key={location}>
+                <div className='card monitoring-item-card'>
                   <MonitoringItem 
                     monitoredLocationInformation={monitoredLocationInformation}
                     onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}

@@ -33,7 +33,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         <div className='main-content'>
           <aside className='sidebar'>
             <header>
-              <h1 className='txt-subheading title-section'>Locations</h1>
+              <h1 className='txt-subheading-1 title-section'>Locations</h1>
             </header>
             <LocationList 
               locations={this.props.appCurrentState.locations} 
@@ -44,7 +44,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           </aside>
           <main className='monitoring-container'>
             <header>
-              <h1 className='txt-subheading title-section'>
+              <h1 className='txt-subheading-1 title-section'>
                 Monitored location dashboard
               </h1>
             </header>
