@@ -34,7 +34,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
         <div className='main-content'>
           <aside className='sidebar'>
             <header>
-              <h1 className='txt-subheading title-section'>Locations</h1>
+              <h1 className='txt-subheading-1 title-section'>Locations</h1>
             </header>
             <LocationList 
               locations={this.props.appCurrentState.locations} 
@@ -46,15 +46,16 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 
           <main className='monitoring-container'>
             <header>
-              <h1 className='txt-subheading title-section'>
+              <h1 className='txt-subheading-1 title-section'>
                 Monitored location dashboard
               </h1>
             </header>
-            <div id="map"> A map should be here</div>
-            <GoogleWeatherMap 
-              weatherDataMap={this.props.appCurrentState.weatherDataMap}
-            />
-            <div className='monitoring-list-container'>
+            <section className='weather-map-container'>
+              <GoogleWeatherMap 
+                weatherDataMap={this.props.appCurrentState.weatherDataMap}
+              />
+            </section>
+            <div className='weather-card-container'>
               <MonitoringList 
                 locations={this.props.appCurrentState.locations} 
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
