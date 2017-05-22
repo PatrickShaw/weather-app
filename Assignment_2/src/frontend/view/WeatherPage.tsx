@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import {ActionBar} from './AppBar';
 import {AppState} from '../model/AppState';
-import {GoogleWeatherMap} from './GoogleWeatherMap';
 import {LocationList} from './LocationList';
 import {MonitoringList} from './MonitoringList';
 import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
