@@ -177,16 +177,32 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             = rainfallString == null ? undefined : Number.parseFloat(rainfallString);
           const temperature: number | undefined 
             = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
-          let opacity: number = 0.5;
+          let rainfallColorHex: string;
           if (rainfall != null) {
-            opacity = Math.max(0.2, Math.min(0.6, 0.2 + 0.4 * rainfall / 4.0));
+            // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall colour 
+            // remains the same.
+            const blueness = Math.max(0, Math.min(1, rainfall / 100));
+            // 0-255, how white/black the grey tone will be.
+            const greyTone = 120;
+            const blue = Math.round(greyTone + blueness * 120);
+            const blueHex = blue.toString(16);
+            const greyHex = greyTone.toString(16);
+            rainfallColorHex = `${greyHex}${greyHex}${blueHex}`;
+          } else {
+            rainfallColorHex = 'DD8888';
           }
+          const pinIcon: google.maps.Icon = {
+            url: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + rainfallColorHex
+          };
+          pin.setIcon(pinIcon);
           // Calculate the background color of the circle according to how hot it is.
-          let heatColor = '#888888';          
+          let heatColor: string;          
           if (temperature != null) {
             // redness will always be between 0 and 1.
             const redness = Math.max(0, Math.min(1, temperature / 42.0));
-            heatColor = `rgb(${40 + Math.round(redness * 170)}, 40, ${Math.round(40 + (1 - redness) * 170)})`;
+            heatColor = `rgb(220, ${Math.round(120 + (1 - redness) * 90)}, 120)`;
+          } else {
+            heatColor = '#888888';
           }
           // Now set the options of the circle.
           circle.setOptions({
@@ -194,7 +210,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             strokeOpacity: 0.75,
             strokeWeight: 1,
             fillColor: heatColor,
-            fillOpacity: opacity,
+            fillOpacity: 0.4,
           });
           circle.setVisible(true);
           let infoWindowContent: string = formattedAddress;
