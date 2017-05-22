@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { GeoCodingService } from './utils/GeoCodingService';
-import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
+import { WeatherLocationData } from '../../../model/WeatherLocationData';
 
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
