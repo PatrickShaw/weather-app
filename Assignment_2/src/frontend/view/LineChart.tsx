@@ -93,13 +93,14 @@ class LineChart extends React.Component<LineChartProps, void> {
     // TODO: Fine tune dates.
     const options = {
       responsive: true, 
+      maintainAspectRatio: false,
       scales: {
         xAxes: [{
             ticks: {
                 autoSkip: true,
                 maxRotation: 0,
                 minRotation: 0,
-                autoSkipPadding: 8
+                autoSkipPadding: 8,
             },
             type: 'time'
           }]

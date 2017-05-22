@@ -40,10 +40,10 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       temperatureTimestamp = currentWeatherData.temperatureData.timestamp;
       const isFloatingPoint: boolean = !isNaN(temperatureDataPoint);
       temperatureDataToRender = 
-        `${isFloatingPoint ? 
-          Math.round(temperatureDataPoint*100)/100 :
-          currentWeatherData.temperatureData.temperature}` +
-        `${isFloatingPoint ? ' ℃' : ''} ` + 
+        `${isFloatingPoint
+          ? Math.round(temperatureDataPoint * 100) / 100
+          : currentWeatherData.temperatureData.temperature}` +
+        `${isFloatingPoint ? ' ℃' : ''} ` +
         `(${currentWeatherData.temperatureData.timestamp})`;      
     } else {
       temperatureDataToRender = dataMissingMessage;
@@ -59,7 +59,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       const isFloatingPoint: boolean = !isNaN(rainfallDataPoint);
       rainfallDataToRender = 
         `${isFloatingPoint ? 
-          Math.round(rainfallDataPoint*100)/100 :
+          Math.round(rainfallDataPoint * 100) / 100 :
           currentWeatherData.rainfallData.rainfall}` +
         `${isFloatingPoint ? ' mm' : ''} ` + 
         `(${currentWeatherData.rainfallData.timestamp})`;
@@ -75,7 +75,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section>
         <section className='worded-measurements'>
-          <h1 className='txt-heading align-card-head'>{currentWeatherData.location}</h1>
+          <h1 className='txt-title'>{currentWeatherData.location}</h1>
           {
             this.props.monitoredLocationInformation.monitorRainfall ? 
             <h2 className='txt-body-1'>

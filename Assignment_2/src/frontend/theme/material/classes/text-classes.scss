@@ -4,75 +4,95 @@
   font-weight: $txt-weight-body-1;
   font-size: $txt-size-body-1;
   line-height: $txt-line-height-body-1;
+  letter-spacing: $txt-letter-spacing-body-1;
 }
 
 .txt-body-2 {
   font-weight: $txt-weight-body-2;
   font-size: $txt-size-body-2;
   line-height: $txt-line-height-body-2;
+  letter-spacing: $txt-letter-spacing-body-2;
 }
 
 .txt-title {  
   font-weight: $txt-weight-title;
   font-size: $txt-size-title;
   line-height: $txt-line-height-title;
+  letter-spacing: $txt-letter-spacing-title;
+}
+
+.txt-headline {
+  font-weight: $txt-weight-headline;
+  font-size: $txt-size-headline;
+  line-height: $txt-line-height-headline;
+  letter-spacing: $txt-letter-spacing-headline;
 }
 
 .txt-subheading-2 {
   font-weight: $txt-weight-subheading-2;
   font-size: $txt-size-subheading-2;
   line-height: $txt-line-height-subheading-2;
+  letter-spacing: $txt-letter-spacing-subheading-2;
 }
 
 .txt-subheading-1 {
   font-weight: $txt-weight-subheading-1;
   font-size: $txt-size-subheading-1;
   line-height: $txt-line-height-subheading-1;
+  letter-spacing: $txt-letter-spacing-subheading-1;
 }
 
 .txt-display-1 {
   font-weight: $txt-weight-display-1;
   font-size: $txt-size-display-1;
   line-height: $txt-line-height-display-1;
+  letter-spacing: $txt-letter-spacing-display-1;
 }
 
 .txt-display-2 {
   font-weight: $txt-weight-display-2;
   font-size: $txt-size-display-2;
   line-height: $txt-line-height-display-2;
+  letter-spacing: $txt-letter-spacing-display-2;
 }
 
 .txt-display-3 {
   font-weight: $txt-weight-display-3;
   font-size: $txt-size-display-3;
+  letter-spacing: $txt-letter-spacing-display-3;
 }
 
 .txt-display-4 {
   font-weight: $txt-weight-display-4;
   font-size: $txt-size-display-4;
+  letter-spacing: $txt-letter-spacing-display-3;
 }
 
 .txt-button-english {
   font-size: $txt-size-button-english;
   font-weight: $txt-weight-button-english;
   text-transform: $txt-transform-button;
+  letter-spacing: $txt-letter-spacing-button;
 }
 
 .txt-button-dense {
   font-size: $txt-size-button-dense;
   font-weight: $txt-weight-button-dense;
   text-transform: $txt-transform-button;
+  letter-spacing: $txt-letter-spacing-button;  
 }
 
 .txt-button-tall {
   font-size: $txt-size-button-tall;
   font-weight: $txt-weight-button-tall;
   text-transform: $txt-transform-button;
+  letter-spacing: $txt-letter-spacing-button;
 }
 
 .txt-app-bar-title {
   font-size: $txt-size-app-bar-title;
   font-weight: $txt-weight-app-bar-title;
+  letter-spacing: $txt-letter-spacing-app-bar-title;
 }
 
 .txt-app-bar-title.dark {
@@ -86,6 +106,7 @@
 .txt-app-bar-subtitle {
   font-size: $txt-size-app-bar-subtitle;
   font-weight: $txt-weight-app-bar-subtitle;
+  letter-spacing: $txt-letter-spacing-app-bar-subtitle;
 }
 
 .txt-app-bar-subtitle.dark {
