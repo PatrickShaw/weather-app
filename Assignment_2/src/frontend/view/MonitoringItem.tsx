@@ -38,7 +38,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       temperatureTimestamp = currentWeatherData.temperatureData.timestamp;
       const isFloatingPoint: boolean = !isNaN(temperatureDataPoint);
       temperatureDataToRender = 
-        `${currentWeatherData.temperatureData.temperature}` +
+        `${isFloatingPoint ? 
+          Math.round(temperatureDataPoint*100)/100 :
+          currentWeatherData.temperatureData.temperature}` +
         `${isFloatingPoint ? ' ℃' : ''} ` + 
         `(${currentWeatherData.temperatureData.timestamp})`;      
     } else {
