@@ -109,10 +109,11 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           // Also add a new marker.
           newLocationInfoPromise = this.geocoder.geocodeAddress(locationKey + ', Melbourne, Australia')
             .then((results: google.maps.GeocoderResult[]) => {
+              console.log(results);
               // Parse the info we need.
               const jsonResult: google.maps.GeocoderResult = results[0];
               const formattedAddress: string = jsonResult.formatted_address;
-              const latLongString: string = JSON.stringify(jsonResult['geometry']['location']);
+              const latLongString: string = JSON.stringify(jsonResult.geometry.location);
               const latLongJson: JSON = JSON.parse(latLongString);
               const latitude: number = latLongJson['lat'];
               const longitude: number = latLongJson['lng'];
@@ -122,16 +123,13 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 position: latlng,
                 title: formattedAddress
               });              
+              // Not transparent until we calculate the correct colours and opacit later on.
               const circle = new google.maps.Circle({
-                strokeColor: '#0000ff',
                 strokeOpacity: 0,
-                strokeWeight: 0,
-                fillColor: '#0000ff',
                 fillOpacity: 0,
                 center: latlng,
                 radius: 10000
               });
-              console.log('---- here ---');
               circle.setMap(this.googleMap);
               circle.setValues(true);
               pin.setMap(this.googleMap);
@@ -190,28 +188,19 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           // Calculate the background color of the circle according to how hot it is.
           let heatColor = '#888888';          
           if (temperature != null) {
+            // redness will always be between 0 and 1.
             const redness = Math.max(0, Math.min(1, temperature / 42.0));
             heatColor = `rgb(${40 + Math.round(redness * 170)}, 40, ${Math.round(40 + (1 - redness) * 170)})`;
           }
           // Now set the options of the circle.
-          // TODO: I thought this would re-render the circle but it doesn't.
-          console.log('heat colour: ' + heatColor);
-          console.log('opacity: '  + opacity);
-          // circle.setVisible(false);
-          if (temperature > 11.15) {
-            heatColor = '#ffff00';
-          }
           circle.setOptions({
             strokeColor: heatColor,
             strokeOpacity: 0.75,
             strokeWeight: 1,
             fillColor: heatColor,
             fillOpacity: opacity,
-            center: latlng,
-            radius: 10000
           });
           circle.setVisible(true);
-          console.log('~~~ THERE ~~~');
           
           // Compile the data into a single object and set it to the info map.
           const locationInfo: LocationMarkerInformation = new LocationMarkerInformation(
