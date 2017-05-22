@@ -63,39 +63,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       zoom: 8
     });
     this.googleMap = googleMap;
-    // // for (const location of this.props.locations) {
-    //   const locationPromise = this.geocoder.geocodeAddress(location + ', Melbourne, Australia')
-    //     .then((results: google.maps.GeocoderResult[]) => {
-    //         // Parse the info we need.
-    //         const jsonResult: google.maps.GeocoderResult = results[0];
-    //         const formattedAddress: string = jsonResult.formatted_address;
-    //         const latLongString: string = JSON.stringify(jsonResult['geometry']['location']);
-    //         const latLongJson: JSON = JSON.parse(latLongString);
-    //         const latitude: number = latLongJson['lat'];
-    //         const longitude: number = latLongJson['lng'];
-    //         const latlng: google.maps.LatLng = new google.maps.LatLng(latitude, longitude);
-    //         // Create a pin.
-    //         const pin = new google.maps.Marker({
-    //           position: latlng,
-    //           title: formattedAddress,
-    //           map: this.googleMap
-    //         });
-
-    //         const circle = new google.maps.Circle({
-    //           // strokeColor: heatColor,
-    //           strokeOpacity: 0.75,
-    //           strokeWeight: 1,
-    //           // fillColor: heatColor,
-    //           // fillOpacity: opacity,
-    //           center: latlng,
-    //           radius: 10000,
-    //           map: this.googleMap
-    //         });
-
-    //         pin.setVisible(false);
-    //         circle.setVisible(false);
-
-    //     });
   }
 
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
@@ -146,7 +113,8 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
               pin.setVisible(true);
 
               const infoWindow = new google.maps.InfoWindow({
-                content: 'a string here'
+                content: 'a string here',
+                maxWidth: 200
               });
               
               // Hacky but typescript requires this.
@@ -231,14 +199,11 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           circle.setVisible(true);
           let infoWindowContent: string = formattedAddress;
           if (temperature !== undefined) {
-            infoWindowContent = `${infoWindowContent}, temperature: ${Math.round(temperature  * 100 ) / 100} ℃`;
-            console.log('info window content ???');
-            console.log(infoWindowContent);
+            infoWindowContent = `${infoWindowContent}<br/>Temperature: ${Math.round(temperature  * 100 ) / 100} ℃`;
           }
           if (rainfall !== undefined) {
-            infoWindowContent = `${infoWindowContent}, rainfall: ${Math.round(rainfall * 100 ) / 100} mm`;
-            console.log('info window content in rainfal yo ???');
-            console.log(infoWindowContent);
+            infoWindowContent = `${infoWindowContent}<br/>Rainfall: ${Math.round(rainfall * 100 ) / 100} mm`;
+
           }
           infoWindow.setContent(infoWindowContent);
           
