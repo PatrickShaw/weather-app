@@ -73,7 +73,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   public render(): JSX.Element {
     return (
       <div>
-        <div className="location-item">
+        <div className='location-item'>
           <GenericListItem title={this.props.location}>
             <button 
               onClick={this.onRainfallMonitorButtonClickedBound} 

@@ -3,15 +3,16 @@ import * as SocketIo from 'socket.io';
 import * as chalk from 'chalk';
 
 import { FullLambdaWeatherService } from './FullLambdaWeatherService';
-import { TestWeatherClientOnlyNumbersFactory } from '../weather_client/test/TestWeatherClientOnlyNumbersFactory';
+import { TestWellFormattedWeatherClientFactory } from '../weather_client/test/TestWellFormattedWeatherClientFactory';
 
 console.log(chalk.cyan('Starting server...'));
 const server = Http.createServer();
 server.listen(8080);
 const io: SocketIO.Server = SocketIo(server);
-const weatherClientFactory: TestWeatherClientOnlyNumbersFactory = new TestWeatherClientOnlyNumbersFactory();
+const weatherClientFactory: TestWellFormattedWeatherClientFactory = new TestWellFormattedWeatherClientFactory();
 const service: FullLambdaWeatherService = new FullLambdaWeatherService(
   io, 
-  weatherClientFactory
+  weatherClientFactory,
+  3000
 );
 service.run();

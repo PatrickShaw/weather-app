@@ -3,9 +3,6 @@
     "tslint:latest",
     "tslint-react"
   ],
-  "include": [
-        "src/*"
-  ], 
   "rules": {
     "no-reference": false,
     "object-literal-sort-keys": false,

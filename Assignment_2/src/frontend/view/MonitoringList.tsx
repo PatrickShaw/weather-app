@@ -26,7 +26,7 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
     // console.log(Object.keys(this.props.weatherDataMap));
     // console.log(this.props.weatherDataMap);
     return (
-      <section className="monitoring-list">
+      <section className='monitoring-list'>
         {
           // If a location is in this.props.weatherDataMap then it has information that should be rendered.
           this.props.locations.map((location, locationIndex) => {
@@ -34,11 +34,13 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
               this.props.weatherDataMap.get(location);
             return (
               monitoredLocationInformation && monitoredLocationInformation.weatherDataList.length > 0 ?
-              <div key={location} className="card monitoring-item-card">
-                <MonitoringItem 
-                  monitoredLocationInformation={monitoredLocationInformation}
-                  onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
-                />
+              <div key={location}>
+                <div className='card monitoring-item-card'>
+                  <MonitoringItem 
+                    monitoredLocationInformation={monitoredLocationInformation}
+                    onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
+                  />
+                </div>
               </div>
               : null
             );

@@ -15,7 +15,7 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },  
-    name: "Frontend Server",
+    name: 'Frontend Server',
     entry: paths.appIndexJs,
     devtool: 'source-map',
     module: {

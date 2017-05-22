@@ -38,23 +38,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
     // Triggers io.on('connection')'s callback
     const socket: SocketIOClient.Socket = SocketIo.connect('http://127.0.0.1:8080');
 
-    // TODO(patrick): Confirm this should not be here.
-    // this.onLocationsListRainfallItemClicked = new class implements OnLocationItemClickedObserver {
-    //   public onItemClicked(location: string, selected: boolean): void {
-    //     // The backend speaks in MonitorMetadata objects, so create one.
-    //     const monitor: MonitorMetadata = new MonitorMetadata(location);
-    //     if (selected) {
-    //       // We're unselecting a location so emit to remove the monitor
-    //       socket.emit(SocketKeys.removeRainfallMonitor, monitor);
-    //     } else {
-    //       // We're selecting a location so emit to add the monitor
-    //       socket.emit(SocketKeys.addRainfallMonitor, monitor);
-    //     }
-    //   }
-    // }();
-
     // Create on click monitor listeners
-
     // TODO: Rename it?
     this.onMonitoringListGraphItemClicked = new class implements OnMonitoringItemClickedObserver {
       public onItemClicked(location: string) {
@@ -296,7 +280,7 @@ class WeatherPageContainer extends React.Component<{}, AppState> {
         />
       ) : 
       (
-        <h1 className="error">
+        <h1 className='error'>
             WeatherMelbourne2 WSDL connection unsuccessful. 
             Make sure your device is connected to the internet and 
             http://viper.infotech.monash.edu.au:8180/axis2/services/MelbourneWeather2?wsdl is available.
