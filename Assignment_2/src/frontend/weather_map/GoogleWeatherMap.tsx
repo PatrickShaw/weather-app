@@ -6,8 +6,10 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
+  // readonly locations: string[];
 }
 
+// Holds inofrmation for a location marker and it's circle.
 class LocationMarkerInformation {
   public readonly latlng: google.maps.LatLng;
   public readonly formattedAddress: string;
@@ -58,6 +60,39 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       zoom: 8
     });
     this.googleMap = googleMap;
+    // // for (const location of this.props.locations) {
+    //   const locationPromise = this.geocoder.geocodeAddress(location + ', Melbourne, Australia')
+    //     .then((results: google.maps.GeocoderResult[]) => {
+    //         // Parse the info we need.
+    //         const jsonResult: google.maps.GeocoderResult = results[0];
+    //         const formattedAddress: string = jsonResult.formatted_address;
+    //         const latLongString: string = JSON.stringify(jsonResult['geometry']['location']);
+    //         const latLongJson: JSON = JSON.parse(latLongString);
+    //         const latitude: number = latLongJson['lat'];
+    //         const longitude: number = latLongJson['lng'];
+    //         const latlng: google.maps.LatLng = new google.maps.LatLng(latitude, longitude);
+    //         // Create a pin.
+    //         const pin = new google.maps.Marker({
+    //           position: latlng,
+    //           title: formattedAddress,
+    //           map: this.googleMap
+    //         });
+
+    //         const circle = new google.maps.Circle({
+    //           // strokeColor: heatColor,
+    //           strokeOpacity: 0.75,
+    //           strokeWeight: 1,
+    //           // fillColor: heatColor,
+    //           // fillOpacity: opacity,
+    //           center: latlng,
+    //           radius: 10000,
+    //           map: this.googleMap
+    //         });
+
+    //         pin.setVisible(false);
+    //         circle.setVisible(false);
+
+    //     });
   }
 
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps) {
@@ -65,6 +100,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       // Check whether we're adding/updating or deleting a marker.
       if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
         let newLocationInfoPromise: Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle]>;
+        // Location not in weathermap.
         if (!this.state.locationInfoMap.has(locationKey)) {
           // Using 'null' as a way of saying that something is going to populate this later. Hacky..
           this.state.locationInfoMap.set(locationKey, null);
@@ -86,10 +122,20 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 position: latlng,
                 title: formattedAddress
               });              
-              const circle = new google.maps.Circle();
-              // Add it to the map.
+              const circle = new google.maps.Circle({
+                strokeColor: '#0000ff',
+                strokeOpacity: 0,
+                strokeWeight: 0,
+                fillColor: '#0000ff',
+                fillOpacity: 0,
+                center: latlng,
+                radius: 10000
+              });
+              console.log('---- here ---');
               circle.setMap(this.googleMap);
+              circle.setValues(true);
               pin.setMap(this.googleMap);
+              pin.setVisible(true);
               // return the parsed data for use.
               return [formattedAddress, latlng, pin, circle];
             })
@@ -116,17 +162,18 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             });
         }
         newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle]) => {
+          pin.setVisible(true);
+          
           // We have the data to build the marker information now.
           let rainfallString: string | null;
           let temperatureString: string | null;
           if (monitorData.weatherDataList.length > 0) {
-            const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[0];
+            const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[
+              monitorData.weatherDataList.length - 1];
             rainfallString = recentWeatherData.rainfallData == null 
-                ? null 
-                : recentWeatherData.rainfallData.rainfall;
+                ? null : recentWeatherData.rainfallData.rainfall;
             temperatureString = recentWeatherData.temperatureData == null 
-                ? null 
-                : recentWeatherData.temperatureData.temperature;
+                ? null : recentWeatherData.temperatureData.temperature;
           } else {
             rainfallString = null;
             temperatureString = null;
@@ -141,22 +188,31 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             opacity = Math.max(0.2, Math.min(0.6, 0.2 + 0.4 * rainfall / 4.0));
           }
           // Calculate the background color of the circle according to how hot it is.
-          let heatColor = '#888888';
+          let heatColor = '#888888';          
           if (temperature != null) {
             const redness = Math.max(0, Math.min(1, temperature / 42.0));
             heatColor = `rgb(${40 + Math.round(redness * 170)}, 40, ${Math.round(40 + (1 - redness) * 170)})`;
           }
           // Now set the options of the circle.
           // TODO: I thought this would re-render the circle but it doesn't.
+          console.log('heat colour: ' + heatColor);
+          console.log('opacity: '  + opacity);
+          // circle.setVisible(false);
+          if (temperature > 11.15) {
+            heatColor = '#ffff00';
+          }
           circle.setOptions({
             strokeColor: heatColor,
-            strokeOpacity: 0,
-            strokeWeight: 0,
+            strokeOpacity: 0.75,
+            strokeWeight: 1,
             fillColor: heatColor,
             fillOpacity: opacity,
             center: latlng,
             radius: 10000
           });
+          circle.setVisible(true);
+          console.log('~~~ THERE ~~~');
+          
           // Compile the data into a single object and set it to the info map.
           const locationInfo: LocationMarkerInformation = new LocationMarkerInformation(
             latlng, 
@@ -175,10 +231,10 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const locationInfo: LocationMarkerInformation | undefined | null
             = this.state.locationInfoMap.get(locationKey);
           if (locationInfo != null) {
-            locationInfo.marker.setMap(null);
-            locationInfo.circle.setMap(null);
-            this.state.locationInfoMap.delete(locationKey);
-            console.log(locationInfo);
+            // locationInfo.marker.setMap(null);
+            locationInfo.marker.setVisible(false);
+            locationInfo.circle.setVisible(false);
+            // locationInfo.circle.setMap(null);
           }
         }
       }
