@@ -4,6 +4,8 @@ import { GeoCodingService } from './utils/GeoCodingService';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
 
+import './GoogleWeatherMap.scss';
+
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // readonly locations: string[];
@@ -113,8 +115,8 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
               pin.setVisible(true);
 
               const infoWindow = new google.maps.InfoWindow({
-                content: 'a string here',
-                maxWidth: 200
+                content: '',
+                maxWidth: 400
               });
               
               // Hacky but typescript requires this.
@@ -183,11 +185,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             // remains the same.
             const blueness = Math.max(0, Math.min(1, rainfall / 100));
             // 0-255, how white/black the grey tone will be.
-            const greyTone = 120;
-            const blue = Math.round(greyTone + blueness * 120);
+            const baseGreyTone = 220;
+            const greyRange = 210;
+            const blueOffset = 35;
+            const blue = Math.round(baseGreyTone + blueOffset);
+            const red = Math.round(baseGreyTone - greyRange * blueness);
+            const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
             const blueHex = blue.toString(16);
-            const greyHex = greyTone.toString(16);
-            rainfallColorHex = `${greyHex}${greyHex}${blueHex}`;
+            const redHex = red.toString(16);
+            const greenHex = green.toString(16);
+            rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
           } else {
             rainfallColorHex = 'DD8888';
           }
@@ -213,15 +220,18 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillOpacity: 0.4,
           });
           circle.setVisible(true);
-          let infoWindowContent: string = formattedAddress;
-          if (temperature !== undefined) {
-            infoWindowContent = `${infoWindowContent}<br/>Temperature: ${Math.round(temperature  * 100 ) / 100} ℃`;
+          let infoWindowContent: string = `<span class="txt-body-2">${formattedAddress}</span>`;
+          if (temperature != null) {
+            infoWindowContent 
+              = `${infoWindowContent}<br/><strong>Temperature:</strong> ${Math.round(temperature  * 100 ) / 100} ℃`;
           }
-          if (rainfall !== undefined) {
-            infoWindowContent = `${infoWindowContent}<br/>Rainfall: ${Math.round(rainfall * 100 ) / 100} mm`;
-
+          if (rainfall != null) {
+            infoWindowContent 
+              = `${infoWindowContent}<br/><strong>Rainfall:</strong> ${Math.round(rainfall * 100 ) / 100} mm`;
           }
-          infoWindow.setContent(infoWindowContent);
+          infoWindow.setContent(
+            `<span class="txt-body-1">${infoWindowContent}</span>`
+            );
           
           // Compile the data into a single object and set it to the info map.
           const locationInfo: LocationMarkerInformation = new LocationMarkerInformation(
