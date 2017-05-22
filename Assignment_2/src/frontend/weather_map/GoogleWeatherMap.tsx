@@ -15,6 +15,7 @@ class LocationMarkerInformation {
   public readonly formattedAddress: string;
   public readonly marker: google.maps.Marker;
   public readonly circle: google.maps.Circle;
+  public readonly infoWindow: google.maps.InfoWindow;
   public readonly temperature?: number;
   public readonly rainfall?: number;
   constructor(
@@ -22,6 +23,7 @@ class LocationMarkerInformation {
     formattedAddress: string,
     marker: google.maps.Marker,
     circle: google.maps.Circle,
+    infoWindow: google.maps.InfoWindow,
     temperature?: number,
     rainfall?: number
   ) { 
@@ -29,6 +31,7 @@ class LocationMarkerInformation {
     this.formattedAddress = formattedAddress;
     this.marker = marker;
     this.circle = circle;
+    this.infoWindow = infoWindow;
     this.temperature = temperature;
     this.rainfall = rainfall;
   }
@@ -95,11 +98,18 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     //     });
   }
 
-  public componentWillReceiveProps(nextProps: GoogleWeatherMapProps) {
+  public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
+    if (this.googleMap == null) {
+      this.googleMap = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: -37.81950134905335, lng: 144.98429111204815},
+        zoom: 8
+    });
+    }
     for (const [locationKey, monitorData] of nextProps.weatherDataMap.entries()) {
       // Check whether we're adding/updating or deleting a marker.
       if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
-        let newLocationInfoPromise: Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle]>;
+        let newLocationInfoPromise: Promise<[
+          string, google.maps.LatLng, google.maps.Marker, google.maps.Circle, google.maps.InfoWindow]>;
         // Location not in weathermap.
         if (!this.state.locationInfoMap.has(locationKey)) {
           // Using 'null' as a way of saying that something is going to populate this later. Hacky..
@@ -134,8 +144,24 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
               circle.setValues(true);
               pin.setMap(this.googleMap);
               pin.setVisible(true);
+
+              const infoWindow = new google.maps.InfoWindow({
+                content: 'a string here'
+              });
+              
+              // Hacky but typescript requires this.
+              const m: google.maps.Map | undefined = this.googleMap ? this.googleMap : undefined;
+
+              pin.addListener('mouseover', () => {
+                infoWindow.open(m, pin);
+              });
+
+              pin.addListener('mouseout', () => {
+                infoWindow.close();
+              });
+
               // return the parsed data for use.
-              return [formattedAddress, latlng, pin, circle];
+              return [formattedAddress, latlng, pin, circle, infoWindow];
             })
             .catch((error) => {
               console.error(error);
@@ -148,18 +174,20 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           // We already have the location information.
           // We just want the lat lng so resolve it.
           newLocationInfoPromise = 
-            new Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle]>((resolve, reject) => {
+            new Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle, google.maps.InfoWindow]>
+            ((resolve, reject) => {
               const locationInfo: LocationMarkerInformation | undefined | null 
                 = this.state.locationInfoMap.get(locationKey);
               if (locationInfo != null) {
-                resolve([locationInfo.formattedAddress, locationInfo.latlng, locationInfo.marker, locationInfo.circle]);
+                resolve([locationInfo.formattedAddress, locationInfo.latlng, 
+                  locationInfo.marker, locationInfo.circle, locationInfo.infoWindow]);
               } else {
                 // TODO: This can technically happen via race conditions.
                 reject('locationInfo was undefined');
               }
             });
         }
-        newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle]) => {
+        newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle, infoWindow]) => {
           pin.setVisible(true);
           
           // We have the data to build the marker information now.
@@ -201,6 +229,18 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillOpacity: opacity,
           });
           circle.setVisible(true);
+          let infoWindowContent: string = formattedAddress;
+          if (temperature !== undefined) {
+            infoWindowContent = `${infoWindowContent}, temperature: ${Math.round(temperature  * 100 ) / 100} ℃`;
+            console.log('info window content ???');
+            console.log(infoWindowContent);
+          }
+          if (rainfall !== undefined) {
+            infoWindowContent = `${infoWindowContent}, rainfall: ${Math.round(rainfall * 100 ) / 100} mm`;
+            console.log('info window content in rainfal yo ???');
+            console.log(infoWindowContent);
+          }
+          infoWindow.setContent(infoWindowContent);
           
           // Compile the data into a single object and set it to the info map.
           const locationInfo: LocationMarkerInformation = new LocationMarkerInformation(
@@ -208,6 +248,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             formattedAddress, 
             pin, 
             circle,
+            infoWindow,
             rainfall,
             temperature
           );
