@@ -28,16 +28,16 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
     return (
 
       <div className='weather-page'>
-        <div className='page-heading'>
+        <div className='page-app-bar'>
           <ActionBar title='Melbourne Weather' subtitle='Full Lambda'/>
         </div>
         <div className='main-content'>
           <aside className='sidebar'>
-            <header>
-              <h1 className='txt-subheading-1 title-section'>Locations</h1>
+            <header className='title-section'>
+              <h1 className='txt-headline'>Locations</h1>
             </header>
             <LocationList 
-              locations={this.props.appCurrentState.locations} 
+              locations={this.props.appCurrentState.locations}
               weatherDataMap={this.props.appCurrentState.weatherDataMap}
               onRainfallItemClickedObserver={this.props.onLocationRainfallItemClickedObserver}
               onTemperatureItemClickedObserver={this.props.onLocationTemperatureItemClickedObserver}
@@ -45,8 +45,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
           </aside>
 
           <main className='monitoring-container'>
-            <header>
-              <h1 className='txt-subheading-1 title-section'>
+            <header className='title-section'>
+              <h1 className='txt-headline'>
                 Monitored location dashboard
               </h1>
             </header>
@@ -77,4 +77,3 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
 
 export {WeatherPage};
 export default WeatherPage;
-

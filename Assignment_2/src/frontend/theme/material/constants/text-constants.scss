@@ -26,29 +26,41 @@ $txt-weight-bold: bold;
 /* Display 4 */
 $txt-size-display-4: 6.989rem;
 $txt-weight-display-4: $txt-weight-light;
+$txt-letter-spacing-display-4: -0.01rem;
 /* Display 3 */
 $txt-size-display-3: 3.494rem;
 $txt-weight-display-3: $txt-weight-regular;
+$txt-letter-spacing-display-3: -0.005rem;
 /* Display 2 */
 $txt-size-display-2: 2.808rem;
 $txt-weight-display-2: $txt-weight-regular;
 $txt-line-height-display-2: 7.455rem;
+$txt-letter-spacing-display-2: 0rem;
 /* Display 1 */
 $txt-size-display-1: 2.122rem;
 $txt-weight-display-1: $txt-weight-regular;
 $txt-line-height-display-1: 2.496rem;
+$txt-letter-spacing-display-1: 0rem;
+/* Headline */
+$txt-size-headline: 1.498rem;
+$txt-line-height-headline: 1.997rem;
+$txt-weight-headline: $txt-weight-regular;
+$txt-letter-spacing-headline: 0rem;
 /* Titles */
 $txt-weight-title: $txt-weight-medium;  
 $txt-size-title: 1.31rem;
 $txt-line-height-title: 1.747rem;
+$txt-letter-spacing-title: 0.005rem;
 /* Subheading 1 */
 $txt-weight-subheading-1: $txt-weight-regular;
 $txt-size-subheading-1: 0.998rem;
 $txt-line-height-subheading-1: 1.622rem;
+$txt-letter-spacing-subheading-1: 0.01rem; 
 /* Subheading 2 */
 $txt-weight-subheading-2: $txt-weight-regular;
 $txt-size-subheading-2: 0.998rem;
 $txt-line-height-subheading-2: 1.871rem;
+$txt-letter-spacing-subheading-2: 0.01rem;
 /* Body 1 */
 $txt-size-body-1-mobile: 0.874rem;
 $txt-size-body-1-desktop: 0.811rem;
@@ -59,6 +71,7 @@ $txt-size-body-1: $txt-size-body-1-mobile;
 }
 $txt-weight-body-1: $txt-weight-regular;
 $txt-line-height-body-1: 1.345rem;
+$txt-letter-spacing-body-1: 0.01rem;
 /* Body 2 */
 $txt-size-body-2-mobile: $txt-size-body-1-mobile;
 $txt-size-body-2-desktop: $txt-size-body-1-desktop;
@@ -68,23 +81,27 @@ $txt-size-body-2: $txt-size-body-2-mobile;
 }
 $txt-weight-body-2: $txt-weight-medium;
 $txt-line-height-body-2: 1.6135rem;
+$txt-letter-spacing-body-2: 0.01rem;
 /* Caption */
 $txt-size-caption: 0.749rem;
 $txt-weight-caption: $txt-weight-regular;
-
+$txt-letter-spacing-caption: 0.02rem;
 /* App bar */
 $txt-color-app-bar-title-light: $txt-color-primary-light;
 $txt-color-app-bar-title-dark: $txt-color-primary-dark;
 $txt-size-app-bar-title: $txt-size-title;
 $txt-weight-app-bar-title: $txt-weight-title;
+$txt-letter-spacing-app-bar-title: $txt-letter-spacing-title;
 
 $txt-color-app-bar-subtitle-light: $txt-color-secondary-light;
 $txt-color-app-bar-subtitle-dark: $txt-color-secondary-dark;
 $txt-size-app-bar-subtitle: $txt-size-subheading-2;
 $txt-weight-app-bar-subtitle: $txt-weight-subheading-2;
 $txt-line-height-app-bar-subtitle: $txt-line-height-subheading-2;
+$txt-letter-spacing-app-bar-subtitle: $txt-letter-spacing-subheading-2;
 /* Button */
 $txt-transform-button: uppercase; // ALL CAPS
+$txt-letter-spacing-button: 0.01rem;
 // English
 $txt-size-button-english: 0.874rem;
 $txt-weight-button-english: $txt-weight-medium;

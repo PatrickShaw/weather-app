@@ -6,12 +6,14 @@
   align-items: center;
 }
 .worded-measurements {
-  padding: $layout-padding-lg;
+  padding-right: $layout-padding-lg;
+  padding-left: $layout-padding-lg;
+  padding-top: $layout-padding-lg;
 }
 .graph-container {
   padding-left: $layout-padding-lg;
   padding-right: $layout-padding-lg;
-  padding-bottom: $layout-padding-lg; 
+  padding-top: $layout-padding-lg; 
 }
 .buttons {
   display: flex;
