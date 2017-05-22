@@ -1,10 +1,12 @@
+import './MonitoringItem.scss';
+
 import * as React from 'react';
 
 import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import './MonitoringItem.scss';
+
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
@@ -56,7 +58,9 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       rainfallTimestamp = currentWeatherData.rainfallData.timestamp;
       const isFloatingPoint: boolean = !isNaN(rainfallDataPoint);
       rainfallDataToRender = 
-        `${currentWeatherData.rainfallData.rainfall}` +
+        `${isFloatingPoint ? 
+          Math.round(rainfallDataPoint*100)/100 :
+          currentWeatherData.rainfallData.rainfall}` +
         `${isFloatingPoint ? ' mm' : ''} ` + 
         `(${currentWeatherData.rainfallData.timestamp})`;
     } else {
