@@ -38,3 +38,13 @@
   padding-left: $item-list-padding-h;
   padding-right: $item-list-padding-h;
 }
+.button-padding {
+  padding-left: $layout-padding-md;
+  padding-right: $layout-padding-md;
+  padding-top: $layout-padding-md;
+  padding-bottom: $layout-padding-md;
+}
+.button-margin {
+  margin-left: $layout-padding-md;
+  margin-right: $layout-padding-md; 
+}

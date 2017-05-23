@@ -1,11 +1,10 @@
-import * as React from 'react';
-
-import { GeoCodingService } from './utils/GeoCodingService';
-import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
-import { WeatherLocationData } from '../../../model/WeatherLocationData';
-
 import './GoogleWeatherMap.scss';
 
+import * as React from 'react';
+import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
+import { GeoCodingService } from './utils/GeoCodingService';
+import { WeatherLocationData } from '../../../model/WeatherLocationData';
+import { Button } from '../Button';
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // readonly locations: string[];
@@ -49,22 +48,54 @@ class WeatherMapState {
 }
 
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
+  private mapContainer;
   private googleMap: google.maps.Map | null;
-  private geocoder;
+  private readonly geocoder: GeoCodingService;
+  private currentWeatherService: string = '';
+  private readonly onToggleWeatherServiceBound;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
     this.googleMap = null;
     this.state = new WeatherMapState(new Map<string, LocationMarkerInformation>());  
     this.geocoder = new GeoCodingService();
+    this.onToggleWeatherServiceBound = this.onToggleWeatherService.bind(this);
+  }
+
+  private onToggleWeatherService(event: Event) {
+      this.currentWeatherService = this.currentWeatherService === '' ? 'hello.world' : '';
+      console.log('current weather service: ' + this.currentWeatherService);
+      this.toggle();
+      this.setState({}); // Force re-render.
   }
 
   public componentDidMount(): void {
-    const googleMap = new google.maps.Map(document.getElementById('map'), {
+    const googleMap = new google.maps.Map(this.mapContainer, {
       center: {lat: -37.81950134905335, lng: 144.98429111204815},
       zoom: 8
     });
     this.googleMap = googleMap;
+  }
+
+  // Toggles markers and circles so only those for current weather service shown.
+  public toggle() {
+    // Process only weather data objects we are monitoring (the rest shouldn't be shown anyways).
+    for (const [locationKey, monitorData] of this.props.weatherDataMap.entries()) {
+      if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
+        const locationMarkerInformation: LocationMarkerInformation | undefined | null = 
+          this.state.locationInfoMap.get(locationKey);
+        if (locationMarkerInformation == null) {
+          continue;
+        }
+        if (locationKey.includes(this.currentWeatherService)) {
+          locationMarkerInformation.marker.setVisible(true);
+          locationMarkerInformation.circle.setVisible(true);
+        } else {
+          locationMarkerInformation.marker.setVisible(false);
+          locationMarkerInformation.circle.setVisible(false);
+        }
+      }
+    }
   }
 
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
@@ -72,7 +103,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       this.googleMap = new google.maps.Map(document.getElementById('map'), {
         center: {lat: -37.81950134905335, lng: 144.98429111204815},
         zoom: 8
-    });
+     });
     }
     for (const [locationKey, monitorData] of nextProps.weatherDataMap.entries()) {
       // Check whether we're adding/updating or deleting a marker.
@@ -88,6 +119,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           // Also add a new marker.
           newLocationInfoPromise = this.geocoder.geocodeAddress(locationKey + ', Melbourne, Australia')
             .then((results: google.maps.GeocoderResult[]) => {
+
               console.log(results);
               // Parse the info we need.
               const jsonResult: google.maps.GeocoderResult = results[0];
@@ -102,7 +134,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 position: latlng,
                 title: formattedAddress
               });              
-              // Not transparent until we calculate the correct colours and opacit later on.
+              // Not transparent until we calculate the correct colors and opacit later on.
               const circle = new google.maps.Circle({
                 strokeOpacity: 0,
                 fillOpacity: 0,
@@ -110,10 +142,17 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 radius: 10000
               });
               circle.setMap(this.googleMap);
-              circle.setValues(true);
+           
               pin.setMap(this.googleMap);
-              pin.setVisible(true);
 
+              if (locationKey.includes(this.currentWeatherService)) {
+                pin.setVisible(true);
+                circle.setVisible(true);
+              } else {
+                pin.setVisible(false);
+                circle.setVisible(false);
+              }
+            
               const infoWindow = new google.maps.InfoWindow({
                 content: '',
                 maxWidth: 400
@@ -158,8 +197,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             });
         }
         newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle, infoWindow]) => {
-          pin.setVisible(true);
-          
+                    
           // We have the data to build the marker information now.
           let rainfallString: string | null;
           let temperatureString: string | null;
@@ -181,21 +219,27 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
           let rainfallColorHex: string;
           if (rainfall != null) {
-            // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall colour 
-            // remains the same.
-            const blueness = Math.max(0, Math.min(1, rainfall / 100));
-            // 0-255, how white/black the grey tone will be.
-            const baseGreyTone = 220;
-            const greyRange = 210;
-            const blueOffset = 35;
-            const blue = Math.round(baseGreyTone + blueOffset);
-            const red = Math.round(baseGreyTone - greyRange * blueness);
-            const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
-            const blueHex = blue.toString(16);
-            const redHex = red.toString(16);
-            const greenHex = green.toString(16);
-            rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
+            if (isNaN(rainfall)) {
+              // Set to grey if N/A.
+              rainfallColorHex = 'd3d3d3';
+            } else {
+              // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall color 
+              // remains the same.
+              const blueness = Math.max(0, Math.min(1, rainfall / 100));
+              // 0-255, how white/black the grey tone will be.
+              const baseGreyTone = 220;
+              const greyRange = 210;
+              const blueOffset = 35;
+              const blue = Math.round(baseGreyTone + blueOffset);
+              const red = Math.round(baseGreyTone - greyRange * blueness);
+              const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
+              const blueHex = blue.toString(16);
+              const redHex = red.toString(16);
+              const greenHex = green.toString(16);
+              rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
+            }
           } else {
+            // Grey if we didn't have rainfall or we don't need to monitor it.
             rainfallColorHex = 'DD8888';
           }
           const pinIcon: google.maps.Icon = {
@@ -203,11 +247,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           };
           pin.setIcon(pinIcon);
           // Calculate the background color of the circle according to how hot it is.
-          let heatColor: string;          
+          let heatColor: string;    
           if (temperature != null) {
-            // redness will always be between 0 and 1.
-            const redness = Math.max(0, Math.min(1, temperature / 42.0));
-            heatColor = `rgb(220, ${Math.round(120 + (1 - redness) * 90)}, 120)`;
+            if (isNaN(temperature)) {
+            // Set to grey if N/A.
+              heatColor = 'd3d3d3';
+            } else {
+              // redness will always be between 0 and 1.
+              const redness = Math.max(0, Math.min(1, temperature / 42.0));
+              heatColor = `rgb(220, ${Math.round(120 + (1 - redness) * 90)}, 120)`;
+            }
           } else {
             heatColor = '#888888';
           }
@@ -219,7 +268,15 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillColor: heatColor,
             fillOpacity: 0.4,
           });
-          circle.setVisible(true);
+
+          if (locationKey.includes(this.currentWeatherService)) {
+            pin.setVisible(true);
+            circle.setVisible(true);
+          } else {
+            pin.setVisible(false);
+            circle.setVisible(false);
+          }
+
           let infoWindowContent: string = `<span class="txt-body-2">${formattedAddress}</span>`;
           if (temperature != null) {
             infoWindowContent 
@@ -252,22 +309,26 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const locationInfo: LocationMarkerInformation | undefined | null
             = this.state.locationInfoMap.get(locationKey);
           if (locationInfo != null) {
-            // locationInfo.marker.setMap(null);
             locationInfo.marker.setVisible(false);
             locationInfo.circle.setVisible(false);
-            // locationInfo.circle.setMap(null);
           }
         }
       }
     }
-  }
-  
-  public render(): JSX.Element {       
+  }  
+
+  public render(): JSX.Element {
     return (
-      <div id='map'/>
+      <div className='google-map-container'>
+        <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
+        <button className='button-toggle-service button-margin card' onClick={this.onToggleWeatherServiceBound}>
+          <div className='ripple button-padding'>
+            Toggle weather service
+          </div>
+        </button>
+      </div>
     );
   }
-  
 }
 
 export default GoogleWeatherMap;
