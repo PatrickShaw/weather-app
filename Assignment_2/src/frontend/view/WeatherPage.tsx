@@ -15,7 +15,7 @@ interface WeatherPageProps {
   readonly onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
-  readonly appCurrentState: AppState; 
+  readonly appCurrentState: AppState;
 }
 
 /**
@@ -57,6 +57,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
               />
             </section>
+
             <div className='weather-card-container'>
               <MonitoringList 
                 locations={this.props.appCurrentState.locations}

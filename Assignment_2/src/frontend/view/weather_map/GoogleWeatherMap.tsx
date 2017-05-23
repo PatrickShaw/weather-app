@@ -1,10 +1,10 @@
+import './GoogleWeatherMap.scss';
+
 import * as React from 'react';
 
 import { GeoCodingService } from './utils/GeoCodingService';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
-
-import './GoogleWeatherMap.scss';
 
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
@@ -50,7 +50,8 @@ class WeatherMapState {
 
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
   private googleMap: google.maps.Map | null;
-  private geocoder;
+  private geocoder: GeoCodingService;
+  private currentWeatherService: string = '';
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
@@ -59,12 +60,70 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     this.geocoder = new GeoCodingService();
   }
 
+  // Render button on google map.
+  public toggleControl(toggleDiv: HTMLDivElement, map: google.maps.Map) {
+    // Set CSS for the control border.
+    const toggleUI = document.createElement('div');
+    toggleUI.style.backgroundColor = '#fff';
+    toggleUI.style.border = '2px solid #fff';
+    toggleUI.style.borderRadius = '3px';
+    toggleUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+    toggleUI.style.cursor = 'pointer';
+    toggleUI.style.marginBottom = '22px';
+    toggleUI.style.textAlign = 'center';
+    toggleUI.title = 'Click to recenter the map';
+    toggleDiv.appendChild(toggleUI);
+
+    // Set CSS for the control interior.
+    const toggleText = document.createElement('div');
+    toggleText.style.color = 'rgb(25,25,25)';
+    toggleText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    toggleText.style.fontSize = '16px';
+    toggleText.style.lineHeight = '38px';
+    toggleText.style.paddingLeft = '5px';
+    toggleText.style.paddingRight = '5px';
+    toggleText.innerHTML = 'Toggle weather service';
+    toggleUI.appendChild(toggleText);
+
+    // Setup the click event listeners: simply set the map to Chicago.
+    toggleUI.addEventListener('click', () => {
+      this.currentWeatherService = this.currentWeatherService === '' ? 'hello.world' : '';
+      console.log('current weather service: ' + this.currentWeatherService);
+      this.toggle();
+      this.setState({}); // Force re-render.
+    });
+  }
+
   public componentDidMount(): void {
     const googleMap = new google.maps.Map(document.getElementById('map'), {
       center: {lat: -37.81950134905335, lng: 144.98429111204815},
       zoom: 8
     });
     this.googleMap = googleMap;
+    const toggleDiv: HTMLDivElement = document.createElement('div');
+    this.toggleControl(toggleDiv, this.googleMap);
+    this.googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(toggleDiv);
+  }
+
+  // Toggles markers and circles so only those for current weather service shown.
+  public toggle() {
+    // Process only weather data objects we are monitoring (the rest shouldn't be shown anyways).
+    for (const [locationKey, monitorData] of this.props.weatherDataMap.entries()) {
+      if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
+        const locationMarkerInformation: LocationMarkerInformation | undefined | null = 
+          this.state.locationInfoMap.get(locationKey);
+        if (locationMarkerInformation == null) {
+          continue;
+        }
+        if (locationKey.includes(this.currentWeatherService)) {
+          locationMarkerInformation.marker.setVisible(true);
+          locationMarkerInformation.circle.setVisible(true);
+        } else {
+          locationMarkerInformation.marker.setVisible(false);
+          locationMarkerInformation.circle.setVisible(false);
+        }
+      }
+    }
   }
 
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
@@ -72,7 +131,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       this.googleMap = new google.maps.Map(document.getElementById('map'), {
         center: {lat: -37.81950134905335, lng: 144.98429111204815},
         zoom: 8
-    });
+     });
     }
     for (const [locationKey, monitorData] of nextProps.weatherDataMap.entries()) {
       // Check whether we're adding/updating or deleting a marker.
@@ -88,6 +147,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           // Also add a new marker.
           newLocationInfoPromise = this.geocoder.geocodeAddress(locationKey + ', Melbourne, Australia')
             .then((results: google.maps.GeocoderResult[]) => {
+
               console.log(results);
               // Parse the info we need.
               const jsonResult: google.maps.GeocoderResult = results[0];
@@ -110,10 +170,17 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 radius: 10000
               });
               circle.setMap(this.googleMap);
-              circle.setValues(true);
+           
               pin.setMap(this.googleMap);
-              pin.setVisible(true);
 
+              if (locationKey.includes(this.currentWeatherService)) {
+                pin.setVisible(true);
+                circle.setVisible(true);
+              } else {
+                pin.setVisible(false);
+                circle.setVisible(false);
+              }
+            
               const infoWindow = new google.maps.InfoWindow({
                 content: '',
                 maxWidth: 400
@@ -158,8 +225,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             });
         }
         newLocationInfoPromise.then(([formattedAddress, latlng, pin, circle, infoWindow]) => {
-          pin.setVisible(true);
-          
+                    
           // We have the data to build the marker information now.
           let rainfallString: string | null;
           let temperatureString: string | null;
@@ -181,6 +247,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
           let rainfallColorHex: string;
           if (rainfall != null) {
+            
             // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall colour 
             // remains the same.
             const blueness = Math.max(0, Math.min(1, rainfall / 100));
@@ -219,7 +286,15 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillColor: heatColor,
             fillOpacity: 0.4,
           });
-          circle.setVisible(true);
+
+          if (locationKey.includes(this.currentWeatherService)) {
+            pin.setVisible(true);
+            circle.setVisible(true);
+          } else {
+            pin.setVisible(false);
+            circle.setVisible(false);
+          }
+
           let infoWindowContent: string = `<span class="txt-body-2">${formattedAddress}</span>`;
           if (temperature != null) {
             infoWindowContent 
@@ -252,10 +327,8 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const locationInfo: LocationMarkerInformation | undefined | null
             = this.state.locationInfoMap.get(locationKey);
           if (locationInfo != null) {
-            // locationInfo.marker.setMap(null);
             locationInfo.marker.setVisible(false);
             locationInfo.circle.setVisible(false);
-            // locationInfo.circle.setMap(null);
           }
         }
       }
