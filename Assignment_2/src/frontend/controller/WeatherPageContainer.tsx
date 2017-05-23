@@ -12,7 +12,6 @@ import { WeatherPage } from '../view/WeatherPage';
 import { 
   FullLambdaServiceClient, 
   OnMonitorAddedObserver,
-  OnMonitorRemovedObserver, 
   MonitorConnection,
   OnLocationsRetrievedObserver,
   OnServerSetupSucessRetrievedObserver,
