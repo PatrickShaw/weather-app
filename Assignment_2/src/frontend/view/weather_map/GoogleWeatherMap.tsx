@@ -162,7 +162,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 position: latlng,
                 title: formattedAddress
               });              
-              // Not transparent until we calculate the correct colours and opacit later on.
+              // Not transparent until we calculate the correct colors and opacit later on.
               const circle = new google.maps.Circle({
                 strokeOpacity: 0,
                 fillOpacity: 0,
@@ -246,21 +246,26 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const temperature: number | undefined 
             = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
           let rainfallColorHex: string;
-          if (rainfall != null && !isNaN(rainfall)) {
-            // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall colour 
-            // remains the same.
-            const blueness = Math.max(0, Math.min(1, rainfall / 100));
-            // 0-255, how white/black the grey tone will be.
-            const baseGreyTone = 220;
-            const greyRange = 210;
-            const blueOffset = 35;
-            const blue = Math.round(baseGreyTone + blueOffset);
-            const red = Math.round(baseGreyTone - greyRange * blueness);
-            const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
-            const blueHex = blue.toString(16);
-            const redHex = red.toString(16);
-            const greenHex = green.toString(16);
-            rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
+          if (rainfall != null) {
+            if (isNaN(rainfall)) {
+              // Set to grey if N/A.
+              rainfallColorHex = 'd3d3d3';
+            } else {
+              // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall color 
+              // remains the same.
+              const blueness = Math.max(0, Math.min(1, rainfall / 100));
+              // 0-255, how white/black the grey tone will be.
+              const baseGreyTone = 220;
+              const greyRange = 210;
+              const blueOffset = 35;
+              const blue = Math.round(baseGreyTone + blueOffset);
+              const red = Math.round(baseGreyTone - greyRange * blueness);
+              const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
+              const blueHex = blue.toString(16);
+              const redHex = red.toString(16);
+              const greenHex = green.toString(16);
+              rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
+            }
           } else {
             rainfallColorHex = 'DD8888';
           }
@@ -269,11 +274,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           };
           pin.setIcon(pinIcon);
           // Calculate the background color of the circle according to how hot it is.
-          let heatColor: string;          
+          let heatColor: string;    
           if (temperature != null) {
-            // redness will always be between 0 and 1.
-            const redness = Math.max(0, Math.min(1, temperature / 42.0));
-            heatColor = `rgb(220, ${Math.round(120 + (1 - redness) * 90)}, 120)`;
+            if (isNaN(temperature)) {
+            // Set to grey if N/A.
+              heatColor = 'd3d3d3';
+            } else {
+              // redness will always be between 0 and 1.
+              const redness = Math.max(0, Math.min(1, temperature / 42.0));
+              heatColor = `rgb(220, ${Math.round(120 + (1 - redness) * 90)}, 120)`;
+            }
           } else {
             heatColor = '#888888';
           }
