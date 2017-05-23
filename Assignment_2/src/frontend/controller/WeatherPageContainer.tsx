@@ -48,37 +48,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     this.timelapseServiceClient = new FullLambdaServiceClient(SocketIo.connect(this.props.timelapseServiceUrl));
   }
 
-  private createServiceMonitorRemovedObserver(servicePrefix: string): OnMonitorRemovedObserver {
-    const that: WeatherPageContainer = this;
-    return new class implements OnMonitorRemovedObserver {
-      public onMonitorRemoved(removeMonitorResponse: RequestResponse<MonitorMetadata>) {
-        // Make sure we didn't receive an error when we tried to remove the monitor
-        if (removeMonitorResponse.error == null) {
-          // Delete monitoring card here, make sure to do so in render part as well.
-          const removedMonitor = removeMonitorResponse.data;
-          const weatherDataMap: Map<string, MonitoredLocationInformation> = that.state.weatherDataMap;
-          const prefixedLocation: string = prefixLocation(servicePrefix, removedMonitor.location);
-          const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
-            weatherDataMap.get(prefixedLocation);
-          if (monitoredLocationInformation != null) {
-            if (!monitoredLocationInformation.monitorRainfall && !monitoredLocationInformation.monitorTemperature) {
-              // Nothing to monitor, data for this isn't getting fetched from backend.
-              // Delete card by deleting info form weatherDataMap.
-              weatherDataMap.delete(prefixedLocation);
-              // Re-render.
-              that.setState({ weatherDataMap });
-            } // Implicit else: Has meaningful data in card, don't remove.
-          } else {
-            console.error(`Error: monitoredLocationInformation could not be found for ${removedMonitor}`);
-          }
-        } else {
-          // Log error.
-          console.error(removeMonitorResponse.error);
-        }
-      }
-    }();
-  }
-
   private createOnLocationsRetrievedObserver(
     servicePrefix: string, 
     serviceTitle: string
@@ -125,7 +94,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
         console.log(weatherLocationDataList);
           
         const newWeatherDataMap: Map<string, MonitoredLocationInformation> = that.state.weatherDataMap;
-        
+        console.log(that.state);
         // Loop for each WeatherLocationData object sent by backend.
         for (const weatherLocationData of weatherLocationDataList) {
           const monitoredLocationInformation: MonitoredLocationInformation | undefined = newWeatherDataMap
@@ -319,15 +288,13 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     serviceClient.addOnLocationsRetrievedObserver(this.createOnLocationsRetrievedObserver(servicePrefix, serviceTitle));
     // Create observers specific to this service.
     const onMonitorAddedObserver: OnMonitorAddedObserver = this.createServiceMonitorAddedObserver(servicePrefix);
-    const onMonitorRemovedObserver: OnMonitorRemovedObserver = this.createServiceMonitorRemovedObserver(servicePrefix);
 
     // Rainfall monitors
     serviceClient.rainfallMonitorConnection.addMonitorAddedObserver(onMonitorAddedObserver);
-    serviceClient.rainfallMonitorConnection.addMonitorRemovedObserver(onMonitorRemovedObserver);
 
     // Temperature monitors
     serviceClient.temperatureMonitorConnection.addMonitorAddedObserver(onMonitorAddedObserver);
-    serviceClient.rainfallMonitorConnection.addMonitorRemovedObserver(onMonitorRemovedObserver);
+    // TODO: We can reconfirm the monitorRainfall and monitorTemperature via removeMonitorEvent observers.
   }
   
   public render(): JSX.Element {

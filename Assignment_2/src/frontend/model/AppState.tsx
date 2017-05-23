@@ -43,7 +43,7 @@ class AppState {
     // Since the location doesn't exist yet, add it in.
     const locationSet: Set<string> = new Set<string>();
     locationSet.add(prefixLocation(servicePrefix, location));
-    appState.sortedLocations.splice(mid, 0, new LocationMetadata(location, locationSet));
+    appState.sortedLocations.splice(mid + 1, 0, new LocationMetadata(location, locationSet));
   }
 }
 

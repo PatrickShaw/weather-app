@@ -36,16 +36,18 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
               const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
                 this.props.weatherDataMap.get(prefixedLocation);
               return (
-                monitoredLocationInformation && monitoredLocationInformation.weatherDataList.length > 0 ?
-                <div key={prefixedLocation}>
-                  <div className='card monitoring-item-card'>
-                    <MonitoringItem 
-                      prefixedLocation={prefixedLocation}
-                      monitoredLocationInformation={monitoredLocationInformation}
-                      onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
-                    />
+                monitoredLocationInformation != null
+                && (monitoredLocationInformation.monitorRainfall || monitoredLocationInformation.monitorTemperature) 
+                && monitoredLocationInformation.weatherDataList.length > 0 
+                ? <div key={prefixedLocation}>
+                    <div className='card monitoring-item-card'>
+                      <MonitoringItem 
+                        prefixedLocation={prefixedLocation}
+                        monitoredLocationInformation={monitoredLocationInformation}
+                        onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
+                      />
+                    </div>
                   </div>
-                </div>
                 : null
               );
             });
