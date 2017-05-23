@@ -246,8 +246,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           const temperature: number | undefined 
             = temperatureString == null ? undefined : Number.parseFloat(temperatureString);
           let rainfallColorHex: string;
-          if (rainfall != null) {
-            
+          if (rainfall != null && !isNaN(rainfall)) {
             // blueness varies from 0-100mm rainfall, any higher than 100 and the rainfall colour 
             // remains the same.
             const blueness = Math.max(0, Math.min(1, rainfall / 100));
