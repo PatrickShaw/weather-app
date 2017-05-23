@@ -8,17 +8,22 @@ import { WeatherLocationData } from '../../model/WeatherLocationData';
  */
 
 class MonitoredLocationInformation {
+  public readonly location: string;
   public readonly weatherDataList: WeatherLocationData[];
   public readonly monitorRainfall: boolean;
   public readonly monitorTemperature: boolean;
   public readonly monitorGraph: boolean;
-
+  public readonly serviceTitle: string;
   constructor(
+    location: string,
+    serviceTitle: string,
     weatherDataList: WeatherLocationData[],
     monitorRainfall: boolean,
     monitorTemperature: boolean,
     monitorGraph: boolean = false
   ) {
+    this.location = location;
+    this.serviceTitle = serviceTitle;
     this.weatherDataList = weatherDataList;
     this.monitorRainfall = monitorRainfall;
     this.monitorTemperature = monitorTemperature;

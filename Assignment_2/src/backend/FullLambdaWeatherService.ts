@@ -10,9 +10,6 @@ import { WeatherClient } from '../weather_client/WeatherClient';
 import { WeatherClientFactory } from '../weather_client/WeatherClientFactory';
 import { WeatherLocationData } from '../model/WeatherLocationData';
 
-// TODO: Consider if having soft dependencies on Temp & Rainfall & their request data types is better
-// allows for dependency injection where you pass in req parameters.
-
 /**
  * Controller class instantiated by the node server. This specifies the core logic specified in 
  * assignment 1 of FIT3077. Although the class may look giant, the majority of the service consists of comments, 

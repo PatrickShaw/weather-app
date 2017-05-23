@@ -6,11 +6,11 @@ import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import { Button } from './Button';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
+  readonly prefixedLocation: string;
   readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
@@ -76,7 +76,10 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section>
         <section className='worded-measurements'>
-          <h1 className='txt-title'>{currentWeatherData.location}</h1>
+          <h1 className='txt-title'>
+            { `${this.props.monitoredLocationInformation.location}` + 
+              ` (${this.props.monitoredLocationInformation.serviceTitle})` }
+          </h1>
           {
             this.props.monitoredLocationInformation.monitorRainfall ? 
             <h2 className='txt-body-1'>
@@ -105,7 +108,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
           <button 
             className='button-margin button-padding ripple' 
             onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
-              that.props.monitoredLocationInformation.weatherDataList[0].location
+              this.props.prefixedLocation
             )}
           >
             <i className='material-icons'>

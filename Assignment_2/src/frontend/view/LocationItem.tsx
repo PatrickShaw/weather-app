@@ -2,13 +2,14 @@ import './LocationItem.scss';
 
 import * as React from 'react';
 
-import { Button } from './Button';
 import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 
 interface LocationItemProps {
   // The location associated with the LocationItem
+  readonly prefixedLocation: string;
   readonly location: string;
+  readonly serviceTitle: string;
   // Whether the rainfall monitor has been selected for this item.
   readonly rainfallMonitorSelected: boolean; 
   // Whether the temperature monitor ahs been selected for this item.
@@ -50,7 +51,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     if (this.props.onRainfallMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
       this.props.onRainfallMonitorClickedObserver.onItemClicked(
-        this.props.location, 
+        this.props.prefixedLocation, 
         this.props.rainfallMonitorSelected
       );
     }
@@ -65,7 +66,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
       this.props.onTemperatureMonitorClickedObserver.onItemClicked(
-        this.props.location, 
+        this.props.prefixedLocation, 
         this.props.temperatureMonitorSelected
       );
     }
@@ -75,7 +76,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     return (
       <div>
         <div className='location-item'>
-          <GenericListItem title={this.props.location}>
+          <GenericListItem title={`${this.props.location} (${this.props.serviceTitle})`}>
               <button 
                 onClick={this.onRainfallMonitorButtonClickedBound}
                 className={

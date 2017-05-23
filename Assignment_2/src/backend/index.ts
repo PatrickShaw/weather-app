@@ -16,10 +16,10 @@ console.log(chalk.cyan('Starting server...'));
 new FullLambdaWeatherService(
   SocketIo.listen(8080),
   new MelbourneWeatherClientFactory(),
-  300000
+  3000
 ).run();
 new FullLambdaWeatherService(
   SocketIo.listen(8081),
   new MelbourneTimelapseWeatherClientFactory(),
-  30000
+  3000
 ).run();

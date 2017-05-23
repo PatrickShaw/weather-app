@@ -4,7 +4,6 @@ import * as React from 'react';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { GeoCodingService } from './utils/GeoCodingService';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
-import { Button } from '../Button';
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // readonly locations: string[];
@@ -80,14 +79,14 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   // Toggles markers and circles so only those for current weather service shown.
   public toggle() {
     // Process only weather data objects we are monitoring (the rest shouldn't be shown anyways).
-    for (const [locationKey, monitorData] of this.props.weatherDataMap.entries()) {
+    for (const [prefixedLocation, monitorData] of this.props.weatherDataMap.entries()) {
       if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
         const locationMarkerInformation: LocationMarkerInformation | undefined | null = 
-          this.state.locationInfoMap.get(locationKey);
+          this.state.locationInfoMap.get(prefixedLocation);
         if (locationMarkerInformation == null) {
           continue;
         }
-        if (locationKey.includes(this.currentWeatherService)) {
+        if (prefixedLocation.includes(this.currentWeatherService)) {
           locationMarkerInformation.marker.setVisible(true);
           locationMarkerInformation.circle.setVisible(true);
         } else {
@@ -99,25 +98,19 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }
 
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
-    if (this.googleMap == null) {
-      this.googleMap = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -37.81950134905335, lng: 144.98429111204815},
-        zoom: 8
-     });
-    }
-    for (const [locationKey, monitorData] of nextProps.weatherDataMap.entries()) {
+    for (const [prefixedLocation, monitorData] of nextProps.weatherDataMap.entries()) {
       // Check whether we're adding/updating or deleting a marker.
       if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
         let newLocationInfoPromise: Promise<[
           string, google.maps.LatLng, google.maps.Marker, google.maps.Circle, google.maps.InfoWindow]>;
         // Location not in weathermap.
-        if (!this.state.locationInfoMap.has(locationKey)) {
+        if (!this.state.locationInfoMap.has(prefixedLocation)) {
           // Using 'null' as a way of saying that something is going to populate this later. Hacky..
-          this.state.locationInfoMap.set(locationKey, null);
+          this.state.locationInfoMap.set(prefixedLocation, null);
           // We don't have location info for this location yet.
           // Go get the lat lng of the location.
           // Also add a new marker.
-          newLocationInfoPromise = this.geocoder.geocodeAddress(locationKey + ', Melbourne, Australia')
+          newLocationInfoPromise = this.geocoder.geocodeAddress(monitorData.location + ', Melbourne, Australia')
             .then((results: google.maps.GeocoderResult[]) => {
 
               console.log(results);
@@ -145,7 +138,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
            
               pin.setMap(this.googleMap);
 
-              if (locationKey.includes(this.currentWeatherService)) {
+              if (prefixedLocation.includes(this.currentWeatherService)) {
                 pin.setVisible(true);
                 circle.setVisible(true);
               } else {
@@ -177,7 +170,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             });
         } else {
           // Once again, null means something else is currently populating the entry.
-          if (this.state.locationInfoMap.get(locationKey) === null) {
+          if (this.state.locationInfoMap.get(prefixedLocation) === null) {
             continue;
           }
           // We already have the location information.
@@ -186,7 +179,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             new Promise<[string, google.maps.LatLng, google.maps.Marker, google.maps.Circle, google.maps.InfoWindow]>
             ((resolve, reject) => {
               const locationInfo: LocationMarkerInformation | undefined | null 
-                = this.state.locationInfoMap.get(locationKey);
+                = this.state.locationInfoMap.get(prefixedLocation);
               if (locationInfo != null) {
                 resolve([locationInfo.formattedAddress, locationInfo.latlng, 
                   locationInfo.marker, locationInfo.circle, locationInfo.infoWindow]);
@@ -269,7 +262,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillOpacity: 0.4,
           });
 
-          if (locationKey.includes(this.currentWeatherService)) {
+          if (prefixedLocation.includes(this.currentWeatherService)) {
             pin.setVisible(true);
             circle.setVisible(true);
           } else {
@@ -301,13 +294,13 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             temperature
           );
           // Update the map.
-          this.state.locationInfoMap.set(locationKey, locationInfo);
+          this.state.locationInfoMap.set(prefixedLocation, locationInfo);
         });
       } else {
-        if (this.state.locationInfoMap.has(locationKey)) {
+        if (this.state.locationInfoMap.has(prefixedLocation)) {
           // No longer monitoring this location so remove it from the map.
           const locationInfo: LocationMarkerInformation | undefined | null
-            = this.state.locationInfoMap.get(locationKey);
+            = this.state.locationInfoMap.get(prefixedLocation);
           if (locationInfo != null) {
             locationInfo.marker.setVisible(false);
             locationInfo.circle.setVisible(false);
