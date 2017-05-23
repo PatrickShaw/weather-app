@@ -2,6 +2,7 @@ import './MonitoringList.scss';
 
 import * as React from 'react';
 
+import {LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
@@ -12,7 +13,7 @@ interface MonitoringListProps {
   // This means that the complexity of finding what to render is O(locations.length) instead of 
   // O(weatherDataMap.size) but for this assignment the difference minimal and the optimization is 
   // considered out of scope.
-  readonly locations: string[];
+  readonly locations: LocationMetadata[];
   // The map of locations to their associated MonitoredLocationInformation.
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
@@ -29,21 +30,27 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
       <section className='monitoring-list'>
         {
           // If a location is in this.props.weatherDataMap then it has information that should be rendered.
-          this.props.locations.map((location, locationIndex) => {
-            const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
-              this.props.weatherDataMap.get(location);
-            return (
-              monitoredLocationInformation && monitoredLocationInformation.weatherDataList.length > 0 ?
-              <div key={location}>
-                <div className='card monitoring-item-card'>
-                  <MonitoringItem 
-                    monitoredLocationInformation={monitoredLocationInformation}
-                    onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
-                  />
-                </div>
-              </div>
-              : null
-            );
+          this.props.locations.map((locationMetadata) => {
+            const prefixedLocations: string[] = Array.from(locationMetadata.servicePrefixes);
+            return prefixedLocations.map((prefixedLocation: string) => {
+              const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
+                this.props.weatherDataMap.get(prefixedLocation);
+              return (
+                monitoredLocationInformation != null
+                && (monitoredLocationInformation.monitorRainfall || monitoredLocationInformation.monitorTemperature) 
+                && monitoredLocationInformation.weatherDataList.length > 0 
+                ? <div key={prefixedLocation}>
+                    <div className='card monitoring-item-card'>
+                      <MonitoringItem 
+                        prefixedLocation={prefixedLocation}
+                        monitoredLocationInformation={monitoredLocationInformation}
+                        onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
+                      />
+                    </div>
+                  </div>
+                : null
+              );
+            });
           })
         }
       </section>

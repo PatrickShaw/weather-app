@@ -16,6 +16,8 @@ interface WeatherPageProps {
   readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
   readonly appCurrentState: AppState;
+  readonly regularServicePrefix: string;
+  readonly timelapseServicePrefix: string;
 }
 
 /**
@@ -37,7 +39,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
               <h1 className='txt-headline'>Locations</h1>
             </header>
             <LocationList 
-              locations={this.props.appCurrentState.locations}
+              locations={this.props.appCurrentState.sortedLocations}
               weatherDataMap={this.props.appCurrentState.weatherDataMap}
               onRainfallItemClickedObserver={this.props.onLocationRainfallItemClickedObserver}
               onTemperatureItemClickedObserver={this.props.onLocationTemperatureItemClickedObserver}
@@ -55,11 +57,13 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             <section className='weather-map-container'>
               <GoogleWeatherMap
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
+                regularServicePrefix={this.props.regularServicePrefix}
+                timelapseServicePrefix={this.props.timelapseServicePrefix}
               />
             </section>
             <div className='weather-card-container'>
               <MonitoringList 
-                locations={this.props.appCurrentState.locations}
+                locations={this.props.appCurrentState.sortedLocations}
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
                 onGraphToggleClickedObserver={this.props.onMonitoringListGraphItemClicked}
               />

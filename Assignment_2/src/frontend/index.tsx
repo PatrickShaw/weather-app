@@ -8,6 +8,11 @@ import { WeatherPageContainer } from './controller/WeatherPageContainer';
 
 // Attach our React components to the 'root' id in the HTML page.
 ReactDOM.render(
-  <WeatherPageContainer/>,  
+  <WeatherPageContainer
+    regularServicePrefix='reglar_service_'
+    regularServiceUrl='http://127.0.0.1:8081'
+    timelapseServicePrefix='timelapse_service_'
+    timelapseServiceUrl='http://127.0.0.1:8080'
+  />,  
   document.getElementById('root')
 );

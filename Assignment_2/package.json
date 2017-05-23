@@ -21,10 +21,9 @@
   "license": "MIT",
   "scripts": {
     "start": "concurrently --kill-others \"npm run backend-start\" \"npm run frontend-start\"",
-    "backend-offline-chart-support-start": "node scripts/backend-offline-chart-support-start.js",
+    "backend-start": "node scripts/backend-start.js",
     "backend-offline-start": "node scripts/backend-offline-start.js",
-    "frontend-start": "node scripts/frontend-start.js",
-    "backend-start": "node scripts/backend-start.js"
+    "frontend-start": "node scripts/frontend-start.js"
   },
   "dependencies": {
     "@google/maps": "^0.3.1",

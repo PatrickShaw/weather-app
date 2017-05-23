@@ -48,7 +48,6 @@ class LineChart extends React.Component<LineChartProps, void> {
           timestamp = weatherData.rainfallData.timestamp;
         }
       }
-      rainfallDataPoints.push(rainfallPoint);  // Can be null, if null breaks graph being joint.
 
       let temperaturePoint: number | null = null;
       if (this.props.monitoredLocationInformation.monitorTemperature) {
@@ -61,7 +60,6 @@ class LineChart extends React.Component<LineChartProps, void> {
           timestamp = weatherData.temperatureData.timestamp;  
         }
       }
-      temperatureDataPoints.push(temperaturePoint);  // Can be null, if null breaks graph being joint.
       
       // Note: Assumed for a single weather data location, if a rainfall or temp is provided then 
       // the timestamp must not be null.
@@ -72,6 +70,12 @@ class LineChart extends React.Component<LineChartProps, void> {
         // String date of form: 24/07/2015 12:58:45
         const momentResult: moment.Moment = moment(timestamp, 'DD/MM/YYYY H:mm:ss');
         if (momentResult.isValid) {
+          // Note that we only add the rainfall and temperature points if we have a corresponding 
+          // timestamp. Otherwise the chart won't know where to put the data point.
+          // Can be null, if null breaks graph being joint.
+          rainfallDataPoints.push(rainfallPoint);  
+          // Can be null, if null breaks graph being joint.
+          temperatureDataPoints.push(temperaturePoint);  
           const date: Date = momentResult.toDate();
           timestampDataPoints.push(date);
         } else {
@@ -81,13 +85,16 @@ class LineChart extends React.Component<LineChartProps, void> {
         console.error('Timestamp was null.');
       }
     }
-    
+    const datasets = [];
+    if (this.props.monitoredLocationInformation.monitorTemperature) {
+      datasets.push(this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints));
+    }
+    if (this.props.monitoredLocationInformation.monitorRainfall) {
+      datasets.push(this.createTrendline('Rainfall (mm)', 33, 150, 243, rainfallDataPoints));
+    }
     const data = {
       labels: timestampDataPoints,
-      datasets: [ 
-        this.createTrendline('Rainfall (mm)', 33, 150, 243, rainfallDataPoints),
-        this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints)
-      ]
+      datasets
     };
     // TODO: Set axis labels, configure graph so looks nicer.
     // TODO: Fine tune dates.
