@@ -197,7 +197,13 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
         console.error(chalk.red(error.stack));
       });
     }
-    return returnPromise;
+    return returnPromise.then((orginalData: WeatherLocationData) => {
+      return new WeatherLocationData(
+        originalData.location, 
+        getRainfall ? originalData.rainfainll : null,
+        getTemperature ? originalData.temperature : null
+      );
+    });
   }
 
   /**

@@ -85,7 +85,7 @@ class LineChart extends React.Component<LineChartProps, void> {
         console.error('Timestamp was null.');
       }
     }
-    const datasets = [];
+    const datasets: Array<{}> = [];
     if (this.props.monitoredLocationInformation.monitorTemperature) {
       datasets.push(this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints));
     }
