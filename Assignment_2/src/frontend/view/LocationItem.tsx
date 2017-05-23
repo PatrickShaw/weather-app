@@ -2,6 +2,7 @@ import './LocationItem.scss';
 
 import * as React from 'react';
 
+import { Button } from './Button';
 import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 
@@ -75,20 +76,24 @@ class LocationItem extends React.Component<LocationItemProps, void> {
       <div>
         <div className='location-item'>
           <GenericListItem title={this.props.location}>
-            <button 
-              onClick={this.onRainfallMonitorButtonClickedBound} 
-              className={this.props.rainfallMonitorSelected ? 'selected' : ''}
-            >
-              Rain
-            </button>
-
-            <button 
-              onClick={this.onTemperatureMonitorButtonClickedBound} 
-              className={this.props.temperatureMonitorSelected ? 'selected' : ''}
-            >
-              Temp
-            </button>
-        
+              <button 
+                onClick={this.onRainfallMonitorButtonClickedBound}
+                className={
+                  `button-margin button-padding ripple` + 
+                  `${this.props.rainfallMonitorSelected ? ' selected' : ''}`
+                }
+              >
+                Rain
+              </button>
+              <button 
+                onClick={this.onTemperatureMonitorButtonClickedBound}
+                className={
+                  `button-margin button-padding ripple` + 
+                  `${this.props.temperatureMonitorSelected ? ' selected' : ''}`
+                }
+              >
+                Temp
+              </button>
           </GenericListItem>
         </div>
       </div>

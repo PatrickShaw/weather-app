@@ -6,6 +6,7 @@ import {LineChart} from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { Button } from './Button';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
@@ -102,11 +103,10 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
           }
         <section className='buttons'>
           <button 
-              className='txt-color-primary graph-buttuon'
-              onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
-                that.props.monitoredLocationInformation.weatherDataList[0].location
-              )}
-              disabled={false}
+            className='button-margin button-padding ripple' 
+            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+              that.props.monitoredLocationInformation.weatherDataList[0].location
+            )}
           >
             <i className='material-icons'>
               {
