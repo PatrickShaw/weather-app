@@ -12,7 +12,7 @@ import {
 console.log(chalk.cyan('Starting server...'));
 
 const io: SocketIO.Server = SocketIo.listen(8080);
-
+console.log(chalk.magenta('START TIMELAPSE'));
 const weatherClientFactory: MelbourneTimelapseWeatherClientFactory = new MelbourneTimelapseWeatherClientFactory();
 // const weatherClientFactory: MelbourneWeatherClientFactory = new MelbourneWeatherClientFactory();
 

@@ -57,7 +57,6 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
               />
             </section>
-
             <div className='weather-card-container'>
               <MonitoringList 
                 locations={this.props.appCurrentState.locations}

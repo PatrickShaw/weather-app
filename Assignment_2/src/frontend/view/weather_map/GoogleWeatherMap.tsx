@@ -346,7 +346,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   
   public render(): JSX.Element {       
     return (
-      <div id='map'/>
+      <div />
     );
   }
   
