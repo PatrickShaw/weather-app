@@ -20,6 +20,6 @@ new FullLambdaWeatherService(
 ).run();
 new FullLambdaWeatherService(
   SocketIo.listen(8081),
-  new MelbourneWeatherClientFactory(),
+  new MelbourneTimelapseWeatherClientFactory(),
   30000
 ).run();
