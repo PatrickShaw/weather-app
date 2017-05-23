@@ -10,7 +10,6 @@
 .remaining-items {
   flex-shrink: 0;
   flex-grow: 0;
-}
-.remaining-items > * {
-  margin-right: $layout-padding-lg;
+  display: flex;
+  flex-direction: row;
 }

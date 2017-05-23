@@ -1,8 +1,6 @@
+import { SoapResponse } from '../../model/SoapResponse';
 import { RainfallRequestData } from './RainfallRequestData';
 import { TemperatureRequestData } from './TemperatureRequestData';
-interface SoapResponse<T> {
-  return: T;
-}
 interface MelbourneWeatherSoapServiceStub {
   // Get a List of locations.
   getLocations(): Promise<SoapResponse<string[]>>;

@@ -1,15 +1,20 @@
-@import "constants/text-constants";
-@import "classes/text-classes";
-@import "classes/layout-classes";
-@import "classes/misc-classes";
-* {
+@import 'constants/text-constants';
+@import 'classes/text-classes';
+@import 'classes/layout-classes';
+@import 'classes/misc-classes';
+body {
   font-family: Roboto, sans-serif;
   font-weight: $txt-weight-regular;
   color: $txt-color-primary-dark;
   margin: 0;
   padding: 0;
 }
-
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
 strong {
   font-weight: $txt-weight-medium;
+}
+i {
+  font-family: MaterialIcons;
 }

@@ -7,7 +7,9 @@ import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClicke
 
 interface LocationItemProps {
   // The location associated with the LocationItem
+  readonly prefixedLocation: string;
   readonly location: string;
+  readonly serviceTitle: string;
   // Whether the rainfall monitor has been selected for this item.
   readonly rainfallMonitorSelected: boolean; 
   // Whether the temperature monitor ahs been selected for this item.
@@ -16,6 +18,8 @@ interface LocationItemProps {
   readonly onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
   // Specifies what happens when the temperature monitor button is clicked.
   readonly onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
+  // Specifies what happens when graph toggle button clicked.
+  readonly onGraphMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
 /**
@@ -27,12 +31,17 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
   private onRainfallMonitorButtonClickedBound: any;
   private onTemperatureMonitorButtonClickedBound: any;
+  private onGraphMonitorButtonClickedBound: any;
   constructor(props: LocationItemProps) {
     super(props);
     this.onRainfallMonitorButtonClickedBound = this.onRainfallMonitorButtonClicked.bind(this);
     this.onTemperatureMonitorButtonClickedBound = this.onTemperatureMonitorButtonClicked.bind(this);
+    this.onGraphMonitorButtonClickedBound = this.onGraphMonitorButtonClicked.bind(this);
   }
 
+  private onGraphMonitorButtonClicked(): void {
+    console.log('Graph Monitor Button Clicked');
+  }
   /**
    * The unbound method that triggers the rainfall monitor click observer to fire.
    */
@@ -42,7 +51,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     if (this.props.onRainfallMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
       this.props.onRainfallMonitorClickedObserver.onItemClicked(
-        this.props.location, 
+        this.props.prefixedLocation, 
         this.props.rainfallMonitorSelected
       );
     }
@@ -57,7 +66,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
       this.props.onTemperatureMonitorClickedObserver.onItemClicked(
-        this.props.location, 
+        this.props.prefixedLocation, 
         this.props.temperatureMonitorSelected
       );
     }
@@ -66,20 +75,26 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   public render(): JSX.Element {
     return (
       <div>
-        <div className="location-item">
-          <GenericListItem title={this.props.location}>
-            <button 
-              onClick={this.onRainfallMonitorButtonClickedBound} 
-              className={this.props.rainfallMonitorSelected ? 'selected' : ''}
-            >
-              Rain
-            </button>
-            <button 
-              onClick={this.onTemperatureMonitorButtonClickedBound} 
-              className={this.props.temperatureMonitorSelected ? 'selected' : ''}
-            >
-              Temp
-            </button>
+        <div className='location-item'>
+          <GenericListItem title={`${this.props.location} (${this.props.serviceTitle})`}>
+              <button 
+                onClick={this.onRainfallMonitorButtonClickedBound}
+                className={
+                  `button-margin button-padding ripple` + 
+                  `${this.props.rainfallMonitorSelected ? ' selected' : ''}`
+                }
+              >
+                Rain
+              </button>
+              <button 
+                onClick={this.onTemperatureMonitorButtonClickedBound}
+                className={
+                  `button-margin button-padding ripple` + 
+                  `${this.props.temperatureMonitorSelected ? ' selected' : ''}`
+                }
+              >
+                Temp
+              </button>
           </GenericListItem>
         </div>
       </div>

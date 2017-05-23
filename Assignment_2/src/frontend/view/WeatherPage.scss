@@ -1,6 +1,6 @@
-@import "../theme/full-lambda-dimens";
-@import "../theme/full-lambda-colors";
-@import "../theme/full-lambda-text";
+@import '../theme/full-lambda-dimens';
+@import '../theme/full-lambda-colors';
+@import '../theme/full-lambda-text';
 $main-minimum-height: 600px;
 .weather-page {
  display: flex; 
@@ -14,16 +14,25 @@ $main-minimum-height: 600px;
   font-size: 200%;
 }
 
-.main-content {
+.main-content { 
   display: flex;
   flex-direction: row;
   flex-grow: 1;
 }
-
+$gaps: $layout-padding-lg;
 .monitoring-container {
   min-height: $main-minimum-height;
   background: $background-1-light;
   flex-grow: 1;
+}
+.weather-card-container {
+  margin: $layout-padding-xl;
+}
+.weather-map-container {
+  height: 400px;
+  margin-left: $layout-padding-xl;
+  margin-right: $layout-padding-xl;
+  margin-bottom: $layout-padding-xl;
 }
 
 .sidebar {
@@ -36,7 +45,7 @@ $main-minimum-height: 600px;
   flex-shrink: 0;
 }
 
-.page-heading {
+.page-app-bar {
   width: 100%;
   z-index: 10;
   box-shadow: 0px 0px 6px 5px $shadow-dark;
@@ -59,7 +68,3 @@ $main-minimum-height: 600px;
   color: $txt-color-secondary-light;
 }
 
-.monitoring-list-container {
-  margin-left: $layout-padding-xl;
-  margin-right: $layout-padding-xl;
-}
