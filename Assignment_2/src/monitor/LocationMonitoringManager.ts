@@ -35,7 +35,6 @@ class LocationMonitoringManager {
     this.onRemovedMonitoredLocationObservers = new Set<OnRemovedMonitoredLocationObserver>();    
   }
 
-
   /**
    * Gets all locations within the location monitoring manager as a set.
    */

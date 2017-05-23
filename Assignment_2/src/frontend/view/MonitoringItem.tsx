@@ -77,8 +77,8 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
       <section>
         <section className='worded-measurements'>
           <h1 className='txt-title'>
-            { `${this.props.monitoredLocationInformation.location}` + 
-              ` (${this.props.monitoredLocationInformation.serviceTitle})` }
+            {`${this.props.monitoredLocationInformation.location}` + 
+             ` (${this.props.monitoredLocationInformation.serviceTitle})`}
           </h1>
           {
             this.props.monitoredLocationInformation.monitorRainfall ? 
@@ -94,15 +94,15 @@ class MonitoringItem extends React.Component<MonitoringItemProps, void> {
           }
         </section>
           {
-          this.props.monitoredLocationInformation.monitorGraph ?
-            <section className='graph-container'>
-              <div>
-                  <LineChart
-                    monitoredLocationInformation={this.props.monitoredLocationInformation}
-                  />
-              </div> 
-            </section>
-          : null
+            this.props.monitoredLocationInformation.monitorGraph ?
+              <section className='graph-container'>
+                <div>
+                    <LineChart
+                      monitoredLocationInformation={this.props.monitoredLocationInformation}
+                    />
+                </div> 
+              </section>
+            : null
           }
         <section className='buttons'>
           <button 

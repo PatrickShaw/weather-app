@@ -10,7 +10,6 @@ import {
 } from '../weather_client/melbourne/MelbourneWeatherClientFactory';
 // import { MelbourneWeatherClientFactory } from '../weather_client/melbourne/MelbourneWeatherClientFactory';
 
-
 console.log(chalk.cyan('Starting server...'));
 
 new FullLambdaWeatherService(

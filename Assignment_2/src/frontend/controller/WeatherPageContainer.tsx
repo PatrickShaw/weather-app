@@ -267,6 +267,9 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     this.initialzeServiceClientObservers(this.timelapseServiceClient, this.props.timelapseServicePrefix, 'Timelapse');
   }
 
+  /**
+   * Selects a service depending on what the prefix specified in the prefixedLocation was.
+   */
   private selectServiceClient(prefixedLocation: string): FullLambdaServiceClient {
     if (prefixedLocation.startsWith(this.props.regularServicePrefix)) {
       return this.regularServiceClient;
@@ -277,6 +280,9 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     }
   }
 
+  /**
+   * Tells a MonitorConnection to either add or remove a monitor.
+   */
   private onMonitorSelected(
     monitorConnection: MonitorConnection,
     monitorMetadata: MonitorMetadata,
@@ -334,6 +340,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
           onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
           onMonitoringListGraphItemClicked={this.onMonitoringListGraphItemClicked}
+          regularServicePrefix={this.props.regularServicePrefix}
+          timelapseServicePrefix={this.props.timelapseServicePrefix}
         />
       ) : 
       (

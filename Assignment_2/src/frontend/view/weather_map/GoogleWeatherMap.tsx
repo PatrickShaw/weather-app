@@ -4,7 +4,10 @@ import * as React from 'react';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { GeoCodingService } from './utils/GeoCodingService';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
+import { prefixLocation } from '../../prefixLocation';
 interface GoogleWeatherMapProps {
+  readonly regularServicePrefix: string;
+  readonly timelapseServicePrefix: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // readonly locations: string[];
 }
@@ -39,9 +42,12 @@ class LocationMarkerInformation {
 
 class WeatherMapState {
   public readonly locationInfoMap: Map<string, LocationMarkerInformation | null>;
+  public readonly currentServicePrefix: string;
   constructor(
+    currentServicePrefix: string,
     locationInfo: Map<string, LocationMarkerInformation | null>
   ) {
+    this.currentServicePrefix = currentServicePrefix;
     this.locationInfoMap = locationInfo;
   }
 }
@@ -50,22 +56,22 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   private mapContainer;
   private googleMap: google.maps.Map | null;
   private readonly geocoder: GeoCodingService;
-  private currentWeatherService: string = '';
   private readonly onToggleWeatherServiceBound;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
     this.googleMap = null;
-    this.state = new WeatherMapState(new Map<string, LocationMarkerInformation>());  
+    this.state = new WeatherMapState(this.props.regularServicePrefix, new Map<string, LocationMarkerInformation>());  
     this.geocoder = new GeoCodingService();
     this.onToggleWeatherServiceBound = this.onToggleWeatherService.bind(this);
   }
 
   private onToggleWeatherService(event: Event) {
-      this.currentWeatherService = this.currentWeatherService === '' ? 'hello.world' : '';
-      console.log('current weather service: ' + this.currentWeatherService);
-      this.toggle();
-      this.setState({}); // Force re-render.
+      const newServicePrefix 
+        = this.state.currentServicePrefix === this.props.regularServicePrefix 
+        ? this.props.timelapseServicePrefix 
+        : this.props.regularServicePrefix;
+      this.setState({ currentServicePrefix: newServicePrefix });
   }
 
   public componentDidMount(): void {
@@ -77,7 +83,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }
 
   // Toggles markers and circles so only those for current weather service shown.
-  public toggle() {
+  public filterMarkers() {
     // Process only weather data objects we are monitoring (the rest shouldn't be shown anyways).
     for (const [prefixedLocation, monitorData] of this.props.weatherDataMap.entries()) {
       if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
@@ -86,7 +92,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
         if (locationMarkerInformation == null) {
           continue;
         }
-        if (prefixedLocation.includes(this.currentWeatherService)) {
+        if (prefixedLocation.startsWith(this.state.currentServicePrefix)) {
           locationMarkerInformation.marker.setVisible(true);
           locationMarkerInformation.circle.setVisible(true);
         } else {
@@ -138,7 +144,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
            
               pin.setMap(this.googleMap);
 
-              if (prefixedLocation.includes(this.currentWeatherService)) {
+              if (prefixedLocation.startsWith(this.state.currentServicePrefix)) {
                 pin.setVisible(true);
                 circle.setVisible(true);
               } else {
@@ -262,7 +268,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
             fillOpacity: 0.4,
           });
 
-          if (prefixedLocation.includes(this.currentWeatherService)) {
+          if (prefixedLocation.startsWith(this.state.currentServicePrefix)) {
             pin.setVisible(true);
             circle.setVisible(true);
           } else {
@@ -311,6 +317,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }  
 
   public render(): JSX.Element {
+    this.filterMarkers();
     return (
       <div className='google-map-container'>
         <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>

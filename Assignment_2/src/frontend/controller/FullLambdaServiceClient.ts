@@ -1,3 +1,11 @@
+/**
+ * The following file is effectively a wrapper around the socket.io communications between the 
+ * client and server. You can listen in on what the client is doing via a series of observer interfaces.
+ * Please note that, for addMonitorEvent and removeMonitorEvent we would be better off using a REST API as
+ * socket.io is not designed for that kind of thing.
+ * 
+ * The code is quite basic so comments will be left to a minimum.
+ */
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { RequestResponse } from '../../model/RequestResponse';
 import {WeatherLocationData} from '../../model/WeatherLocationData';
@@ -22,6 +30,9 @@ interface OnWeatherLocationDataListRetrievedObserver {
   onWeatherLocationDataListRetrieved(weatherLocationDataList: WeatherLocationData[]);
 }
 
+/**
+ * Essentially just a wrapper around the add and remove socket IO events.
+ */
 class MonitorConnection {
   private readonly socket: SocketIOClient.Socket;
   private readonly onMonitorAddedObservers: Set<OnMonitorAddedObserver>;
@@ -35,8 +46,12 @@ class MonitorConnection {
     this.onMonitorRemovedObservers = new Set<OnMonitorRemovedObserver>();
     this.addMonitorEvent = addMonitorEvent;
     this.removeMonitorEvent = removeMonitorEvent;
+    this.initialiseSocketEndPoints();
   }
 
+  /**
+   * Sets up the socket.on methods.
+   */
   public initialiseSocketEndPoints() {
     this.socket.on(this.addMonitorEvent, (response: RequestResponse<WeatherLocationData>) => {
       for (const observer of this.onMonitorAddedObservers) {

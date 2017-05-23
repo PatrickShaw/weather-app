@@ -16,6 +16,8 @@ interface WeatherPageProps {
   readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
   readonly appCurrentState: AppState;
+  readonly regularServicePrefix: string;
+  readonly timelapseServicePrefix: string;
 }
 
 /**
@@ -55,6 +57,8 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             <section className='weather-map-container'>
               <GoogleWeatherMap
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
+                regularServicePrefix={this.props.regularServicePrefix}
+                timelapseServicePrefix={this.props.timelapseServicePrefix}
               />
             </section>
             <div className='weather-card-container'>
