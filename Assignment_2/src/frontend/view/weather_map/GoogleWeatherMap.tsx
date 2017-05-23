@@ -1,9 +1,8 @@
 import './GoogleWeatherMap.scss';
 
 import * as React from 'react';
-
-import { GeoCodingService } from './utils/GeoCodingService';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
+import { GeoCodingService } from './utils/GeoCodingService';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
 
 interface GoogleWeatherMapProps {
@@ -49,6 +48,7 @@ class WeatherMapState {
 }
 
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
+  private mapContainer;
   private googleMap: google.maps.Map | null;
   private geocoder: GeoCodingService;
   private currentWeatherService: string = '';
@@ -95,7 +95,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   }
 
   public componentDidMount(): void {
-    const googleMap = new google.maps.Map(document.getElementById('map'), {
+    const googleMap = new google.maps.Map(this.mapContainer, {
       center: {lat: -37.81950134905335, lng: 144.98429111204815},
       zoom: 8
     });
@@ -342,14 +342,13 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
         }
       }
     }
-  }
-  
-  public render(): JSX.Element {       
+  }  
+
+  public render(): JSX.Element {
     return (
-      <div id='map'/>
+      <div style={{width: '100%', height: '100%'}} ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
     );
   }
-  
 }
 
 export default GoogleWeatherMap;

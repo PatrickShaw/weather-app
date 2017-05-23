@@ -52,7 +52,7 @@ class WeatherPage extends React.Component<WeatherPageProps, void> {
             </header>
            
             <div className='monitoring-list-container'>
-            <section className='weather-map-container' id='map' >
+            <section className='weather-map-container'>
               <GoogleWeatherMap
                 weatherDataMap={this.props.appCurrentState.weatherDataMap}
               />
