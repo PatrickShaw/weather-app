@@ -45,8 +45,8 @@ class MelbourneWeatherClient implements WeatherClient {
     getRainfall: boolean = true, // Whether we want to get the rainfall data for this location.
     getTemperature: boolean = true, // Whether we want to get the temperature data for this location.
     forceRefresh: boolean = true // Whether we want to retrieve the data regardless of whether it's cached.
-  ) {
-
+  ): Promise<WeatherLocationData> {
+    // Should not happen.
     if (location == null) {
       throw new Error('Location was null in retrieveWeatherLocationData');
     }
@@ -119,7 +119,6 @@ class MelbourneWeatherClient implements WeatherClient {
           this.locationCache.updateLocation(weatherData);
         } else if (!this.locationCache.has(weatherData)) {
           this.locationCache.addLocation(weatherData);
-
         }
         return weatherData;
       }).catch((error) => {
@@ -141,6 +140,7 @@ class MelbourneWeatherClient implements WeatherClient {
       if (location == null) {
         console.log(chalk.red(`Location is null: ${location}`));
       }
+      // Force refresh of location cache as defaults forceRefresh to true.
       weatherPromises.push(this.retrieveWeatherLocationData(location));
     });
     return Promise.all(weatherPromises);
