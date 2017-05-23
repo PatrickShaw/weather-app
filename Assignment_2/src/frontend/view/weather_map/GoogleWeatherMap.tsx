@@ -4,7 +4,6 @@ import * as React from 'react';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { GeoCodingService } from './utils/GeoCodingService';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
-import { prefixLocation } from '../../prefixLocation';
 interface GoogleWeatherMapProps {
   readonly regularServicePrefix: string;
   readonly timelapseServicePrefix: string;
@@ -232,9 +231,9 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
               const blue = Math.round(baseGreyTone + blueOffset);
               const red = Math.round(baseGreyTone - greyRange * blueness);
               const green = Math.round((baseGreyTone + blueOffset * 0.25) - greyRange * blueness);
-              const blueHex = blue.toString(16);
-              const redHex = red.toString(16);
-              const greenHex = green.toString(16);
+              const blueHex = this.padZeroes(blue.toString(16), 2);
+              const redHex = this.padZeroes(red.toString(16), 2);
+              const greenHex = this.padZeroes(green.toString(16), 2);
               rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
             }
           } else {
@@ -315,6 +314,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       }
     }
   }  
+
+  /**
+   * Pads zeroes to a given string.
+   */
+  private padZeroes(value: string, digitCount: number): string {
+    while (value.length < digitCount) {
+      value = `0${value}`;
+    }
+    return value;
+  }
 
   public render(): JSX.Element {
     this.filterMarkers();
