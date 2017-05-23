@@ -1,7 +1,6 @@
 @import '../constants/colors';
 .ripple {
   cursor: pointer;
-  background: rgba(0,0,0,0);
   transition: background 1s;
 }
 .ripple:hover {

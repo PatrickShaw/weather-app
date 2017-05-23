@@ -4,7 +4,7 @@ import * as React from 'react';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { GeoCodingService } from './utils/GeoCodingService';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
-
+import { Button } from '../Button';
 interface GoogleWeatherMapProps {
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
   // readonly locations: string[];
@@ -50,48 +50,23 @@ class WeatherMapState {
 class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
   private mapContainer;
   private googleMap: google.maps.Map | null;
-  private geocoder: GeoCodingService;
+  private readonly geocoder: GeoCodingService;
   private currentWeatherService: string = '';
+  private readonly onToggleWeatherServiceBound;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
     this.googleMap = null;
     this.state = new WeatherMapState(new Map<string, LocationMarkerInformation>());  
     this.geocoder = new GeoCodingService();
+    this.onToggleWeatherServiceBound = this.onToggleWeatherService.bind(this);
   }
 
-  // Render button on google map.
-  public toggleControl(toggleDiv: HTMLDivElement, map: google.maps.Map) {
-    // Set CSS for the control border.
-    const toggleUI = document.createElement('div');
-    toggleUI.style.backgroundColor = '#fff';
-    toggleUI.style.border = '2px solid #fff';
-    toggleUI.style.borderRadius = '3px';
-    toggleUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-    toggleUI.style.cursor = 'pointer';
-    toggleUI.style.marginBottom = '22px';
-    toggleUI.style.textAlign = 'center';
-    toggleUI.title = 'Click to recenter the map';
-    toggleDiv.appendChild(toggleUI);
-
-    // Set CSS for the control interior.
-    const toggleText = document.createElement('div');
-    toggleText.style.color = 'rgb(25,25,25)';
-    toggleText.style.fontFamily = 'Roboto,Arial,sans-serif';
-    toggleText.style.fontSize = '16px';
-    toggleText.style.lineHeight = '38px';
-    toggleText.style.paddingLeft = '5px';
-    toggleText.style.paddingRight = '5px';
-    toggleText.innerHTML = 'Toggle weather service';
-    toggleUI.appendChild(toggleText);
-
-    // Setup the click event listeners: simply set the map to Chicago.
-    toggleUI.addEventListener('click', () => {
+  private onToggleWeatherService(event: Event) {
       this.currentWeatherService = this.currentWeatherService === '' ? 'hello.world' : '';
       console.log('current weather service: ' + this.currentWeatherService);
       this.toggle();
       this.setState({}); // Force re-render.
-    });
   }
 
   public componentDidMount(): void {
@@ -100,9 +75,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       zoom: 8
     });
     this.googleMap = googleMap;
-    const toggleDiv: HTMLDivElement = document.createElement('div');
-    this.toggleControl(toggleDiv, this.googleMap);
-    this.googleMap.controls[google.maps.ControlPosition.TOP_CENTER].push(toggleDiv);
   }
 
   // Toggles markers and circles so only those for current weather service shown.
@@ -267,6 +239,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
               rainfallColorHex = `${redHex}${greenHex}${blueHex}`;
             }
           } else {
+            // Grey if we didn't have rainfall or we don't need to monitor it.
             rainfallColorHex = 'DD8888';
           }
           const pinIcon: google.maps.Icon = {
@@ -346,7 +319,14 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
 
   public render(): JSX.Element {
     return (
-      <div style={{width: '100%', height: '100%'}} ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
+      <div className='google-map-container'>
+        <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
+        <button className='button-toggle-service button-margin card' onClick={this.onToggleWeatherServiceBound}>
+          <div className='ripple button-padding'>
+            Toggle weather service
+          </div>
+        </button>
+      </div>
     );
   }
 }
