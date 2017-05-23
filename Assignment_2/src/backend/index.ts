@@ -5,22 +5,21 @@ import { FullLambdaWeatherService } from './FullLambdaWeatherService';
 import {
   MelbourneTimelapseWeatherClientFactory,
 } from '../weather_client/melbourne_timelapse/MelbourneTimelapseWeatherClientFactory';
-
+import {
+  MelbourneWeatherClientFactory
+} from '../weather_client/melbourne/MelbourneWeatherClientFactory';
 // import { MelbourneWeatherClientFactory } from '../weather_client/melbourne/MelbourneWeatherClientFactory';
 
 
 console.log(chalk.cyan('Starting server...'));
 
-const io: SocketIO.Server = SocketIo.listen(8080);
-
-const weatherClientFactory: MelbourneTimelapseWeatherClientFactory = new MelbourneTimelapseWeatherClientFactory();
-// const weatherClientFactory: MelbourneWeatherClientFactory = new MelbourneWeatherClientFactory();
-
-const service: FullLambdaWeatherService = new FullLambdaWeatherService(
-  io,
-  weatherClientFactory,
+new FullLambdaWeatherService(
+  SocketIo.listen(8080),
+  new MelbourneWeatherClientFactory(),
+  300000
+).run();
+new FullLambdaWeatherService(
+  SocketIo.listen(8081),
+  new MelbourneWeatherClientFactory(),
   30000
-);
-service.run();
-
-
+).run();
