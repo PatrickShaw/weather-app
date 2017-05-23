@@ -10,9 +10,9 @@ import { WeatherPageContainer } from './controller/WeatherPageContainer';
 ReactDOM.render(
   <WeatherPageContainer
     regularServicePrefix='reglar_service_'
-    regularServiceUrl='http://127.0.0.1:8080'
+    regularServiceUrl='http://127.0.0.1:8081'
     timelapseServicePrefix='timelapse_service_'
-    timelapseServiceUrl='http://127.0.0.1:8081'
+    timelapseServiceUrl='http://127.0.0.1:8080'
   />,  
   document.getElementById('root')
 );

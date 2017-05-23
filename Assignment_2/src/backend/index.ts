@@ -13,12 +13,12 @@ import {
 console.log(chalk.cyan('Starting server...'));
 
 new FullLambdaWeatherService(
-  SocketIo.listen(8080),
+  SocketIo.listen(8081),
   new MelbourneWeatherClientFactory(),
   3000
 ).run();
 new FullLambdaWeatherService(
-  SocketIo.listen(8081),
+  SocketIo.listen(8080),
   new MelbourneTimelapseWeatherClientFactory(),
   3000
 ).run();
