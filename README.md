@@ -1,5 +1,6 @@
 # FIT3077 Full Lambda Assignment 2
 Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
+:shipit:
 
 ## Student details
 ### Patrick Shaw
@@ -86,6 +87,8 @@ Location pins represent the intensity of rainfall, with greater rainfall resulti
 Around each marker is a circle representing the intensity of temperature, the hotter it is the more red the circle. Likewise if temperature is not selected it defaults to a greyish-blue and if temperature is not a valid number it defaults to gery.
 
 Hovering over the pins displays more information about the area.
+
+![Alt Text](https://github.com/darvid7/sequence-diagrams-made-easy/raw/master/images/FullLambdaApp.gif)
 
 <img src="/images/screenshot.png"/>
 
