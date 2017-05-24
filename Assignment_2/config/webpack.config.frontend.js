@@ -6,9 +6,10 @@ const fs = require('fs');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const paths = require('./paths');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const cssnext = require("postcss-cssnext");
+const autoprefixer = require('autoprefixer');
 const publicPath = '/';
 const publicUrl = '';
+const postcssPlugins = [autoprefixer];
 module.exports = {
     output: {
         path: paths.appBuild,
@@ -87,7 +88,7 @@ module.exports = {
                     loader: 'postcss-loader',
                     options: {
                         plugins: () => {
-                            return [autoprefixer]
+                            return postcssPlugins;
                         }
                     }
                 }
@@ -117,7 +118,7 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             plugins: () => {
-                                return [cssnext]
+                                return postcssPlugins;
                             }
                         }
                     }
