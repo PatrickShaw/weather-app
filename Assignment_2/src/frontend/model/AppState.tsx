@@ -1,6 +1,7 @@
 import { LocationMetadata } from './LocationMetadata';
 import { LocationServicePrefixer } from '../LocationServicePrefixer';
 import { MonitoredLocationInformation } from './MonitoredLocationInformation';
+
 class AppState {
   public readonly sortedLocations: LocationMetadata[];
   // weatherDataMap is responsible for keeping track of cards to render.
@@ -22,8 +23,8 @@ class AppState {
   /**
    * Inserts a location into the location list without breaking the order.
    */
-  public static insertServiceLocation(appState: AppState, servicePrefix: string, location: string) {
-    // Uses a binary search in an attemp to improve performance.
+  public static insertServiceLocation(appState: AppState, servicePrefix: string, location: string): void {
+    // Uses a binary search in an attempt to improve performance.
     let min: number = 0;
     let max: number = appState.sortedLocations.length - 1;
     let mid: number = 0;

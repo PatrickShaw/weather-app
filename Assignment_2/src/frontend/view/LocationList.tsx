@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { LocationMetadata } from '../model/LocationMetadata';
+
 import { LocationItem } from './LocationItem';
+import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 

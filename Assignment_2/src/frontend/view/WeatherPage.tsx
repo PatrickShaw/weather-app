@@ -2,13 +2,13 @@ import './WeatherPage.scss';
 
 import * as React from 'react';
 
-import {ActionBar} from './AppBar';
-import {AppState} from '../model/AppState';
+import { ActionBar } from './AppBar';
+import { AppState } from '../model/AppState';
 import { GoogleWeatherMap } from './weather_map/GoogleWeatherMap';
-import {LocationList} from './LocationList';
-import {MonitoringList} from './MonitoringList';
-import {OnLocationItemClickedObserver} from '../observers/OnLocationItemClickedObserver';
-import {OnMonitoringItemClickedObserver} from '../observers/OnMonitoringItemClickedObserver';
+import { LocationList } from './LocationList';
+import { MonitoringList } from './MonitoringList';
+import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
+import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 
 interface WeatherPageProps {
   // Instance variable.
