@@ -1,6 +1,9 @@
 # FIT3077 Full Lambda Assignment 2
 Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
-:shipit:
+
+:ship::100::heavy_check_mark:
+
+/play sexyback
 
 ## Student details
 ### Patrick Shaw
@@ -88,7 +91,11 @@ Around each marker is a circle representing the intensity of temperature, the ho
 
 Hovering over the pins displays more information about the area.
 
+## Gif 
+
 ![Alt Text](https://github.com/darvid7/sequence-diagrams-made-easy/raw/master/images/FullLambdaApp.gif)
+
+## Screen shot
 
 <img src="/images/screenshot.png"/>
 
