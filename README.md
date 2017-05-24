@@ -3,8 +3,6 @@ Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
 
 :ship::100::heavy_check_mark:
 
-► /play pushit
-
 ## Student details
 ### Patrick Shaw
 - **Student email:** psha67@student.monash.edu
