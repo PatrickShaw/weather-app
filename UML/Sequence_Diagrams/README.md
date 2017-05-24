@@ -33,12 +33,12 @@ User clicks on the rain button to add a monitor for a location.
 
 **Frontend - Button gets clicked, sends message to backend.**
 
-<img src="/UML/Sequence_Diagrams/images/AddRainfallMonitor_Start_Frontend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_Start_Frontend.png" >
 
 **Backend - received message, gets data from weather client and returns it to frontend.**
 
-<img src="/UML/Sequence_Diagrams/images/AddRainfallMonitor_Mid_Backend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_Mid_Backend.png" >
 
 **Frontend - received new data, re-renders.**
 
-<img src="/UML/Sequence_Diagrams/images/AddRainfallMonitor_End_Frontend.png" >
+<img src="/UML/Sequence_Diagrams/images/AddRainFallMonitor_End_Frontend.png" >
