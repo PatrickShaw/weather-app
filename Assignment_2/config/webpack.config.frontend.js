@@ -19,7 +19,7 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },  
     name: 'Frontend Server',
-    entry: paths.appIndexJs,
+    entry: ['babel-polyfill', paths.appIndexJs],
     devtool: 'source-map',
     module: {
         rules: [
