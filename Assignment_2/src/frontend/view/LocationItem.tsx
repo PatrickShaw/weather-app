@@ -31,8 +31,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   /**
    * The unbound method that triggers the rainfall monitor click observer to fire.
    */
-  private onRainfallMonitorButtonClicked(
-  ): void {
+  private onRainfallMonitorButtonClicked(): void {
     if (this.props.onRainfallMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
       this.props.onRainfallMonitorClickedObserver.onItemClicked(
@@ -45,9 +44,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   /**
    * The unbound method that triggers the temperature monitor click observer to fire.
    */
-  private onTemperatureMonitorButtonClicked(
-
-  ): void {
+  private onTemperatureMonitorButtonClicked(): void {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
       this.props.onTemperatureMonitorClickedObserver.onItemClicked(
