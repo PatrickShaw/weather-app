@@ -79,6 +79,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
       center: {lat: -37.81950134905335, lng: 144.98429111204815},
       zoom: 8
     });
+    
     this.googleMap = googleMap;
   }
 

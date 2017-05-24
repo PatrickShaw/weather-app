@@ -36,7 +36,7 @@ class AppState {
         max = mid - 1;
       } else {
         // It already exists but we need to add in our service's prefix.
-        appState.sortedLocations[mid].servicePrefixes.add(
+        appState.sortedLocations[mid].prefixedLocations.add(
           LocationServicePrefixer.prefixLocation(servicePrefix, location)
         );
         return;

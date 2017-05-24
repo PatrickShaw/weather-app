@@ -6,7 +6,7 @@ import {
   MonitorConnection,
   OnLocationsRetrievedObserver,
   OnMonitorAddedObserver,
-  OnServerSetupSucessRetrievedObserver,
+  OnServerSetupSuccessRetrievedObserver,
   OnWeatherLocationDataListRetrievedObserver,
 } from './FullLambdaServiceClient';
 
@@ -45,10 +45,13 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     super(props);
     // Start the state off with a bunch of empty lists.
     this.state = new AppState([], new Map<string, MonitoredLocationInformation>(), false);
+    // Connects to the port that the backend is listening on.
+    // Triggers io.on('connection')'s callback
     this.regularServiceClient = new FullLambdaServiceClient(SocketIo.connect(this.props.regularServiceUrl));
     this.timelapseServiceClient = new FullLambdaServiceClient(SocketIo.connect(this.props.timelapseServiceUrl));
   }
-
+  
+  // Create anon class to handle what happens when locations are retrieved.
   private createOnLocationsRetrievedObserver(
     servicePrefix: string, 
     serviceTitle: string
@@ -57,8 +60,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     // Set the locations and 
     return new class implements OnLocationsRetrievedObserver {
       public onLocationsRetrieved(sortedLocations: string[]) {
-        // Now that we have the locations, we need to initialise the MonitoredLocationInformation.
-        // You could lazy-initialise them but that would more complicated code with minimal benefits.
+        // Now that we have the locations, we need to initialize the MonitoredLocationInformation.
+        // You could lazy-initialize them but that would more complicated code with minimal benefits.
         for (const location of sortedLocations) {
           const prefixedLocation: string = LocationServicePrefixer.prefixLocation(servicePrefix, location);
           that.state.weatherDataMap.set(
@@ -81,6 +84,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     }();
   }
 
+  // Create anon class to handle retrieving a list of weather data.
   private createWeatherDataListRetrievedObserver(servicePrefix: string): OnWeatherLocationDataListRetrievedObserver {
     const that: WeatherPageContainer = this;
     return new class implements OnWeatherLocationDataListRetrievedObserver {
@@ -112,6 +116,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     }();
   }
 
+  // Create anon class to handle adding a monitor response.
   private createServiceMonitorAddedObserver(servicePrefix: string): OnMonitorAddedObserver {
     const that: WeatherPageContainer = this;
     return new class implements OnMonitorAddedObserver {
@@ -141,9 +146,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
 
   public componentDidMount(): void {
     const that: WeatherPageContainer = this;
-    // Connects to the port that the backend is listening on.
-    // Triggers io.on('connection')'s callback
-
     // Create on click monitor listeners
     this.onMonitoringListGraphItemClicked = new class implements OnMonitoringItemClickedObserver {
       public onItemClicked(locationKey: string) {
@@ -165,7 +167,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           console.error(`Error: monitoredLocationInformation could not be found for ${locationKey}`);
         }
       }
-
     }();
     
     // Observer that is triggered when rainfall button is clicked for a location.
@@ -279,7 +280,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     );
     // Create the server setup observer.
     serviceClient.addOnServerSetupSuccessRetrievedObserver(
-      new class implements OnServerSetupSucessRetrievedObserver {
+      new class implements OnServerSetupSuccessRetrievedObserver {
         public onServerSetupSuccessRetrieved(success: boolean) {
           // Note that we assume that it's fine to show the GUI if only 1 of the backend services is working properly.
           that.setState({ connectedToServer: success });

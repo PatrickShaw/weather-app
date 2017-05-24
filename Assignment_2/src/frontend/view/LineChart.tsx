@@ -1,9 +1,10 @@
-import * as React from 'react';
-
-import * as moment from 'moment';
-import * as Chart from 'react-chartjs-2';
-import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import './LineChart.scss';
+
+import * as Chart from 'react-chartjs-2';
+import * as React from 'react';
+import * as moment from 'moment';
+
+import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 
 interface LineChartProps {
   monitoredLocationInformation: MonitoredLocationInformation;
@@ -27,6 +28,9 @@ class LineChart extends React.Component<LineChartProps, void> {
       pointBorderColor: lineColor,
       pointBackgroundColor: lineColor,
       data: dataPoints,
+      pointBorderWidth: 1,
+      pointRadius: 2,
+      pointHitRadius: 10
     };
   }
   public render(): JSX.Element {
@@ -44,6 +48,8 @@ class LineChart extends React.Component<LineChartProps, void> {
           rainfallPoint = parseFloat(weatherData.rainfallData.rainfall);
           if (isNaN(rainfallPoint)) {
             rainfallPoint = null;
+          } else {
+            rainfallPoint = Math.round(rainfallPoint * 100) / 100; // Round to two decimal places.
           }
           timestamp = weatherData.rainfallData.timestamp;
         }
@@ -56,6 +62,8 @@ class LineChart extends React.Component<LineChartProps, void> {
           temperaturePoint = parseFloat(weatherData.temperatureData.temperature);
           if (isNaN(temperaturePoint)) {
             temperaturePoint = null;
+          } else {
+            temperaturePoint = Math.round(temperaturePoint * 100) / 100; // Round to two decimal places.
           }
           timestamp = weatherData.temperatureData.timestamp;  
         }
