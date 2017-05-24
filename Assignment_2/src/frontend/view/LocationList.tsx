@@ -27,7 +27,7 @@ class LocationList extends React.Component<LocationListProps, void> {
         {
           // Go through each item in the map and create a LocationItem html markup from it.
           this.props.locations.map((locationMetadata: LocationMetadata, locationIndex) => {
-            const prefixedLocations: string[] = Array.from(locationMetadata.servicePrefixes);
+            const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
             return prefixedLocations.map((prefixedLocation: string) => {
               const weatherData: MonitoredLocationInformation | undefined 
                 = this.props.weatherDataMap.get(prefixedLocation);

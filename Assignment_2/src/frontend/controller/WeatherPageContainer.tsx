@@ -45,6 +45,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     super(props);
     // Start the state off with a bunch of empty lists.
     this.state = new AppState([], new Map<string, MonitoredLocationInformation>(), false);
+    // Connects to the port that the backend is listening on.
+    // Triggers io.on('connection')'s callback
     this.regularServiceClient = new FullLambdaServiceClient(SocketIo.connect(this.props.regularServiceUrl));
     this.timelapseServiceClient = new FullLambdaServiceClient(SocketIo.connect(this.props.timelapseServiceUrl));
   }
@@ -144,9 +146,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
 
   public componentDidMount(): void {
     const that: WeatherPageContainer = this;
-    // Connects to the port that the backend is listening on.
-    // Triggers io.on('connection')'s callback
-
     // Create on click monitor listeners
     this.onMonitoringListGraphItemClicked = new class implements OnMonitoringItemClickedObserver {
       public onItemClicked(locationKey: string) {
@@ -168,7 +167,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           console.error(`Error: monitoredLocationInformation could not be found for ${locationKey}`);
         }
       }
-
     }();
     
     // Observer that is triggered when rainfall button is clicked for a location.
