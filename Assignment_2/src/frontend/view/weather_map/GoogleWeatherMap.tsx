@@ -1,17 +1,18 @@
 import './GoogleWeatherMap.scss';
 
 import * as React from 'react';
-import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
+
 import { GeoCodingService } from './utils/GeoCodingService';
+import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
+
 interface GoogleWeatherMapProps {
   readonly regularServicePrefix: string;
   readonly timelapseServicePrefix: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
-  // readonly locations: string[];
 }
 
-// Holds inofrmation for a location marker and it's circle.
+// Holds information for a location marker and it's circle.
 class LocationMarkerInformation {
   public readonly latlng: google.maps.LatLng;
   public readonly formattedAddress: string;
@@ -327,12 +328,14 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
 
   public render(): JSX.Element {
     this.filterMarkers();
+    const that = this;
     return (
       <div className='google-map-container'>
         <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
         <button className='button-toggle-service button-margin card' onClick={this.onToggleWeatherServiceBound}>
           <div className='ripple button-padding'>
-            Toggle weather service
+            {that.state.currentServicePrefix === 'regular_service_' 
+            ? 'Melbourne Weather Service' : 'Melbourne Weather Timelapse Service'}
           </div>
         </button>
       </div>

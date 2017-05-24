@@ -1,7 +1,17 @@
 import * as React from 'react';
 import * as SocketIo from 'socket.io-client';
 
+import {
+  FullLambdaServiceClient,
+  MonitorConnection,
+  OnLocationsRetrievedObserver,
+  OnMonitorAddedObserver,
+  OnServerSetupSucessRetrievedObserver,
+  OnWeatherLocationDataListRetrievedObserver,
+} from './FullLambdaServiceClient';
+
 import { AppState } from '../model/AppState';
+import { LocationServicePrefixer } from '../LocationServicePrefixer';
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
@@ -9,15 +19,6 @@ import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemCl
 import { RequestResponse } from '../../model/RequestResponse';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { WeatherPage } from '../view/WeatherPage';
-import { 
-  FullLambdaServiceClient, 
-  OnMonitorAddedObserver,
-  MonitorConnection,
-  OnLocationsRetrievedObserver,
-  OnServerSetupSucessRetrievedObserver,
-  OnWeatherLocationDataListRetrievedObserver
-} from './FullLambdaServiceClient';
-import { prefixLocation } from '../prefixLocation';
 
 interface WeatherPageContainerProps {
   readonly regularServiceUrl: string;
@@ -39,6 +40,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
   private onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
   private readonly regularServiceClient: FullLambdaServiceClient;
   private readonly timelapseServiceClient: FullLambdaServiceClient;
+
   constructor(props: WeatherPageContainerProps) {
     super(props);
     // Start the state off with a bunch of empty lists.
@@ -58,7 +60,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
         // Now that we have the locations, we need to initialise the MonitoredLocationInformation.
         // You could lazy-initialise them but that would more complicated code with minimal benefits.
         for (const location of sortedLocations) {
-          const prefixedLocation: string = prefixLocation(servicePrefix, location);
+          const prefixedLocation: string = LocationServicePrefixer.prefixLocation(servicePrefix, location);
           that.state.weatherDataMap.set(
             prefixedLocation, 
             new MonitoredLocationInformation(
@@ -97,7 +99,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
         // Loop for each WeatherLocationData object sent by backend.
         for (const weatherLocationData of weatherLocationDataList) {
           const monitoredLocationInformation: MonitoredLocationInformation | undefined = newWeatherDataMap
-            .get(prefixLocation(servicePrefix, weatherLocationData.location));
+            .get(LocationServicePrefixer.prefixLocation(servicePrefix, weatherLocationData.location));
           if (monitoredLocationInformation == null) {
             throw new Error('No monitoring information was retrieved.');
           }
@@ -119,7 +121,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           // Good, we didn't receive an error, add the new weather data into our state's weather hash map.
           const newWeatherData: WeatherLocationData = addMonitorResponse.data;
           const weatherDataMap: Map<string, MonitoredLocationInformation> = that.state.weatherDataMap;
-          const prefixedLocation: string = prefixLocation(servicePrefix, newWeatherData.location);
+          const prefixedLocation: string = LocationServicePrefixer.prefixLocation(
+              servicePrefix, newWeatherData.location);
           const monitoringData: MonitoredLocationInformation | undefined 
             = weatherDataMap.get(prefixedLocation);
           if (monitoringData != null) {
@@ -138,7 +141,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
 
   public componentDidMount(): void {
     const that: WeatherPageContainer = this;
-
     // Connects to the port that the backend is listening on.
     // Triggers io.on('connection')'s callback
 
@@ -230,9 +232,9 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     }();
 
     // Initialize the socket end points for the original FullLambdaService from stage 1.
-    this.initialzeServiceClientObservers(this.regularServiceClient, this.props.regularServicePrefix, 'Original');
+    this.initializeServiceClientObservers(this.regularServiceClient, this.props.regularServicePrefix, 'Original');
     // Initialize the socket end points for the original FullLambdaService from stage 2.
-    this.initialzeServiceClientObservers(this.timelapseServiceClient, this.props.timelapseServicePrefix, 'Timelapse');
+    this.initializeServiceClientObservers(this.timelapseServiceClient, this.props.timelapseServicePrefix, 'Timelapse');
   }
 
   /**
@@ -265,7 +267,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     }
   }
   
-  private initialzeServiceClientObservers(
+  private initializeServiceClientObservers(
     serviceClient: FullLambdaServiceClient,
     servicePrefix: string,
     serviceTitle: string

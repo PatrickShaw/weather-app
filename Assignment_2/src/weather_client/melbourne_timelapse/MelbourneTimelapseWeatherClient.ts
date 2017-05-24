@@ -40,50 +40,41 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
     });
   }
   
-  // Precondition: valid cache entry exists.
+  // Precondition: Valid cache entry exists.
   private getDataFromCache(getRainfall: boolean, getTemperature: boolean, location: string): WeatherLocationData {
     const weatherData: WeatherLocationData = this.locationCache.get(location);
     let rainfallValue: RainfallData;
     let temperatureValue: TemperatureData;
-    
+    // These shouldn't happen but check in case anyways.
     if (!getRainfall && !getTemperature) {
-      console.error(chalk.red(`getDataFromCache called: getRainfall and getTemperature are false`));
-      return undefined;
+      throw new Error(`getDataFromCache called: getRainfall and getTemperature are false`);
     }
-    
     if (weatherData === undefined) {
-      console.error(chalk.red(`getDataFromCache: WeatherData is undefined, key: ${location} in location cache.`));
-      return undefined;
+      throw new Error(`getDataFromCache: WeatherData is undefined, key: ${location} in location cache.`);
     }
 
     if (getRainfall) {
       // Need to get rainfall, get from cache.
       const cachedRainfall = weatherData.rainfallData;
-      if (cachedRainfall === undefined) {
-        // Should not happen.
-        console.error(chalk.red(`RainfallData is undefined in ${weatherData}`));
-        rainfallValue = undefined;
-      } else {
+      if (cachedRainfall !== undefined) {
         rainfallValue = cachedRainfall;
+      } else {
+        // Should not happen.
+        // Not throwing an error because we can still serve temperature data.
+        console.error(chalk.red(`RainfallData is undefined in ${weatherData}`));
       }   
-    } else {
-      // Don't need to get rainfall, make it undefined.
-      rainfallValue = undefined;
     }
     
     if (getTemperature) {
       // Need to get temperature, get from cache.
       const cachedTemperature = weatherData.temperatureData;
-      if (cachedTemperature === undefined) {
-         // Should not happen.
-        console.error(chalk.red(`TemperatureData is undefined in ${weatherData}`));
-        temperatureValue = undefined;
-      } else {
+      if (cachedTemperature !== undefined) {
         temperatureValue = cachedTemperature;
+      } else {
+         // Should not happen.
+        // Not throwing an error because we can still serve rainfall data.
+        console.error(chalk.red(`TemperatureData is undefined in ${weatherData}`));
       }
-    } else {
-      // Don't need to get temperature, make it undefined.
-      temperatureValue = undefined;
     }
     // Return new WeatherLocationData for request rainfall/temp data.
     const weatherDataToReturn: WeatherLocationData =  new WeatherLocationData(
@@ -167,48 +158,41 @@ class MelbourneTimelapseWeatherClient implements WeatherClient {
       console.log(chalk.cyan(`retrieveWeatherLocationData: making network request`));
       // Get data, add to cache and return data.
       returnPromise = this.weatherService.getWeather(new SoapRequest<string>(location))
-      .then((response: SoapResponse<string[]>) => {
-        const data: string[] = response.return;
-        const timestamp: string = data[0];
-        const rainfall: string = data[2];
-        let temperature: string = data[1];
-        const tempCelsius: number = +temperature  - 273.15;
-        temperature = '' + tempCelsius;  // Converted to celsius.
-        const weatherData: WeatherLocationData =  new WeatherLocationData(
-          location, 
-          new RainfallData(rainfall, timestamp), 
-          new TemperatureData(temperature, timestamp)
-        );
-        // Add into location cache here.
-        if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
-          // In cache but need to update.
-          this.locationCache.updateLocation(weatherData);
-        } else if (!this.locationCache.has(weatherData)) {
-          // Not in cache: add it in.
-          this.locationCache.addLocation(weatherData);
-        }
-        // Return new WeatherLocationData object with only requested data as it is now udpated in cache.
-        return this.getDataFromCache(getRainfall, getTemperature, location);
-      })
-      .catch((error) => {
-        console.error(chalk.bgRed(`Error: retrieveWeatherDataLocation 
-        MelbourneTimelapseWeatherClient.`));
-        console.error(chalk.red(error.message));
-        console.error(chalk.red(error.stack));
-      });
+        .then((response: SoapResponse<string[]>) => {
+          const data: string[] = response.return;
+          const timestamp: string = data[0];
+          const rainfall: string = data[2];
+          let temperature: string = data[1];
+          const tempCelsius: number = parseFloat(temperature) - 273.15;
+          temperature = '' + tempCelsius;  // Converted to celsius.
+          const weatherData: WeatherLocationData =  new WeatherLocationData(
+            location, 
+            new RainfallData(rainfall, timestamp), 
+            new TemperatureData(temperature, timestamp)
+          );
+          // Add into location cache here.
+          if (this.locationCache.has(weatherData) && !cacheEntryCorrect) {
+            // In cache but need to update.
+            this.locationCache.updateLocation(weatherData);
+          } else if (!this.locationCache.has(weatherData)) {
+            // Not in cache: add it in.
+            this.locationCache.addLocation(weatherData);
+          }
+          // Return new WeatherLocationData object with only requested data as it is now udpated in cache.
+          return this.getDataFromCache(getRainfall, getTemperature, location);
+        })
+        .catch((error) => {
+          console.error(chalk.bgRed(`Error: retrieveWeatherDataLocation 
+          MelbourneTimelapseWeatherClient.`));
+          console.error(chalk.red(error.message));
+          console.error(chalk.red(error.stack));
+        });
     }
-    return returnPromise.then((orginalData: WeatherLocationData) => {
-      return new WeatherLocationData(
-        originalData.location, 
-        getRainfall ? originalData.rainfainll : null,
-        getTemperature ? originalData.temperature : null
-      );
-    });
+    return returnPromise;
   }
 
   /**
    * Retrieve weather data from SOAP client endpoint based on locations.
-   * @param locations Locations to get data for.
    */
   public retrieveWeatherLocationDataList(locations: string[]): Promise<WeatherLocationData[]> {
     const weatherPromises: Array<Promise<WeatherLocationData>> = [];

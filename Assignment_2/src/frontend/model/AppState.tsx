@@ -1,6 +1,6 @@
-import { MonitoredLocationInformation } from './MonitoredLocationInformation';
 import { LocationMetadata } from './LocationMetadata';
-import { prefixLocation } from '../prefixLocation';
+import { LocationServicePrefixer } from '../LocationServicePrefixer';
+import { MonitoredLocationInformation } from './MonitoredLocationInformation';
 class AppState {
   public readonly sortedLocations: LocationMetadata[];
   // weatherDataMap is responsible for keeping track of cards to render.
@@ -36,13 +36,15 @@ class AppState {
         max = mid - 1;
       } else {
         // It already exists but we need to add in our service's prefix.
-        appState.sortedLocations[mid].servicePrefixes.add(prefixLocation(servicePrefix, location));
+        appState.sortedLocations[mid].servicePrefixes.add(
+          LocationServicePrefixer.prefixLocation(servicePrefix, location)
+        );
         return;
       }
     }
     // Since the location doesn't exist yet, add it in.
     const locationSet: Set<string> = new Set<string>();
-    locationSet.add(prefixLocation(servicePrefix, location));
+    locationSet.add(LocationServicePrefixer.prefixLocation(servicePrefix, location));
     appState.sortedLocations.splice(mid + 1, 0, new LocationMetadata(location, locationSet));
   }
 }
