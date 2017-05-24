@@ -271,20 +271,6 @@ class FullLambdaWeatherService {
           = this.temperatureMonitoringData.sessionManager.getLocationMonitorManagerForSession(sessionId).
             getMonitoredLocations();
                   
-        // Log for debugging.
-        // let rainfallLocationString: string = '';
-        // rainfallToEmitWeatherFor.forEach((location) => {
-        //   rainfallLocationString = rainfallLocationString.concat(', ', location);
-        // });
-        // let temperatureLocationsString: string = '';
-        // temperatureToEmitWeatherFor.forEach((location) => {
-        //    temperatureLocationsString = temperatureLocationsString.concat(', ', location);
-        // });
-
-        // console.log(`${chalk.magenta(`Session: ${sessionId}`)}, 
-        //   ${chalk.cyan(`rainfall locations: ${temperatureLocationsString}, 
-        //   temperature locations: ${temperatureLocationsString}`)}`);
-
         // We only need to emit data if the user is monitoring a location.
         // Otherwise don't even bother executing the emission code.
         const weatherDataToEmit: WeatherLocationData[] = [];

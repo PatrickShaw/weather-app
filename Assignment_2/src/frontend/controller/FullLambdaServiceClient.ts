@@ -8,8 +8,8 @@
  */
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { RequestResponse } from '../../model/RequestResponse';
-import {WeatherLocationData} from '../../model/WeatherLocationData';
 import SocketKeys from '../../socket.io/socket-keys';
+import {WeatherLocationData} from '../../model/WeatherLocationData';
 interface OnMonitorAddedObserver {
   onMonitorAdded(response: RequestResponse<WeatherLocationData>);
 }
@@ -19,7 +19,7 @@ interface OnMonitorRemovedObserver {
 }
 
 interface OnLocationsRetrievedObserver {
-  onLocationsRetrieved(repsonse: string[]);
+  onLocationsRetrieved(response: string[]);
 }
 
 interface OnServerSetupSucessRetrievedObserver {
