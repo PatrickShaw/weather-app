@@ -1,8 +1,9 @@
 class SoapRequest<T> {
+  public readonly parameters: T;
+
   constructor(data: T) {
     this.parameters = data;
   }
-  public readonly parameters: T;
 }
 export {SoapRequest};
 export default SoapRequest;

@@ -110,7 +110,7 @@ class FullLambdaWeatherService {
     addEventName: string, 
     removeEventName: string,
     sessionManager: SessionMonitoringManager
-  ) {
+  ): void {
     const sessionId = socket.id;
     // Triggered when frontend emits socket.emit(addMonitorEvent, monitor);
     socket.on(addEventName, (monitor: MonitorMetadata) => {
@@ -197,7 +197,7 @@ class FullLambdaWeatherService {
     });
   }
 
-  private onAllLocationsRetrieved(locations: string[]) {
+  private onAllLocationsRetrieved(locations: string[]): void {
     // Retrieves all locations from SOAP client points.
     // Only called once, under the assumption locations are set.
     this.melbourneWeatherLocations = locations;

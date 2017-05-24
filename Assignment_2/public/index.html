@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
+    <script>
+      var map;
+      function initMap() {
+        console.log('initMapCalled');
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxhlLHBbuas8eMitNV0agVB-OHTWACS8A&callback=initMap"
+    async defer></script>
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -17,20 +25,9 @@
     <title>Melbourne Weather - Full Lambda</title>
   </head>
   <body>
-  
 
     <div id="root">
     </div>
-
-
-    <script>
-      var map;
-      function initMap() {
-        console.log('initMapCalled');
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxhlLHBbuas8eMitNV0agVB-OHTWACS8A&callback=initMap"
-    async defer></script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
