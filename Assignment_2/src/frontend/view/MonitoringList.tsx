@@ -31,7 +31,7 @@ class MonitoringList extends React.Component<MonitoringListProps, void> {
         {
           // If a location is in this.props.weatherDataMap then it has information that should be rendered.
           this.props.locations.map((locationMetadata) => {
-            const prefixedLocations: string[] = Array.from(locationMetadata.servicePrefixes);
+            const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
             return prefixedLocations.map((prefixedLocation: string) => {
               const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
                 this.props.weatherDataMap.get(prefixedLocation);
