@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const fs = require('fs');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const paths = require('./paths');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const cssnext = require("postcss-cssnext");
 const publicPath = '/';
 const publicUrl = '';
 module.exports = {
@@ -80,6 +82,14 @@ module.exports = {
                   options: {
                       sourceMap: true
                   }
+                }, 
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        plugins: () => {
+                            return [autoprefixer]
+                        }
+                    }
                 }
               ],
             },
@@ -102,7 +112,16 @@ module.exports = {
                         options: {
                             sourceMap: true
                         }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            plugins: () => {
+                                return [cssnext]
+                            }
+                        }
                     }
+
                 ]
             },
             // JSON loader lets us use JSON files in the app (if we choose to use them)
@@ -128,6 +147,7 @@ module.exports = {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin()
+        // new StyleLintPlugin({ syntax: 'scss'}) uncomment this one day.
     ],
     stats: {
         colors: true,

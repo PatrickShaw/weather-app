@@ -334,7 +334,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
         <button 
           className='button-toggle-service button-margin card' 
           onClick={() => { this.onToggleWeatherService(); }}
-          >
+        >
           <div className='ripple button-padding'>
             {that.state.currentServicePrefix === 'regular_service_' 
             ? 'Melbourne Weather Service' : 'Melbourne Weather Timelapse Service'}
