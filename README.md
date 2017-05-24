@@ -1,5 +1,5 @@
 # FIT3077 Full Lambda Assignment 2
-Please mark Assignment 2 stage 1 from the last commit of Friday 5th May 232f1abdad97543f05df36e5e22f7d212067cb9a, we've isolated this in it's own branch `Assignment2-Stage1`
+Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
 
 ## Student details
 ### Patrick Shaw
@@ -78,6 +78,16 @@ The development-master pattern is used in conjuction with feature branches. Code
 
 ## Other cool things our product does
 Our product can handle multiple sessions from different browsers/tabs. Each will have it's own set of clickable buttons to add and remove rainfall and temperature data. We also cache the weather data so new sessions can be served ASAP.
+
+It also has a google map which can be used to toggle location pins for a weather service.
+
+Location pins represent the intensity of rainfall, with greater rainfall resulting in a deep blue and less rainfall in a light blue pin. If rainfall is not selected it defaults to red. If rainfall in not a valid number it defaults to grey. 
+
+Around each marker is a circle representing the intensity of temperature, the hotter it is the more red the circle. Likewise if temperature is not selected it defaults to a greyish-blue and if temperature is not a valid number it defaults to gery.
+
+Hovering over the pins displays more information about the area.
+
+<img src="/images/screenshot.png"/>
 
 ## Technology stack
 ### Languages & syntax choices
