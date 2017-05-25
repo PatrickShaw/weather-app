@@ -158,11 +158,12 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
                 maxWidth: 400
               });
               
-              // Hacky but typescript requires this.
-              const m: google.maps.Map | undefined = this.googleMap ? this.googleMap : undefined;
-
               pin.addListener('mouseover', () => {
-                infoWindow.open(m, pin);
+                if (this.googleMap != null) {
+                  infoWindow.open(this.googleMap, pin);
+                } else {
+                  throw new Error('Google map != null was false.');
+                }
               });
 
               pin.addListener('mouseout', () => {
@@ -204,9 +205,9 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
           if (monitorData.weatherDataList.length > 0) {
             const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[
               monitorData.weatherDataList.length - 1];
-            rainfallString = recentWeatherData.rainfallData == null 
+            rainfallString = recentWeatherData.rainfallData == null || !monitorData.monitorRainfall
                 ? null : recentWeatherData.rainfallData.rainfall;
-            temperatureString = recentWeatherData.temperatureData == null 
+            temperatureString = recentWeatherData.temperatureData == null || !monitorData.monitorTemperature 
                 ? null : recentWeatherData.temperatureData.temperature;
           } else {
             rainfallString = null;

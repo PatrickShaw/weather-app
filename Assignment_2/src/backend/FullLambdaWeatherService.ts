@@ -75,7 +75,7 @@ class FullLambdaWeatherService {
     this.io.sockets.on('connection', (socket: SocketIO.Socket): void => {  
       // Called when session started with frontend.
       const sessionId: string = socket.id;
-      console.log(`Session started ${sessionId}`);
+      // console.log(`Session started ${sessionId}`);
       // Pass them some fresh data, if the server went down, we should let the API consumers
       socket.emit(SocketKeys.retrievedLocations, this.melbourneWeatherLocations);
       socket.emit(SocketKeys.replaceWeatherData, []);
@@ -91,7 +91,7 @@ class FullLambdaWeatherService {
       }
 
       socket.on('disconnect', () => {
-        console.log(`Session ended: ${sessionId}`);
+        // console.log(`Session ended: ${sessionId}`);
         // Once a session has ended we need to remove it from our records so that the API doesn't try 
         // emit data to the disconnected socket.
         for (const monitoringManager of this.monitoringDataList) {
@@ -120,7 +120,7 @@ class FullLambdaWeatherService {
         const locationMonitoringManager: LocationMonitoringManager | undefined = 
           sessionManager.getLocationMonitorManagerForSession(sessionId);
         if (locationMonitoringManager) {
-          console.log(`Session ID ${chalk.magenta(sessionId)} added monitor ${chalk.magenta(monitor.location)}`);
+          // console.log(`Session ID ${chalk.magenta(sessionId)} added monitor ${chalk.magenta(monitor.location)}`);
           // Can add monitor.
           // Add new location to monitor to all locations that are monitored.
           locationMonitoringManager.addMonitorLocation(monitor);
@@ -167,10 +167,10 @@ class FullLambdaWeatherService {
         const locationMonitoringManager: LocationMonitoringManager | undefined = 
           sessionManager.getLocationMonitorManagerForSession(sessionId);
         if (locationMonitoringManager) {
-          console.log(
+          /*console.log(
             `Session ID ${chalk.magenta(sessionId)} ` +
             `removed ${chalk.magenta(removeEventName)} monitor ${chalk.magenta(monitor.location)}`
-          );
+          );*/
           // Can remove location.
           locationMonitoringManager.removeMonitoredLocation(monitor);
           socket.emit(removeEventName, new RequestResponse(monitor, null));
@@ -220,13 +220,13 @@ class FullLambdaWeatherService {
   private onWeatherLocationDataRetrieved(weatherLocationDataList: WeatherLocationData[]): void {
     // Logs timestamp and weatherLocationDataList in backend before sending data to frontend.
     // Send updated data to front end.
-    const retrievedDataTimeStamp: string = new Date().toString();
+    /*const retrievedDataTimeStamp: string = new Date().toString();
     console.log(
       chalk.green('Retrieved') +
       chalk.magenta(` ${weatherLocationDataList.length} `) +
       chalk.green('weather data items at time:') +
       chalk.magenta(` ${retrievedDataTimeStamp} `)
-    );
+    );*/
 
     // weatherLocationDataList.forEach((weatherLocationData) => {
     //   console.log(chalk.cyan(weatherLocationData.toString()));
@@ -235,7 +235,7 @@ class FullLambdaWeatherService {
     // Note: sockets.sockets is a Socket IO library attribute.
     for (const sessionId of Object.keys(this.io.sockets.sockets)) {
       try {
-        console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
+        // console.info(`Getting monitoring session for session ID: ${chalk.magenta(sessionId)}`);
         let validSessionMonitors: boolean = true;
         for (const monitoringSession of this.monitoringDataList) {
           const sessionManager: SessionMonitoringManager = monitoringSession.sessionManager;
