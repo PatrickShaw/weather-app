@@ -19,7 +19,7 @@ Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
  - OS X El Captain 10.11.6
 	
 ### Browser support
-We use the assignment to try out new features of JavaScript and CSS such as promises and CSS Grid. 
+We used the assignment to try out new features of JavaScript and CSS such as promises and CSS Grid. 
 This limits the compatibility of the app to modern browsers only. Our Webpack transpiler loaders should provide extended compatibility, however, for the sake of marking, the app works correctly on the following browsers:
  - Google Chrome +58.0.3029.110 (64-bit)
  - Firefox 53.0.3
@@ -59,7 +59,7 @@ than is absolutely necessary"*. Our server acts as a cache for the SOAP service'
  - **[Factory pattern](https://en.wikipedia.org/wiki/Factory_method_pattern):** We use the factory pattern to allow the `FullLambdaWeatherService` to create a `WeatherClient` from a `WeatherClientFactory` so that the service does not need to know the underlying steps to create the client. Retry-client-creation functionality will be written into the `FullLambdaWeatherService` as an example of using the pre-existing factory code to potentially build multiple `Promise<WeatherClient>`s.
  - **Seperate GUI and logic**: We almost totally avoid any logic on the frontend of our project. This allows us to provide functionality that is independant of the user's interface. In fact, the only frontend class that performs limited controller functionality is the `WeatherPageContainer` which links the view to the [socket.io](https://socket.io) API. All other frontend classes concern themselves with rendering the DOM in a particular way.
  - **[MVC (Model, view, controller)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller):** The model, view and controller (as previously discussed) are seperated. The `WeatherPageContainer` determines how inputs are interpreted, all other `React.Component`s serve as view type classes. All business type logic is handled by the backend server.
- - **Use [dependency injection](https://en.wikipedia.org/wiki/Dependency_injection):** [Gregory Kick's Java Dagger 2 video](https://www.youtube.com/watch?v=oK_XtfXPkqw) explains dependency injection quite well. As a an example of the benefits of dependency injection in our own code; `WeatherClient` is passed into the `FullLambdaWeatherService`'s constructor. This allows us to swap out the `MelbourneWeatherClient` with a `TestWeatherClient` which allows for easier debugging.
+ - **Use [dependency injection](https://en.wikipedia.org/wiki/Dependency_injection):** [Gregory Kick's Java Dagger 2 video](https://www.youtube.com/watch?v=oK_XtfXPkqw) explains dependency injection quite well. As an example of the benefits of dependency injection in our own code; `WeatherClient` is passed into the `FullLambdaWeatherService`'s constructor. This allows us to swap out the `MelbourneWeatherClient` with a `TestWeatherClient` which allows for easier debugging.
  - **[Composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance):** Self explanatory. This mentality is typically considered to enable more flexibility in code. An example of this was our choice to compose the `LocationItem` of a `GenericListItem` rather than inheriting from it.
 
 ## Guidelines
