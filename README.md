@@ -22,7 +22,7 @@ Please mark Assignment 2 stage 2 from the last commit of Thursday 25th May
 We used the assignment to try out new features of JavaScript and CSS such as promises and CSS Grid. 
 This limits the compatibility of the app to modern browsers only. Our Webpack transpiler loaders should provide extended compatibility, however, for the sake of marking, the app works correctly on the following browsers:
  - Google Chrome +58.0.3029.110 (64-bit)
- - Firefox 53.0.3
+ - Firefox +53.0.3
 
 ## Installation instructions 
 0. Make sure [Node.js](https://nodejs.org/en/download/) is installed.
