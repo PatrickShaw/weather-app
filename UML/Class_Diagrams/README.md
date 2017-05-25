@@ -6,6 +6,8 @@ Images of the sequence diagram can be found in `./images`, pdf versions can be f
 
 ## Backend
 
+The classes and interfaces added in stage two and shown in red.
+
 <img src="/UML/Class_Diagrams/images/backend.png" >
 
 ## Frontend
