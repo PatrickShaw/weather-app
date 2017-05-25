@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 
 interface LineChartProps {
-  monitoredLocationInformation: MonitoredLocationInformation;
+  readonly monitoredLocationInformation: MonitoredLocationInformation;
 }
 
 class LineChart extends React.Component<LineChartProps, void> {

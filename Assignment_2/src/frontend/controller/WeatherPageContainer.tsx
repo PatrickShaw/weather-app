@@ -8,7 +8,7 @@ import {
   OnMonitorAddedObserver,
   OnServerSetupSuccessRetrievedObserver,
   OnWeatherLocationDataListRetrievedObserver,
-} from './FullLambdaServiceClient';
+} from '../../lambda_client/FullLambdaServiceClient';
 
 import { AppState } from '../model/AppState';
 import { LocationServicePrefixer } from '../LocationServicePrefixer';
