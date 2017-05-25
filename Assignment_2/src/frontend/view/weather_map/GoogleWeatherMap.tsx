@@ -56,17 +56,15 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
   private mapContainer;
   private googleMap: google.maps.Map | null;
   private readonly geocoder: GeoCodingService;
-  private readonly onToggleWeatherServiceBound;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
     this.googleMap = null;
     this.state = new WeatherMapState(this.props.regularServicePrefix, new Map<string, LocationMarkerInformation>());  
     this.geocoder = new GeoCodingService();
-    this.onToggleWeatherServiceBound = this.onToggleWeatherService.bind(this);
   }
 
-  private onToggleWeatherService(event: Event) {
+  private onToggleWeatherService() {
       const newServicePrefix 
         = this.state.currentServicePrefix === this.props.regularServicePrefix 
         ? this.props.timelapseServicePrefix 
@@ -333,7 +331,10 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
     return (
       <div className='google-map-container'>
         <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
-        <button className='button-toggle-service button-margin card' onClick={this.onToggleWeatherServiceBound}>
+        <button 
+          className='button-toggle-service button-margin card' 
+          onClick={() => { this.onToggleWeatherService(); }}
+        >
           <div className='ripple button-padding'>
             {that.state.currentServicePrefix === 'regular_service_' 
             ? 'Melbourne Weather Service' : 'Melbourne Weather Timelapse Service'}

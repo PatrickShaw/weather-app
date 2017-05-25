@@ -18,8 +18,6 @@ interface LocationItemProps {
   readonly onRainfallMonitorClickedObserver?: OnLocationItemClickedObserver;
   // Specifies what happens when the temperature monitor button is clicked.
   readonly onTemperatureMonitorClickedObserver?: OnLocationItemClickedObserver;
-  // Specifies what happens when graph toggle button clicked.
-  readonly onGraphMonitorClickedObserver?: OnLocationItemClickedObserver;
 }
 
 /**
@@ -29,25 +27,11 @@ interface LocationItemProps {
 class LocationItem extends React.Component<LocationItemProps, void> {
   // The bound versions of the original click methods.
   // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
-  private onRainfallMonitorButtonClickedBound: any;
-  private onTemperatureMonitorButtonClickedBound: any;
-  private onGraphMonitorButtonClickedBound: any;
-  constructor(props: LocationItemProps) {
-    super(props);
-    this.onRainfallMonitorButtonClickedBound = this.onRainfallMonitorButtonClicked.bind(this);
-    this.onTemperatureMonitorButtonClickedBound = this.onTemperatureMonitorButtonClicked.bind(this);
-    this.onGraphMonitorButtonClickedBound = this.onGraphMonitorButtonClicked.bind(this);
-  }
-
-  private onGraphMonitorButtonClicked(): void {
-    console.log('Graph Monitor Button Clicked');
-  }
+ 
   /**
    * The unbound method that triggers the rainfall monitor click observer to fire.
    */
-  private onRainfallMonitorButtonClicked(
-    event: React.MouseEvent<HTMLElement>
-  ): void {
+  private onRainfallMonitorButtonClicked(): void {
     if (this.props.onRainfallMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
       this.props.onRainfallMonitorClickedObserver.onItemClicked(
@@ -60,9 +44,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
   /**
    * The unbound method that triggers the temperature monitor click observer to fire.
    */
-  private onTemperatureMonitorButtonClicked(
-    event: React.MouseEvent<HTMLElement>
-  ): void {
+  private onTemperatureMonitorButtonClicked(): void {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
       this.props.onTemperatureMonitorClickedObserver.onItemClicked(
@@ -78,7 +60,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
         <div className='location-item'>
           <GenericListItem title={`${this.props.location} (${this.props.serviceTitle})`}>
               <button 
-                onClick={this.onRainfallMonitorButtonClickedBound}
+                onClick={() => { this.onRainfallMonitorButtonClicked(); }}
                 className={
                   `button-margin button-padding ripple` + 
                   `${this.props.rainfallMonitorSelected ? ' selected' : ''}`
@@ -87,7 +69,7 @@ class LocationItem extends React.Component<LocationItemProps, void> {
                 Rain
               </button>
               <button 
-                onClick={this.onTemperatureMonitorButtonClickedBound}
+                onClick={() => {this.onTemperatureMonitorButtonClicked(); }}
                 className={
                   `button-margin button-padding ripple` + 
                   `${this.props.temperatureMonitorSelected ? ' selected' : ''}`

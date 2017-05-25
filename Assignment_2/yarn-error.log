@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add @types/react-dom
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add postcss-loader
 
 PATH: 
   C:\Program Files\nodejs\;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\IntelSGXPSW\bin\x64\Release\;C:\Program Files\Intel\IntelSGXPSW\bin\win32\Release\;C:\Go\bin;C:\WINDOWS\system32\config\systemprofile\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\HashiCorp\Vagrant\bin;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Program Files\Git LFS;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Java\jdk1.8.0_66\bin;C:\Program Files\Splunk\bin\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\MySQL\MySQL Utilities 1.6\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files (x86)\Yarn\bin;C:\Program Files\MATLAB\R2017a\runtime\win64;C:\Program Files\MATLAB\R2017a\bin;C:\Strawberry\perl\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\c\bin;C:\Users\eastd\AppData\Local\Programs\Python\Python35\Scripts\;C:\Users\eastd\AppData\Local\Programs\Python\Python35\;C:\RailsInstaller\Git\cmd;C:\RailsInstaller\Ruby2.1.0\bin;C:\Program Files\TortoiseSVN\bin;c:\Program Files\Intel\WiFi\bin\;c:\Program Files\Common Files\Intel\WirelessCommon\;C:\Users\eastd\AppData\Local\atom\bin;C:\Users\eastd\AppData\Local\Microsoft\WindowsApps;C:\Program Files\NuSMV\bin;C:\Users\eastd\AppData\Roaming\npm;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\eastd\AppData\Local\Yarn\.bin
@@ -37,10 +37,9 @@ npm manifest:
     "license": "MIT",
     "scripts": {
       "start": "concurrently --kill-others \"npm run backend-start\" \"npm run frontend-start\"",
-      "backend-offline-chart-support-start": "node scripts/backend-offline-chart-support-start.js",
+      "backend-start": "node scripts/backend-start.js",
       "backend-offline-start": "node scripts/backend-offline-start.js",
-      "frontend-start": "node scripts/frontend-start.js",
-      "backend-start": "node scripts/backend-start.js"
+      "frontend-start": "node scripts/frontend-start.js"
     },
     "dependencies": {
       "@google/maps": "^0.3.1",
@@ -52,6 +51,7 @@ npm manifest:
       "@types/moment": "^2.13.0",
       "@types/node": "^7.0.21",
       "@types/react": "^15.0.24",
+      "@types/react-dom": "^15.5.0",
       "@types/socket.io": "^1.4.29",
       "@types/socket.io-client": "^1.4.29",
       "@types/webpack": "^2.2.15",
@@ -60,10 +60,8 @@ npm manifest:
       "chart.js": "^2.5.0",
       "moment": "^2.18.1",
       "react": "^15.5.4",
-      "react-chartjs": "^0.8.0",
       "react-chartjs-2": "^2.1.0",
       "react-dom": "^15.5.4",
-      "react-google-maps": "^6.3.0",
       "soap-as-promised": "^1.19.1",
       "socket.io": "^2.0.1",
       "socket.io-client": "^1.7.3"

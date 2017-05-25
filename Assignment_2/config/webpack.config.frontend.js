@@ -5,8 +5,11 @@ const webpack = require('webpack');
 const fs = require('fs');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const paths = require('./paths');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 const publicPath = '/';
 const publicUrl = '';
+const postcssPlugins = [autoprefixer];
 module.exports = {
     output: {
         path: paths.appBuild,
@@ -16,7 +19,7 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },  
     name: 'Frontend Server',
-    entry: paths.appIndexJs,
+    entry: ['babel-polyfill', paths.appIndexJs],
     devtool: 'source-map',
     module: {
         rules: [
@@ -80,6 +83,14 @@ module.exports = {
                   options: {
                       sourceMap: true
                   }
+                }, 
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        plugins: () => {
+                            return postcssPlugins;
+                        }
+                    }
                 }
               ],
             },
@@ -102,7 +113,16 @@ module.exports = {
                         options: {
                             sourceMap: true
                         }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            plugins: () => {
+                                return postcssPlugins;
+                            }
+                        }
                     }
+
                 ]
             },
             // JSON loader lets us use JSON files in the app (if we choose to use them)
@@ -128,6 +148,7 @@ module.exports = {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin()
+        // new StyleLintPlugin({ syntax: 'scss'}) uncomment this one day.
     ],
     stats: {
         colors: true,
