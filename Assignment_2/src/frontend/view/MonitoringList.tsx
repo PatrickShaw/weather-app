@@ -2,7 +2,7 @@ import './MonitoringList.scss';
 
 import * as React from 'react';
 
-import {LocationMetadata } from '../model/LocationMetadata';
+import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
