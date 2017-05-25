@@ -4,10 +4,10 @@
  * Please note that, for addMonitorEvent and removeMonitorEvent we would be better off using a REST API as
  * socket.io is not designed for that kind of thing. 
  */
-import { MonitorMetadata } from '../../model/MonitorMetadata';
-import { RequestResponse } from '../../model/RequestResponse';
-import SocketKeys from '../../socket.io/socket-keys';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { MonitorMetadata } from '../model/MonitorMetadata';
+import { RequestResponse } from '../model/RequestResponse';
+import SocketKeys from '../socket.io/socket-keys';
+import { WeatherLocationData } from '../model/WeatherLocationData';
 
 interface OnMonitorAddedObserver {
   onMonitorAdded(response: RequestResponse<WeatherLocationData>): void;

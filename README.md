@@ -2,7 +2,6 @@
 Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
 
 :ship::100::heavy_check_mark:
-
 ## Student details
 ### Patrick Shaw
 - **Student email:** psha67@student.monash.edu
@@ -18,6 +17,12 @@ Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
 ## Tested envionments
  - Windows 10 Home (OS Build 14393.1066)
  - OS X El Captain 10.11.6
+	
+### Browser support
+We use the assignment to try out new features of JavaScript and CSS such as promises and CSS Grid. 
+This limits the compatibility of the app to modern browsers only. Our Webpack transpiler loaders should provide extended compatibility, however, for the sake of marking, the app works correctly on the following browsers:
+ - Google Chrome +58.0.3029.110 (64-bit)
+ - Firefox 53.0.3
 
 ## Installation instructions 
 0. Make sure [Node.js](https://nodejs.org/en/download/) is installed.
@@ -33,6 +38,9 @@ Please mark Assignment 2 stage 2 from the last commit of Thursday 2th May
 10. Type into the URL bar: *'localhost:3000'*.
 
 **Note:** You MUST wait for the backend's compilation to finish before running `npm run frontend-start`. This is an issue with having two Webpack builds running at the same time in the same folder with similar configurations. It is assumed that a solution to this problem is out of scope for this assignment.
+
+## Assignment 2
+The report resides in the repository with the file name: [FIT3077_Assignment2_Stage2_Report_26029391_26898187_FullLambda](/FIT3077_Assignment2_Stage2_Report_26029391_26898187_FullLambda.pdf).
 
 ## UML Diagrams
 - [Class diagrams](/UML/Class_Diagrams/README.md)

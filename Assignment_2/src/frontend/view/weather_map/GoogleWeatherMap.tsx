@@ -2,7 +2,7 @@ import './GoogleWeatherMap.scss';
 
 import * as React from 'react';
 
-import { GeoCodingService } from './utils/GeoCodingService';
+import { GeoCodingServiceClient } from './utils/GeoCodingServiceClient';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
 
@@ -40,7 +40,7 @@ class LocationMarkerInformation {
   }
 }
 
-class WeatherMapState {
+class GoogleWeatherMapState {
   public readonly locationInfoMap: Map<string, LocationMarkerInformation | null>;
   public readonly currentServicePrefix: string;
   constructor(
@@ -52,16 +52,18 @@ class WeatherMapState {
   }
 }
 
-class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMapState> {
+class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeatherMapState> {
   private mapContainer;
   private googleMap: google.maps.Map | null;
-  private readonly geocoder: GeoCodingService;
+  private readonly geocoder: GeoCodingServiceClient;
 
   constructor(props: GoogleWeatherMapProps) {
     super(props);
     this.googleMap = null;
-    this.state = new WeatherMapState(this.props.regularServicePrefix, new Map<string, LocationMarkerInformation>());  
-    this.geocoder = new GeoCodingService();
+    this.state = new GoogleWeatherMapState(
+      this.props.regularServicePrefix, new Map<string, LocationMarkerInformation>()
+    );  
+    this.geocoder = new GeoCodingServiceClient();
   }
 
   private onToggleWeatherService() {
@@ -156,11 +158,12 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
                 maxWidth: 400
               });
               
-              // Hacky but typescript requires this.
-              const m: google.maps.Map | undefined = this.googleMap ? this.googleMap : undefined;
-
               pin.addListener('mouseover', () => {
-                infoWindow.open(m, pin);
+                if (this.googleMap != null) {
+                  infoWindow.open(this.googleMap, pin);
+                } else {
+                  throw new Error('Google map != null was false.');
+                }
               });
 
               pin.addListener('mouseout', () => {
@@ -202,9 +205,9 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, WeatherMap
           if (monitorData.weatherDataList.length > 0) {
             const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[
               monitorData.weatherDataList.length - 1];
-            rainfallString = recentWeatherData.rainfallData == null 
+            rainfallString = recentWeatherData.rainfallData == null || !monitorData.monitorRainfall
                 ? null : recentWeatherData.rainfallData.rainfall;
-            temperatureString = recentWeatherData.temperatureData == null 
+            temperatureString = recentWeatherData.temperatureData == null || !monitorData.monitorTemperature 
                 ? null : recentWeatherData.temperatureData.temperature;
           } else {
             rainfallString = null;
