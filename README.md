@@ -27,9 +27,9 @@ This limits the compatibility of the app to modern browsers only. Our Webpack tr
 ## Installation instructions 
 0. Make sure [Node.js](https://nodejs.org/en/download/) is installed.
 1. Open up a terminal.
-2. cd to desired folder.
-3. git clone https://github.com/Monash-University-FIT3077/fulllambda-Assignments.git
-4. cd fulllambda-Assignments/Assignment_2
+2. `cd` to desired folder.
+3. `git clone https://github.com/Monash-University-FIT3077/fulllambda-Assignments.git`
+4. `cd fulllambda-Assignments/Assignment_2`
 5. Run `npm install`. If you have yarn installed you can use `yarn install`. Wait for all the node packages to finish downloading.
 6. Run `npm run backend-start`. Wait for the the *'Webpack configuration complete'* message to be printed to the console.
 7. Open up another terminal.
