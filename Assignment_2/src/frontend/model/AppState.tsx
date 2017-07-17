@@ -1,15 +1,18 @@
 import { LocationMetadata } from './LocationMetadata';
 import { LocationServicePrefixer } from '../LocationServicePrefixer';
 import { MonitoredLocationInformation } from './MonitoredLocationInformation';
-
+import { observable } from 'mobx';
 class AppState {
-  public readonly sortedLocations: LocationMetadata[];
+  @observable
+  public sortedLocations: LocationMetadata[];
   // weatherDataMap is responsible for keeping track of cards to render.
   // Maps locations to MonitoredLocationInformation which has what information needs to be rendered.
   // So weatherDataMap holds all info that a location needs to render for all locations.
-  public readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
+  @observable
+  public weatherDataMap: Map<string, MonitoredLocationInformation>;
   // Whether or not the frontend has fully connected to the server
-  public readonly connectedToServer: boolean;
+  @observable
+  public connectedToServer: boolean;
   constructor(
     sortedLocations: LocationMetadata[],
     weatherDataMap: Map<string, MonitoredLocationInformation>,

@@ -75,8 +75,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           AppState.insertServiceLocation(this.state, servicePrefix, location);
         }
         console.log(this.state);
-        // Render the changes we just made to the state.
-        this.setState({ sortedLocations: this.state.sortedLocations, weatherDataMap: this.state.weatherDataMap});
     };
   }
 
@@ -104,8 +102,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           // Add this weatherLocationData received to array of weatherLocationData.
           monitoredLocationInformation.weatherDataList.push(weatherLocationData);
         }
-        // Tell react to re-render.
-        this.setState({ weatherDataMap: newWeatherDataMap });
     };
   }
 
@@ -127,7 +123,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           } else {
             console.error('Could not find monitoring data');
           }
-          this.setState({ weatherDataMap });
         } else {
           console.error(addMonitorResponse.error);
         }
@@ -150,7 +145,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           );
           // Update WeatherDataMap.
           this.state.weatherDataMap.set(locationKey, newMonitoredLocationInformation);
-          this.setState({ weatherDataMap: this.state.weatherDataMap });  // Make react re-render.          
         } else {
           console.error(`Error: monitoredLocationInformation could not be found for ${locationKey}`);
         }
@@ -178,11 +172,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
 
         // Add new data to the state in AppState weatherMap in memory.
         this.state.weatherDataMap.set(prefixedLocation, newData);
-        // Makes react render the new state.
-        this.setState({
-          weatherDataMap: this.state.weatherDataMap
-        });
-        
+
         this.onMonitorSelected(
           this.selectServiceClient(prefixedLocation).rainfallMonitorConnection, 
           new MonitorMetadata(newData.location),
@@ -205,9 +195,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           originalData.monitorGraph
         );
         this.state.weatherDataMap.set(prefixedLocation, newData);
-        this.setState({
-          weatherDataMap: this.state.weatherDataMap
-        });
         this.onMonitorSelected(
           this.selectServiceClient(prefixedLocation).temperatureMonitorConnection,
           new MonitorMetadata(newData.location),
@@ -263,8 +250,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     // Create the server setup observer.
     serviceClient.addOnServerSetupSuccessRetrievedObserver(
         (success: boolean) => {
-          // Note that we assume that it's fine to show the GUI if only 1 of the backend services is working properly.
-          this.setState({ connectedToServer: success });
+          this.state.connectedToServer = success;
         }
     );
     serviceClient.addOnLocationsRetrievedObserver(this.createOnLocationsRetrievedObserver(servicePrefix, serviceTitle));
