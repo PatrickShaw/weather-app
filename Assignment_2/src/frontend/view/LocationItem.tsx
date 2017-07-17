@@ -34,7 +34,7 @@ class LocationItem extends React.Component<LocationItemProps, {}> {
   private onRainfallMonitorButtonClicked(): void {
     if (this.props.onRainfallMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
-      this.props.onRainfallMonitorClickedObserver.onItemClicked(
+      this.props.onRainfallMonitorClickedObserver(
         this.props.prefixedLocation, 
         this.props.rainfallMonitorSelected
       );
@@ -47,7 +47,7 @@ class LocationItem extends React.Component<LocationItemProps, {}> {
   private onTemperatureMonitorButtonClicked(): void {
     if (this.props.onTemperatureMonitorClickedObserver != null) {
       // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
-      this.props.onTemperatureMonitorClickedObserver.onItemClicked(
+      this.props.onTemperatureMonitorClickedObserver(
         this.props.prefixedLocation, 
         this.props.temperatureMonitorSelected
       );

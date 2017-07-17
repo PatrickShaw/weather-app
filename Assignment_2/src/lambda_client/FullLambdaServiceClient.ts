@@ -8,26 +8,11 @@ import { MonitorMetadata } from '../model/MonitorMetadata';
 import { RequestResponse } from '../model/RequestResponse';
 import SocketKeys from '../socket.io/socket-keys';
 import { WeatherLocationData } from '../model/WeatherLocationData';
-
-interface OnMonitorAddedObserver {
-  onMonitorAdded(response: RequestResponse<WeatherLocationData>): void;
-}
-
-interface OnMonitorRemovedObserver {
-  onMonitorRemoved(response: RequestResponse<MonitorMetadata>): void;
-}
-
-interface OnLocationsRetrievedObserver {
-  onLocationsRetrieved(response: string[]): void;
-}
-
-interface OnServerSetupSuccessRetrievedObserver {
-  onServerSetupSuccessRetrieved(success: boolean): void;
-}
-
-interface OnWeatherLocationDataListRetrievedObserver {
-  onWeatherLocationDataListRetrieved(weatherLocationDataList: WeatherLocationData[]): void;
-}
+type OnMonitorAddedObserver = (response: RequestResponse<WeatherLocationData>) => void;
+type OnMonitorRemovedObserver = (response: RequestResponse<MonitorMetadata>) => void;
+type OnLocationsRetrievedObserver = (response: string[]) => void;
+type OnServerSetupSuccessRetrievedObserver = (success: boolean) => void;
+type OnWeatherLocationDataListRetrievedObserver = (weatherLocationDataList: WeatherLocationData[]) => void;
 
 /**
  * Essentially just a wrapper around the add and remove socket IO events.
@@ -54,13 +39,13 @@ class MonitorConnection {
   public initializeSocketEndPoints(): void {
     this.socket.on(this.addMonitorEvent, (response: RequestResponse<WeatherLocationData>) => {
       for (const observer of this.onMonitorAddedObservers) {
-        observer.onMonitorAdded(response);
+        observer(response);
       }
     });
 
     this.socket.on(this.removeMonitorEvent, (response: RequestResponse<MonitorMetadata>) => {
       for (const observer of this.onMonitorRemovedObservers) {
-        observer.onMonitorRemoved(response);
+        observer(response);
       }
     });
   }
@@ -127,17 +112,17 @@ class FullLambdaServiceClient {
     // When socket.on('even') occurs, trigger observers.
     this.socket.on(SocketKeys.replaceWeatherData, (weatherDataList: WeatherLocationData[]) => {
       for (const observer of this.onWeatherLocationDataListRetrievedObservers) {
-        observer.onWeatherLocationDataListRetrieved(weatherDataList);
+        observer(weatherDataList);
       }
     });
     this.socket.on(SocketKeys.retrievedLocations, (locations) => {
       for (const observer of this.onLocationsRetrievedObservers) {
-        observer.onLocationsRetrieved(locations);
+        observer(locations);
       }
     });
     this.socket.on(SocketKeys.successfulServerSetup, (success: boolean) => {
       for (const observer of this.onServerSetupSuccessRetrievedObservers) {
-        observer.onServerSetupSuccessRetrieved(success);
+        observer(success);
       }
     });
   }

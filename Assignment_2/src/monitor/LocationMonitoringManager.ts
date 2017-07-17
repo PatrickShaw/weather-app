@@ -3,16 +3,12 @@ import { MonitorMetadata } from '../model/MonitorMetadata';
 /**
  * Represents an observer who's method is called when a monitored location is added to a location manager.
  */
-interface OnAddedMonitoredLocationObserver {
-  onAddedMonitoredLocation(monitor: MonitorMetadata): void;
-}
+type OnAddedMonitoredLocationObserver = (monitor: MonitorMetadata) => void;
 
 /**
  * Represents an observer who's method is called when a monitored location is removed from a location manager.
  */
-interface OnRemovedMonitoredLocationObserver {
-  onRemovedMonitoredLocation(monitor: MonitorMetadata): void;
-}
+type OnRemovedMonitoredLocationObserver = (monitor: MonitorMetadata) => void;
 
 /**
  * Controller class to monitor which locations are required to display data for, one instance for each frontend session.
@@ -57,7 +53,7 @@ class LocationMonitoringManager {
     if (!this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.set(monitor.location, monitor);
       for (const onAddedMonitoredLocationObserver of this.onAddedMonitoredLocationObservers) {
-        onAddedMonitoredLocationObserver.onAddedMonitoredLocation(monitor);
+        onAddedMonitoredLocationObserver(monitor);
       }
     }
   }
@@ -69,7 +65,7 @@ class LocationMonitoringManager {
     if (this.monitoredLocations.has(monitor.location)) {
       this.monitoredLocations.delete(monitor.location);
       for (const onRemovedMonitoredLocationObserver of this.onRemovedMonitoredLocationObservers) {
-        onRemovedMonitoredLocationObserver.onRemovedMonitoredLocation(monitor);
+        onRemovedMonitoredLocationObserver(monitor);
       }
     }
   }

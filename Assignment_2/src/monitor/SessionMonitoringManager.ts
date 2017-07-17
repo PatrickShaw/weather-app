@@ -24,24 +24,20 @@ class SessionMonitoringManager {
   private readonly onRemovedMonitoredLocationObserver: OnRemovedMonitoredLocationObserver;
 
   constructor() {
-    const that: SessionMonitoringManager = this;
     this.monitoringSessions = new Map<string, LocationMonitoringManager>();
     this.sessionMonitoringLocationCounts = new Map<string, number>();
-    this.onAddedMonitoredLocationObserver = new class implements OnAddedMonitoredLocationObserver {
-      public onAddedMonitoredLocation(monitor: MonitorMetadata): void {
-        if (!(monitor.location in that.sessionMonitoringLocationCounts)) {
-          that.sessionMonitoringLocationCounts.set(monitor.location, 1);
+    this.onAddedMonitoredLocationObserver =
+      (monitor: MonitorMetadata) => {
+        if (!(monitor.location in this.sessionMonitoringLocationCounts)) {
+          this.sessionMonitoringLocationCounts.set(monitor.location, 1);
         } else {
-          that.incrementLocationCountFromMonitor(monitor, 1);
+          this.incrementLocationCountFromMonitor(monitor, 1);
         }
-      }
-    }();
+    };
 
-    this.onRemovedMonitoredLocationObserver = new class implements OnRemovedMonitoredLocationObserver {
-      public onRemovedMonitoredLocation(monitor: MonitorMetadata): void {
-        that.incrementLocationCountFromMonitor(monitor, -1);
-      }
-    }();
+    this.onRemovedMonitoredLocationObserver = (monitor: MonitorMetadata) => {
+      this.incrementLocationCountFromMonitor(monitor, -1);
+    };
   }
 
   /**

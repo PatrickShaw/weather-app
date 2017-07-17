@@ -107,7 +107,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
         <section className='buttons'>
           <button 
             className='button-margin button-padding ripple' 
-            onClick={() => that.props.onGraphToggleClickedObserver.onItemClicked(
+            onClick={() => that.props.onGraphToggleClickedObserver(
               this.props.prefixedLocation
             )}
           >

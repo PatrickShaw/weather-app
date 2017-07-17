@@ -330,7 +330,6 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
 
   public render(): JSX.Element {
     this.filterMarkers();
-    const that = this;
     return (
       <div className='google-map-container'>
         <div className='google-map' ref={(mapContainer) => { this.mapContainer = mapContainer; }}/>
@@ -339,7 +338,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
           onClick={() => { this.onToggleWeatherService(); }}
         >
           <div className='ripple button-padding'>
-            {that.state.currentServicePrefix === 'regular_service_' 
+            {this.state.currentServicePrefix === 'regular_service_' 
             ? 'Melbourne Weather Service' : 'Melbourne Weather Timelapse Service'}
           </div>
         </button>
