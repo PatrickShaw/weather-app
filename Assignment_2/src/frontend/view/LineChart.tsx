@@ -46,11 +46,7 @@ class LineChart extends React.Component<LineChartProps, {}> {
         // Show rainfall on graph.
         if (weatherData.rainfallData != null && weatherData.rainfallData.rainfall != null) {
           rainfallPoint = parseFloat(weatherData.rainfallData.rainfall);
-          if (isNaN(rainfallPoint)) {
-            rainfallPoint = null;
-          } else {
-            rainfallPoint = Math.round(rainfallPoint * 100) / 100; // Round to two decimal places.
-          }
+          rainfallPoint = isNaN(rainfallPoint) ? null : Math.round(rainfallPoint * 100) / 100;
           timestamp = weatherData.rainfallData.timestamp;
         }
       }
@@ -60,11 +56,7 @@ class LineChart extends React.Component<LineChartProps, {}> {
         // Show temperature on graph.
         if (weatherData.temperatureData != null && weatherData.temperatureData.temperature != null) {
           temperaturePoint = parseFloat(weatherData.temperatureData.temperature);
-          if (isNaN(temperaturePoint)) {
-            temperaturePoint = null;
-          } else {
-            temperaturePoint = Math.round(temperaturePoint * 100) / 100; // Round to two decimal places.
-          }
+          temperaturePoint = isNaN(temperaturePoint) ? null : Math.round(temperaturePoint * 100) / 100;
           timestamp = weatherData.temperatureData.timestamp;  
         }
       }
