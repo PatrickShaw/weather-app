@@ -1,4 +1,4 @@
-import './LocationItem.scss';
+import './LocationItem.css';
 
 import * as React from 'react';
 

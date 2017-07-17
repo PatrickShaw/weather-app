@@ -1,4 +1,4 @@
-import './LineChart.scss';
+import './LineChart.css';
 
 import * as Chart from 'react-chartjs-2';
 import * as React from 'react';

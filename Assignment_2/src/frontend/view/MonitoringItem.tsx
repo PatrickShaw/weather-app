@@ -1,4 +1,4 @@
-import './MonitoringItem.scss';
+import './MonitoringItem.css';
 
 import * as React from 'react';
 

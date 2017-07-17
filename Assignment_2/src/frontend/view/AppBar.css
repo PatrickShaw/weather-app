@@ -1,0 +1,7 @@
+.app-bar {
+  background: var(--color-primary);
+  padding: var(--app-bar-padding);
+}
+.txt-app-bar-title {
+  margin-bottom: var(--layout-padding-sm);
+}

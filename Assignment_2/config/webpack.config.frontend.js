@@ -39,7 +39,7 @@ module.exports = {
                 /\.html$/,
                 /\.(js|jsx)$/,
                 /\.(ts|tsx)$/,
-                /\.scss$/,
+                /\.css$/,
                 /\.sass$/,
                 /\.css$/,
                 /\.json$/,
@@ -93,37 +93,6 @@ module.exports = {
                     }
                 }
               ],
-            },
-            // These are the loaders that let us use SASS 
-            {
-                test: /\.(scss|sass)$/,
-                exclude: [/node_modules/],
-                use: [
-                    {
-                        loader: 'style-loader'
-                    },
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            plugins: () => {
-                                return postcssPlugins;
-                            }
-                        }
-                    }
-
-                ]
             },
             // JSON loader lets us use JSON files in the app (if we choose to use them)
             {

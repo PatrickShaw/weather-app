@@ -1,4 +1,4 @@
-import './GoogleWeatherMap.scss';
+import './GoogleWeatherMap.css';
 
 import * as React from 'react';
 

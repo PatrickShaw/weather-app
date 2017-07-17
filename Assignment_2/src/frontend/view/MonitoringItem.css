@@ -1,0 +1,17 @@
+.worded-measurements {
+  padding-right: var(--layout-padding-lg);
+  padding-left: var(--layout-padding-lg);
+  padding-top: var(--layout-padding-lg);
+}
+.graph-container {
+  padding-left: var(--layout-padding-lg);
+  padding-right: var(--layout-padding-lg);
+  padding-top: var(--layout-padding-lg); 
+  min-height: 152px;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: var(--layout-padding-md);
+  justify-content: flex-end;
+}

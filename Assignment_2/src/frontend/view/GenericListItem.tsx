@@ -1,4 +1,4 @@
-import './GenericListItem.scss';
+import './GenericListItem.css';
 
 import * as React from 'react';
 

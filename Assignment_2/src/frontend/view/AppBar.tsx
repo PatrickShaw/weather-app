@@ -1,4 +1,4 @@
-import './AppBar.scss';
+import './AppBar.css';
 
 import * as React from 'react';
 

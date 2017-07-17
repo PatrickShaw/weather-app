@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/@types/googlemaps/index.d.ts" />
-import './theme/full-lambda-theme.scss';
+import './theme/full-lambda-theme.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';

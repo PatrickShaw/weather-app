@@ -1,0 +1,32 @@
+@import 'wtf-material/material/material-theme.css';
+@import 'wtf-material/material/constants/text-constants.css';
+@import 'wtf-material/material/constants/color-palette.css';
+@import 'wtf-material/material/constants/colors.css';
+@import 'wtf-material/material/constants/layout-constants.css';
+:root {
+  --color-primary: var(--blue-500);
+  --color-accent: var(--orange-a700);
+  --color-dark: var(--blue-grey-900);
+  --color-good: var(--green-a700);
+}
+body {
+  background: var(--color-dark);
+}
+button { 
+  padding: 0;
+  margin: 0;
+  color: var(--color-accent);
+  background: rgba(0,0,0,0);
+  border: 0;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: var(--txt-size-button-english);
+  font-weight: var(--txt-weight-button-english);
+  text-transform: var(--txt-transform-button);
+  letter-spacing: var(--txt-letter-spacing-button);
+}
+button:focus {
+  outline-color: var(--color-accent);
+}

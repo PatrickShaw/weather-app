@@ -1,11 +1,9 @@
-@import '../theme/full-lambda-dimens';
-$monitoring-list-gap: $layout-padding-lg;
 .monitoring-list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   display: grid;
-  grid-gap: $monitoring-list-gap;
+  grid-gap: var(--layout-padding-lg);
   grid-template-columns: 1fr;
 }
 @media (min-width: 872px){

@@ -1,0 +1,68 @@
+:root {
+  --main-minimum-height: 600px;
+}
+.weather-page {
+ display: flex; 
+ flex-direction: row;
+ flex-wrap: wrap;
+}
+
+.error {
+  color: red;
+  background-color: yellow;
+  font-size: 200%;
+}
+
+.main-content { 
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+.monitoring-container {
+  min-height: var(--main-minimum-height);
+  background: var(--background-1-light);
+  flex-grow: 1;
+}
+.weather-card-container {
+  margin: var(--layout-padding-xl);
+}
+.weather-map-container {
+  height: 400px;
+  margin-left: var(--layout-padding-xl);
+  margin-right: var(--layout-padding-xl);
+  margin-bottom: var(--layout-padding-xl);
+}
+
+.sidebar {
+  min-height: var(--main-minimum-height);
+  background: var(--background-1-light);
+  flex-basis: 300px;
+  box-shadow: 0px 0px 6px 2.5px var(--shadow-dark);
+  z-index: 9;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.page-app-bar {
+  width: 100%;
+  z-index: 10;
+  box-shadow: 0px 0px 6px 5px var(--shadow-dark);
+} 
+
+.title-section {
+  padding-left: var(--layout-padding-xl);
+  padding-right: var(--layout-padding-xl);
+  padding-top: var(--layout-padding-xl);
+  padding-bottom: var(--layout-padding-lg);
+}
+
+.page-footer {
+  width: 100%;
+  padding: var(--layout-padding-lg);
+  background: var(--color-dark);
+}
+
+.copyright {
+  color: var(--txt-color-secondary-light);
+}
+

@@ -1,4 +1,4 @@
-import './WeatherPage.scss';
+import './WeatherPage.css';
 
 import * as React from 'react';
 
