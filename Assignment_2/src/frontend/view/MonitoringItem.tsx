@@ -71,7 +71,6 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
     // At least 1 timestamp must be valid as only triggered when data (either rainfall or temperature) is fetched.
     // At the very least it will be the most recent entry, later than all other entries in this.timestampDataPoints.
     // Now we're going to specify the markup for the card itself.
-    const that: MonitoringItem = this;
     return (
       // TODO <<: Change so relies on monitoredLocationInformation instead of the currentWeatherData.
       <section>
@@ -107,7 +106,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
         <section className='buttons'>
           <button 
             className='button-margin button-padding ripple' 
-            onClick={() => that.props.onGraphToggleClickedObserver(
+            onClick={() => this.props.onGraphToggleClickedObserver(
               this.props.prefixedLocation
             )}
           >

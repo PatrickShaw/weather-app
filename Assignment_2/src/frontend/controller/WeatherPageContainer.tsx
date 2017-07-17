@@ -55,14 +55,13 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     servicePrefix: string, 
     serviceTitle: string
   ): OnLocationsRetrievedObserver {
-    const that: WeatherPageContainer = this;
     // Set the locations and 
     return (sortedLocations: string[]) => {
         // Now that we have the locations, we need to initialize the MonitoredLocationInformation.
         // You could lazy-initialize them but that would more complicated code with minimal benefits.
         for (const location of sortedLocations) {
           const prefixedLocation: string = LocationServicePrefixer.prefixLocation(servicePrefix, location);
-          that.state.weatherDataMap.set(
+          this.state.weatherDataMap.set(
             prefixedLocation, 
             new MonitoredLocationInformation(
               location,
@@ -73,17 +72,16 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
               false
             )
           );
-          AppState.insertServiceLocation(that.state, servicePrefix, location);
+          AppState.insertServiceLocation(this.state, servicePrefix, location);
         }
-        console.log(that.state);
+        console.log(this.state);
         // Render the changes we just made to the state.
-        that.setState({ sortedLocations: that.state.sortedLocations, weatherDataMap: that.state.weatherDataMap});
+        this.setState({ sortedLocations: this.state.sortedLocations, weatherDataMap: this.state.weatherDataMap});
     };
   }
 
   // Create anon class to handle retrieving a list of weather data.
   private createWeatherDataListRetrievedObserver(servicePrefix: string): OnWeatherLocationDataListRetrievedObserver {
-    const that: WeatherPageContainer = this;
     return (weatherLocationDataList: WeatherLocationData[]) => {
         // We received some fresh weather data.
         // Tell React that we may need to re-render
@@ -94,8 +92,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
         console.log('Received weather location data at time: ' + timeStamp);
         console.log(weatherLocationDataList);
           
-        const newWeatherDataMap: Map<string, MonitoredLocationInformation> = that.state.weatherDataMap;
-        console.log(that.state);
+        const newWeatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
+        console.log(this.state);
         // Loop for each WeatherLocationData object sent by backend.
         for (const weatherLocationData of weatherLocationDataList) {
           const monitoredLocationInformation: MonitoredLocationInformation | undefined = newWeatherDataMap
@@ -107,19 +105,18 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           monitoredLocationInformation.weatherDataList.push(weatherLocationData);
         }
         // Tell react to re-render.
-        that.setState({ weatherDataMap: newWeatherDataMap });
+        this.setState({ weatherDataMap: newWeatherDataMap });
     };
   }
 
   // Create anon class to handle adding a monitor response.
   private createServiceMonitorAddedObserver(servicePrefix: string): OnMonitorAddedObserver {
-    const that: WeatherPageContainer = this;
     return (addMonitorResponse: RequestResponse<WeatherLocationData>) => {
         // First, make sure we didn't receive an error
         if (addMonitorResponse.error == null) {
           // Good, we didn't receive an error, add the new weather data into our state's weather hash map.
           const newWeatherData: WeatherLocationData = addMonitorResponse.data;
-          const weatherDataMap: Map<string, MonitoredLocationInformation> = that.state.weatherDataMap;
+          const weatherDataMap: Map<string, MonitoredLocationInformation> = this.state.weatherDataMap;
           const prefixedLocation: string = LocationServicePrefixer.prefixLocation(
               servicePrefix, newWeatherData.location);
           const monitoringData: MonitoredLocationInformation | undefined 
@@ -130,7 +127,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
           } else {
             console.error('Could not find monitoring data');
           }
-          that.setState({ weatherDataMap });
+          this.setState({ weatherDataMap });
         } else {
           console.error(addMonitorResponse.error);
         }
@@ -139,7 +136,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
 
   public componentDidMount(): void {
     // Create on click monitor listeners
-    this.onMonitoringListGraphItemClicked = (locationKey: string)=>{
+    this.onMonitoringListGraphItemClicked = (locationKey: string) => {
         const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
           this.state.weatherDataMap.get(locationKey);
         if (monitoredLocationInformation != null) { 
@@ -161,7 +158,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, Ap
     
     // Observer that is triggered when rainfall button is clicked for a location.
     // Either toggles it on or off.
-    this.onLocationsListRainfallItemClicked = (prefixedLocation: string, selected: boolean)=>{
+    this.onLocationsListRainfallItemClicked = (prefixedLocation: string, selected: boolean) => {
         // selected is the previous state, weather the button was previously selected or not.
         // If not selected before then selected will be false, we pass in !selected to make it true
         // so we render that component.
