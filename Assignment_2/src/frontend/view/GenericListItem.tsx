@@ -11,7 +11,7 @@ interface GenericListItemProps {
  * A list item that can be used in a generic sense. Use this as a list and you'll get certain 
  * material ui design aspects for free.
  */
-class GenericListItem extends React.Component<GenericListItemProps, void> {
+class GenericListItem extends React.Component<GenericListItemProps, {}> {
   constructor(props: GenericListItemProps) {
     super(props);
   }

@@ -20,7 +20,7 @@ interface LocationListProps {
  * A simple list wrapper that populates a list with LocationItems according to a map of weather data.
  * Takes in OnLocationItemClickedObserver from parent component.
  */
-class LocationList extends React.Component<LocationListProps, void> {
+class LocationList extends React.Component<LocationListProps, {}> {
   public render(): JSX.Element {
     return (
       <section>

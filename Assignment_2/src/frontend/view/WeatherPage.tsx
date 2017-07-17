@@ -24,7 +24,7 @@ interface WeatherPageProps {
  * Specifies the markup for the actual weather page itself.
  * Takes in OnLocationItemClickedObservers from parent component.
  */
-class WeatherPage extends React.Component<WeatherPageProps, void> {
+class WeatherPage extends React.Component<WeatherPageProps, {}> {
   
   public render(): JSX.Element {
     return (

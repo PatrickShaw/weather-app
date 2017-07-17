@@ -17,7 +17,7 @@ interface MonitoringItemProps {
 /**
  * Component that populates a card with weather data information.
  */
-class MonitoringItem extends React.Component<MonitoringItemProps, void> {
+class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
   public render(): JSX.Element {
     // Only called when the weatherData to show has changed.
     // First we're going to figure out what strings to render for contents of the card.

@@ -24,7 +24,7 @@ interface LocationItemProps {
  * A list item that specifically handles a side bar location item.
  * Contains listeners for when inner rain and temperature monitor buttons are clicked.
  */
-class LocationItem extends React.Component<LocationItemProps, void> {
+class LocationItem extends React.Component<LocationItemProps, {}> {
   // The bound versions of the original click methods.
   // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
  

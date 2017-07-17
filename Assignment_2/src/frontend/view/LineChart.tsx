@@ -10,7 +10,7 @@ interface LineChartProps {
   readonly monitoredLocationInformation: MonitoredLocationInformation;
 }
 
-class LineChart extends React.Component<LineChartProps, void> {
+class LineChart extends React.Component<LineChartProps, {}> {
   private createTrendline(
     label: string,
     lineRedValue: number, 

@@ -9,7 +9,7 @@ interface ActionBarProps {
 /**
  * The action bar for Full Lambda
  */
-class ActionBar extends React.Component<ActionBarProps, void> {
+class ActionBar extends React.Component<ActionBarProps, {}> {
   public render(): JSX.Element {
     return (
       <header className='app-bar'>
