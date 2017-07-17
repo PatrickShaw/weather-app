@@ -1,0 +1,3 @@
+[submodule "Assignment_2/src/frontend/theme/wtf-material"]
+	path = Assignment_2/src/frontend/theme/wtf-material
+	url = https://github.com/PatrickShaw/wtf-material.git
