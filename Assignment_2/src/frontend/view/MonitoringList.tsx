@@ -6,7 +6,7 @@ import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
-
+import { observer } from 'mobx-react';
 interface MonitoringListProps {
   // The list of all locations.
   // We actually use this to keep the weatherDataMap items in alphabetical order when render.

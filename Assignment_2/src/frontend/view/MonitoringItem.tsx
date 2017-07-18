@@ -6,6 +6,7 @@ import { LineChart } from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
+import { observer } from 'mobx-react';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.

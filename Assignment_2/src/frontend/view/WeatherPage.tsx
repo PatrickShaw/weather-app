@@ -9,7 +9,6 @@ import { LocationList } from './LocationList';
 import { MonitoringList } from './MonitoringList';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
-
 interface WeatherPageProps {
   // Instance variable.
   readonly onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
