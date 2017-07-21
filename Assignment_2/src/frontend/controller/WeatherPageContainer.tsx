@@ -1,19 +1,15 @@
 import * as React from 'react';
-import * as SocketIo from 'socket.io-client';
+import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import {
   FullLambdaServiceClient,
   MonitorConnection
 } from '../../lambda_client/FullLambdaServiceClient';
-
 import { AppState } from '../model/AppState';
-import { LocationServicePrefixer } from '../LocationServicePrefixer';
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
-import { RequestResponse } from '../../model/RequestResponse';
-import { WeatherLocationData } from '../../model/WeatherLocationData';
 import { WeatherPage } from '../view/WeatherPage';
 
 interface WeatherPageContainerProps {
@@ -38,6 +34,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
   private onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
   public componentDidMount(): void {
     // Create on click monitor listeners
+    @action
     this.onMonitoringListGraphItemClicked = (locationKey: string) => {
         const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
           this.props.appState.weatherDataMap.get(locationKey);
@@ -46,9 +43,9 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
             monitoredLocationInformation.location,
             monitoredLocationInformation.serviceTitle,
             monitoredLocationInformation.weatherDataList, 
-            monitoredLocationInformation.monitorRainfall,
-            monitoredLocationInformation.monitorTemperature,
-            !monitoredLocationInformation.monitorGraph
+            monitoredLocationInformation.getMonitorRainfall(),
+            monitoredLocationInformation.getMonitorTemperature(),
+            !monitoredLocationInformation.getMonitorGraph()
           );
           // Update WeatherDataMap.
           this.props.appState.weatherDataMap.set(locationKey, newMonitoredLocationInformation);
@@ -59,6 +56,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
     
     // Observer that is triggered when rainfall button is clicked for a location.
     // Either toggles it on or off.
+    @action
     this.onLocationsListRainfallItemClicked = (prefixedLocation: string, selected: boolean) => {
         // selected is the previous state, weather the button was previously selected or not.
         // If not selected before then selected will be false, we pass in !selected to make it true
@@ -73,8 +71,8 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
           originalData.serviceTitle,
           originalData.weatherDataList, 
           !selected,
-          originalData.monitorTemperature,
-          originalData.monitorGraph
+          originalData.getMonitorTemperature(),
+          originalData.getMonitorGraph()
         );
 
         // Add new data to the state in AppState weatherMap in memory.
@@ -86,7 +84,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
           selected
         );
     };
-
+    @action
     this.onLocationsListTemperatureItemClicked = (prefixedLocation: string, selected: boolean) => {
         const originalData: MonitoredLocationInformation | undefined = this.props.appState.weatherDataMap.get(prefixedLocation);
         let newData: MonitoredLocationInformation;
@@ -97,9 +95,9 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
           originalData.location,
           originalData.serviceTitle,
           originalData.weatherDataList, 
-          originalData.monitorRainfall,
+          originalData.getMonitorRainfall(),
           !selected,
-          originalData.monitorGraph
+          originalData.getMonitorGraph()
         );
         this.props.appState.weatherDataMap.set(prefixedLocation, newData);
         this.onMonitorSelected(
@@ -113,6 +111,7 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
   /**
    * Selects a service depending on what the prefix specified in the prefixedLocation was.
    */
+  @action
   private selectServiceClient(prefixedLocation: string): FullLambdaServiceClient {
     if (prefixedLocation.startsWith(this.props.regularServicePrefix)) {
       return this.props.regularClient;
@@ -140,11 +139,10 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
     }
   }
   
-  
   public render(): JSX.Element {
     // console.log(this.state.weatherDataMap);
     return (
-      this.props.appState.connectedToServer ?
+      this.props.appState.getConnectedToServer() ?
       (
         <WeatherPage 
           appCurrentState={this.props.appState}

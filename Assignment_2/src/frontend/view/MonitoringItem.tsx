@@ -6,7 +6,6 @@ import { LineChart } from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
-import { observer } from 'mobx-react';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
@@ -33,7 +32,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
       this.props.monitoredLocationInformation.weatherDataList.length - 1];
       
     if (
-      this.props.monitoredLocationInformation.monitorTemperature &&
+      this.props.monitoredLocationInformation.getMonitorTemperature() &&
       currentWeatherData.temperatureData != null && 
       currentWeatherData.temperatureData.temperature != null &&
       currentWeatherData.temperatureData.temperature !== ''
@@ -81,20 +80,20 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
              ` (${this.props.monitoredLocationInformation.serviceTitle})`}
           </h1>
           {
-            this.props.monitoredLocationInformation.monitorRainfall ? 
+            this.props.monitoredLocationInformation.getMonitorRainfall() ? 
             <h2 className='txt-body-1'>
               <strong>Rainfall:</strong> {rainfallDataToRender}
             </h2> : null
           }
           {
-            this.props.monitoredLocationInformation.monitorTemperature ? 
+            this.props.monitoredLocationInformation.getMonitorTemperature() ? 
             <h2 className='txt-body-1'>
               <strong>Temperature:</strong> {temperatureDataToRender}
             </h2> : null
           }
         </section>
           {
-            this.props.monitoredLocationInformation.monitorGraph ?
+            this.props.monitoredLocationInformation.getMonitorGraph() ?
               <section className='graph-container'>
                 <div>
                     <LineChart
@@ -114,7 +113,7 @@ class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
             <i className='material-icons'>
               {
                 // The two strings represent the up and down arrows respectively
-                this.props.monitoredLocationInformation.monitorGraph ? '\uE5C7' : '\uE5C5'
+                this.props.monitoredLocationInformation.getMonitorGraph() ? '\uE5C7' : '\uE5C5'
               }
               </i>Graph 
           </button>

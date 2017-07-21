@@ -42,7 +42,7 @@ class LineChart extends React.Component<LineChartProps, {}> {
       let timestamp: string | undefined;
 
       let rainfallPoint: number | null = null;
-      if (this.props.monitoredLocationInformation.monitorRainfall) {        
+      if (this.props.monitoredLocationInformation.getMonitorRainfall()) {        
         // Show rainfall on graph.
         if (weatherData.rainfallData != null && weatherData.rainfallData.rainfall != null) {
           rainfallPoint = parseFloat(weatherData.rainfallData.rainfall);
@@ -52,7 +52,7 @@ class LineChart extends React.Component<LineChartProps, {}> {
       }
 
       let temperaturePoint: number | null = null;
-      if (this.props.monitoredLocationInformation.monitorTemperature) {
+      if (this.props.monitoredLocationInformation.getMonitorTemperature()) {
         // Show temperature on graph.
         if (weatherData.temperatureData != null && weatherData.temperatureData.temperature != null) {
           temperaturePoint = parseFloat(weatherData.temperatureData.temperature);
@@ -86,10 +86,10 @@ class LineChart extends React.Component<LineChartProps, {}> {
       }
     }
     const datasets: Array<{}> = [];
-    if (this.props.monitoredLocationInformation.monitorTemperature) {
+    if (this.props.monitoredLocationInformation.getMonitorTemperature()) {
       datasets.push(this.createTrendline('Temperature (℃)', 255, 171, 0, temperatureDataPoints));
     }
-    if (this.props.monitoredLocationInformation.monitorRainfall) {
+    if (this.props.monitoredLocationInformation.getMonitorRainfall()) {
       datasets.push(this.createTrendline('Rainfall (mm)', 33, 150, 243, rainfallDataPoints));
     }
     const data = {

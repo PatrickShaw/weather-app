@@ -37,10 +37,10 @@ class LocationList extends React.Component<LocationListProps, {}> {
               let rainfallSelected: boolean = false;
               let temperatureSelected: boolean = false;
               if (weatherData) {
-                if (weatherData.monitorRainfall) {
+                if (weatherData.getMonitorRainfall()) {
                   rainfallSelected = true;
                 }
-                if (weatherData.monitorTemperature) {
+                if (weatherData.getMonitorTemperature()) {
                   temperatureSelected = true;
                 }
               }

@@ -37,7 +37,7 @@ class MonitoringList extends React.Component<MonitoringListProps, {}> {
                 this.props.weatherDataMap.get(prefixedLocation);
               return (
                 monitoredLocationInformation != null
-                && (monitoredLocationInformation.monitorRainfall || monitoredLocationInformation.monitorTemperature) 
+                && (monitoredLocationInformation.getMonitorRainfall() || monitoredLocationInformation.getMonitorTemperature()) 
                 && monitoredLocationInformation.weatherDataList.length > 0 
                 ? <div key={prefixedLocation}>
                     <div className='card monitoring-item-card'>

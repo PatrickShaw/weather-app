@@ -90,7 +90,7 @@ function createOnLocationsRetrievedObserver(
             false
           )
         );
-        AppState.insertServiceLocation(appState, servicePrefix, location);
+        appState.insertServiceLocation(servicePrefix, location);
       }
   };
 }
@@ -106,7 +106,7 @@ function initializeServiceClientObservers(
   // Create the server setup observer.
   serviceClient.addOnServerSetupSuccessRetrievedObserver(
       (success: boolean) => {
-        appState.connectedToServer = success;
+        appState.setConnectedToServer(success);
       }
   );
   serviceClient.addOnLocationsRetrievedObserver(createOnLocationsRetrievedObserver(servicePrefix, serviceTitle));
