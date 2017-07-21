@@ -1,6 +1,7 @@
 import './WeatherPage.css';
 
 import * as React from 'react';
+import { observer } from 'mobx-react';
 
 import { ActionBar } from './AppBar';
 import { AppState } from '../model/AppState';
@@ -23,6 +24,7 @@ interface WeatherPageProps {
  * Specifies the markup for the actual weather page itself.
  * Takes in OnLocationItemClickedObservers from parent component.
  */
+@observer
 class WeatherPage extends React.Component<WeatherPageProps, {}> {
   
   public render(): JSX.Element {

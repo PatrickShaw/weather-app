@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-
+import { observer } from 'mobx-react';
 interface LocationItemProps {
   // The location associated with the LocationItem
   readonly prefixedLocation: string;
@@ -24,6 +24,7 @@ interface LocationItemProps {
  * A list item that specifically handles a side bar location item.
  * Contains listeners for when inner rain and temperature monitor buttons are clicked.
  */
+@observer
 class LocationItem extends React.Component<LocationItemProps, {}> {
   // The bound versions of the original click methods.
   // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.

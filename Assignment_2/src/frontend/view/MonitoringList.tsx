@@ -22,6 +22,7 @@ interface MonitoringListProps {
 /**
  * A simple wrapper that creates a list of MonitorItems from a map of weather data.
  */
+@observer
 class MonitoringList extends React.Component<MonitoringListProps, {}> {
   public render(): JSX.Element {  
     // console.log(Object.keys(this.props.weatherDataMap));

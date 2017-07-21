@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 
 import { LocationItem } from './LocationItem';
 import { LocationMetadata } from '../model/LocationMetadata';
@@ -20,6 +21,7 @@ interface LocationListProps {
  * A simple list wrapper that populates a list with LocationItems according to a map of weather data.
  * Takes in OnLocationItemClickedObserver from parent component.
  */
+@observer
 class LocationList extends React.Component<LocationListProps, {}> {
   public render(): JSX.Element {
     return (

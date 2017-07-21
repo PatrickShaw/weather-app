@@ -1,4 +1,5 @@
 import './LineChart.css';
+import { observer } from 'mobx-react';
 
 import * as Chart from 'react-chartjs-2';
 import * as React from 'react';
@@ -9,7 +10,7 @@ import { MonitoredLocationInformation } from '../model/MonitoredLocationInformat
 interface LineChartProps {
   readonly monitoredLocationInformation: MonitoredLocationInformation;
 }
-
+@observer
 class LineChart extends React.Component<LineChartProps, {}> {
   private createTrendline(
     label: string,

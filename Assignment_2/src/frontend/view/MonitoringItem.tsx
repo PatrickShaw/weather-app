@@ -1,6 +1,7 @@
 import './MonitoringItem.css';
 
 import * as React from 'react';
+import { observer } from 'mobx-react';
 
 import { LineChart } from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
@@ -17,6 +18,7 @@ interface MonitoringItemProps {
 /**
  * Component that populates a card with weather data information.
  */
+@observer
 class MonitoringItem extends React.Component<MonitoringItemProps, {}> {
   public render(): JSX.Element {
     // Only called when the weatherData to show has changed.
