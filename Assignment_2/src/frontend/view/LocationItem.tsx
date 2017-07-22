@@ -24,7 +24,7 @@ interface LocationItemProps {
  * A list item that specifically handles a side bar location item.
  * Contains listeners for when inner rain and temperature monitor buttons are clicked.
  */
-const LocationItem = observer(({
+const LocationItem: React.ClassicComponentClass<LocationItemProps> = observer(({
   prefixedLocation, 
   location, 
   serviceTitle, 
