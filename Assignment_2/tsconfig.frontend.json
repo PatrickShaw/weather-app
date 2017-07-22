@@ -3,7 +3,7 @@
     "outDir": "build",
     "module": "commonjs",
     "target": "es6",
-    "lib":["es6", "dom"],
+    "lib":["esnext", "dom"],
     "jsx": "react",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -17,7 +17,7 @@
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "noEmitHelpers": true
+    "noEmitHelpers": false 
   },
   "files": [],
   "exclude": [

@@ -87,7 +87,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
   public filterMarkers() {
     // Process only weather data objects we are monitoring (the rest shouldn't be shown anyways).
     for (const [prefixedLocation, monitorData] of this.props.weatherDataMap.entries()) {
-      if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
+      if (monitorData.getMonitorRainfall() || monitorData.getMonitorTemperature()) {
         const locationMarkerInformation: LocationMarkerInformation | undefined | null = 
           this.state.locationInfoMap.get(prefixedLocation);
         if (locationMarkerInformation == null) {
@@ -107,7 +107,7 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
   public componentWillReceiveProps(nextProps: GoogleWeatherMapProps): void {
     for (const [prefixedLocation, monitorData] of nextProps.weatherDataMap.entries()) {
       // Check whether we're adding/updating or deleting a marker.
-      if (monitorData.monitorRainfall || monitorData.monitorTemperature) {
+      if (monitorData.getMonitorRainfall() || monitorData.getMonitorTemperature()) {
         let newLocationInfoPromise: Promise<[
           string, google.maps.LatLng, google.maps.Marker, google.maps.Circle, google.maps.InfoWindow]>;
         // Location not in weathermap.
@@ -205,9 +205,9 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
           if (monitorData.weatherDataList.length > 0) {
             const recentWeatherData: WeatherLocationData = monitorData.weatherDataList[
               monitorData.weatherDataList.length - 1];
-            rainfallString = recentWeatherData.rainfallData == null || !monitorData.monitorRainfall
+            rainfallString = recentWeatherData.rainfallData == null || !monitorData.getMonitorRainfall()
                 ? null : recentWeatherData.rainfallData.rainfall;
-            temperatureString = recentWeatherData.temperatureData == null || !monitorData.monitorTemperature 
+            temperatureString = recentWeatherData.temperatureData == null || !monitorData.getMonitorTemperature() 
                 ? null : recentWeatherData.temperatureData.temperature;
           } else {
             rainfallString = null;

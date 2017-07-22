@@ -3,7 +3,7 @@
     "outDir": "build",
     "module": "commonjs",
     "target": "es6",
-    "lib":["es6", "dom"],
+    "lib":["esnext", "dom"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",

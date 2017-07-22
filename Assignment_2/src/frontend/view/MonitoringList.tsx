@@ -6,7 +6,7 @@ import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
 import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
-
+import { observer } from 'mobx-react';
 interface MonitoringListProps {
   // The list of all locations.
   // We actually use this to keep the weatherDataMap items in alphabetical order when render.
@@ -22,40 +22,35 @@ interface MonitoringListProps {
 /**
  * A simple wrapper that creates a list of MonitorItems from a map of weather data.
  */
-class MonitoringList extends React.Component<MonitoringListProps, {}> {
-  public render(): JSX.Element {  
-    // console.log(Object.keys(this.props.weatherDataMap));
-    // console.log(this.props.weatherDataMap);
-    return (
-      <section className='monitoring-list'>
-        {
-          // If a location is in this.props.weatherDataMap then it has information that should be rendered.
-          this.props.locations.map((locationMetadata) => {
-            const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
-            return prefixedLocations.map((prefixedLocation: string) => {
-              const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
-                this.props.weatherDataMap.get(prefixedLocation);
-              return (
-                monitoredLocationInformation != null
-                && (monitoredLocationInformation.monitorRainfall || monitoredLocationInformation.monitorTemperature) 
-                && monitoredLocationInformation.weatherDataList.length > 0 
-                ? <div key={prefixedLocation}>
-                    <div className='card monitoring-item-card'>
-                      <MonitoringItem 
-                        prefixedLocation={prefixedLocation}
-                        monitoredLocationInformation={monitoredLocationInformation}
-                        onGraphToggleClickedObserver={this.props.onGraphToggleClickedObserver}
-                      />
-                    </div>
+const MonitoringList: React.ClassicComponentClass<MonitoringListProps> 
+  = observer(({locations, weatherDataMap, onGraphToggleClickedObserver}: MonitoringListProps) => (
+    <section className='monitoring-list'>
+      {
+        // If a location is in this.props.weatherDataMap then it has information that should be rendered.
+        locations.map((locationMetadata) => {
+          const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
+          return prefixedLocations.map((prefixedLocation: string) => {
+            const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
+              weatherDataMap.get(prefixedLocation);
+            return (
+              monitoredLocationInformation != null
+              && (monitoredLocationInformation.getMonitorRainfall() || monitoredLocationInformation.getMonitorTemperature()) 
+              && monitoredLocationInformation.weatherDataList.length > 0 
+              ? <div key={prefixedLocation}>
+                  <div className='card monitoring-item-card'>
+                    <MonitoringItem 
+                      prefixedLocation={prefixedLocation}
+                      monitoredLocationInformation={monitoredLocationInformation}
+                      onGraphToggleClickedObserver={onGraphToggleClickedObserver}
+                    />
                   </div>
-                : null
-              );
-            });
-          })
-        }
-      </section>
-    );
-  }
-}
+                </div>
+              : null
+            );
+          });
+        })
+      }
+    </section>
+  ));
 export {MonitoringList};
 export default MonitoringList;
