@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 interface GenericListItemProps {
   readonly title: string;
   readonly subtitle?: string;
+  readonly children?: React.ReactNode
 }
 
 /**
@@ -12,7 +13,7 @@ interface GenericListItemProps {
  * material ui design aspects for free.
  */
 const GenericListItem: React.ClassicComponentClass<GenericListItemProps> = observer(
-  ({title, subtitle, children}) => {
+  ({title, subtitle, children}: GenericListItemProps) => {
     const noSubtitle: boolean = subtitle == null;
     const titleStyle = noSubtitle ? 'txt-body-1' : 'txt-body-2';
     return (

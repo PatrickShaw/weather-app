@@ -32,7 +32,7 @@ const LocationItem = observer(({
   temperatureMonitorSelected,
   onRainfallMonitorClickedObserver, 
   onTemperatureMonitorClickedObserver
-}) => (
+}: LocationItemProps) => (
   <div>
     <div className='location-item'>
       <GenericListItem title={`${location} (${serviceTitle})`}>

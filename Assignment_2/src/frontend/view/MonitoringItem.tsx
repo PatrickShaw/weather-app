@@ -18,11 +18,11 @@ interface MonitoringItemProps {
 /**
  * Component that populates a card with weather data information.
  */
-const MonitoringItem = observer(({
+const MonitoringItem: React.ClassicComponentClass<MonitoringItemProps> = observer(({
     monitoredLocationInformation, 
     prefixedLocation,
     onGraphToggleClickedObserver
-  }) => {
+  }: MonitoringItemProps) => {
   // Only called when the weatherData to show has changed.
   // First we're going to figure out what strings to render for contents of the card.
   const dataMissingMessage = 'N/A';
