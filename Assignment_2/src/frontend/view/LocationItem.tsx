@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { GenericListItem } from './GenericListItem';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-
+import { observer } from 'mobx-react';
 interface LocationItemProps {
   // The location associated with the LocationItem
   readonly prefixedLocation: string;
@@ -24,64 +24,39 @@ interface LocationItemProps {
  * A list item that specifically handles a side bar location item.
  * Contains listeners for when inner rain and temperature monitor buttons are clicked.
  */
-class LocationItem extends React.Component<LocationItemProps, {}> {
-  // The bound versions of the original click methods.
-  // Unfortunately Typescript doesn't specify the types for these bound methods so they have to be any.
- 
-  /**
-   * The unbound method that triggers the rainfall monitor click observer to fire.
-   */
-  private onRainfallMonitorButtonClicked(): void {
-    if (this.props.onRainfallMonitorClickedObserver != null) {
-      // Call parent component onItemClicked() method in passed in onRainfallMonitorClickedObserver.
-      this.props.onRainfallMonitorClickedObserver(
-        this.props.prefixedLocation, 
-        this.props.rainfallMonitorSelected
-      );
-    }
-  }
-
-  /**
-   * The unbound method that triggers the temperature monitor click observer to fire.
-   */
-  private onTemperatureMonitorButtonClicked(): void {
-    if (this.props.onTemperatureMonitorClickedObserver != null) {
-      // Call parent component onItemClicked() method in passed in onTemperatureMonitorClickedObserver.
-      this.props.onTemperatureMonitorClickedObserver(
-        this.props.prefixedLocation, 
-        this.props.temperatureMonitorSelected
-      );
-    }
-  }
-
-  public render(): JSX.Element {
-    return (
-      <div>
-        <div className='location-item'>
-          <GenericListItem title={`${this.props.location} (${this.props.serviceTitle})`}>
-              <button 
-                onClick={() => { this.onRainfallMonitorButtonClicked(); }}
-                className={
-                  `button-margin button-padding ripple` + 
-                  `${this.props.rainfallMonitorSelected ? ' selected' : ''}`
-                }
-              >
-                Rain
-              </button>
-              <button 
-                onClick={() => {this.onTemperatureMonitorButtonClicked(); }}
-                className={
-                  `button-margin button-padding ripple` + 
-                  `${this.props.temperatureMonitorSelected ? ' selected' : ''}`
-                }
-              >
-                Temp
-              </button>
-          </GenericListItem>
-        </div>
-      </div>
-    );
-  }
-}
+const LocationItem: React.ClassicComponentClass<LocationItemProps> = observer(({
+  prefixedLocation, 
+  location, 
+  serviceTitle, 
+  rainfallMonitorSelected, 
+  temperatureMonitorSelected,
+  onRainfallMonitorClickedObserver, 
+  onTemperatureMonitorClickedObserver
+}: LocationItemProps) => (
+  <div>
+    <div className='location-item'>
+      <GenericListItem title={`${location} (${serviceTitle})`}>
+          <button 
+            onClick={() => { onRainfallMonitorClickedObserver ? onRainfallMonitorClickedObserver(prefixedLocation, rainfallMonitorSelected) : null }}
+            className={
+              `button-margin button-padding ripple` + 
+              `${rainfallMonitorSelected ? ' selected' : ''}`
+            }
+          >
+            Rain
+          </button>
+          <button 
+            onClick={() => { onTemperatureMonitorClickedObserver ? onTemperatureMonitorClickedObserver(prefixedLocation, temperatureMonitorSelected) : null }}
+            className={
+              `button-margin button-padding ripple` + 
+              `${temperatureMonitorSelected ? ' selected' : ''}`
+            }
+          >
+            Temp
+          </button>
+      </GenericListItem>
+    </div>
+  </div>
+));
 export {LocationItem};
 export default LocationItem;
