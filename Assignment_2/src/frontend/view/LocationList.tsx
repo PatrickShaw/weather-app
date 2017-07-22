@@ -4,17 +4,12 @@ import { observer } from 'mobx-react';
 import { LocationItem } from './LocationItem';
 import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
-import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
 
 interface LocationListProps {
   // A list of all locations.
   readonly locations: LocationMetadata[];
   // A map of locations to their associated weather data.
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
-  // An observer that specifies what happens when a rainfall monitor button is clicked.
-  readonly onRainfallItemClickedObserver?: OnLocationItemClickedObserver;
-  // An observer that specifies what happens when a temperature monitor button is clicked.
-  readonly onTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
 }
 
 /**
@@ -23,9 +18,7 @@ interface LocationListProps {
  */
 const LocationList: React.ClassicComponentClass<LocationListProps> = observer(({ 
   locations, 
-  weatherDataMap, 
-  onRainfallItemClickedObserver, 
-  onTemperatureItemClickedObserver
+  weatherDataMap
 }: LocationListProps) => (
   <section>
     {
@@ -56,8 +49,6 @@ const LocationList: React.ClassicComponentClass<LocationListProps> = observer(({
               prefixedLocation={prefixedLocation}
               rainfallMonitorSelected={rainfallSelected}
               temperatureMonitorSelected={temperatureSelected}
-              onRainfallMonitorClickedObserver={onRainfallItemClickedObserver}
-              onTemperatureMonitorClickedObserver={onTemperatureItemClickedObserver}
             />
           );
         });

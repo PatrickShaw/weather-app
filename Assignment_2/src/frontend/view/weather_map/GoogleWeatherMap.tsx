@@ -5,10 +5,8 @@ import * as React from 'react';
 import { GeoCodingServiceClient } from './utils/GeoCodingServiceClient';
 import { MonitoredLocationInformation } from '../../model/MonitoredLocationInformation';
 import { WeatherLocationData } from '../../../model/WeatherLocationData';
-
+import {regularClient, timelapseClient} from '../../clients';
 interface GoogleWeatherMapProps {
-  readonly regularServicePrefix: string;
-  readonly timelapseServicePrefix: string;
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
 }
 
@@ -61,16 +59,16 @@ class GoogleWeatherMap extends React.Component<GoogleWeatherMapProps, GoogleWeat
     super(props);
     this.googleMap = null;
     this.state = new GoogleWeatherMapState(
-      this.props.regularServicePrefix, new Map<string, LocationMarkerInformation>()
+      regularClient.servicePrefix, new Map<string, LocationMarkerInformation>()
     );  
     this.geocoder = new GeoCodingServiceClient();
   }
 
   private onToggleWeatherService() {
       const newServicePrefix 
-        = this.state.currentServicePrefix === this.props.regularServicePrefix 
-        ? this.props.timelapseServicePrefix 
-        : this.props.regularServicePrefix;
+        = this.state.currentServicePrefix === regularClient.servicePrefix
+        ? timelapseClient.servicePrefix 
+        : regularClient.servicePrefix;
       this.setState({ currentServicePrefix: newServicePrefix });
   }
 
