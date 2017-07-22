@@ -5,14 +5,12 @@ import { observer } from 'mobx-react';
 
 import { LineChart } from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {
   // The weather data that will be used to populate the monitoring item card with information.
   readonly monitoredLocationInformation: MonitoredLocationInformation;
   readonly prefixedLocation: string;
-  readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
 /**
@@ -20,8 +18,7 @@ interface MonitoringItemProps {
  */
 const MonitoringItem: React.ClassicComponentClass<MonitoringItemProps> = observer(({
     monitoredLocationInformation, 
-    prefixedLocation,
-    onGraphToggleClickedObserver
+    prefixedLocation
   }: MonitoringItemProps) => {
   // Only called when the weatherData to show has changed.
   // First we're going to figure out what strings to render for contents of the card.
@@ -110,9 +107,7 @@ const MonitoringItem: React.ClassicComponentClass<MonitoringItemProps> = observe
       <section className='buttons'>
         <button 
           className='button-margin button-padding ripple' 
-          onClick={() => onGraphToggleClickedObserver(
-            prefixedLocation
-          )}
+          onClick={() => {monitoredLocationInformation.setMonitorGraph(!monitoredLocationInformation.getMonitorGraph())}}
         >
           <i className='material-icons'>
             {
