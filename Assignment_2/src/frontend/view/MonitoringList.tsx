@@ -22,34 +22,35 @@ interface MonitoringListProps {
 /**
  * A simple wrapper that creates a list of MonitorItems from a map of weather data.
  */
-const MonitoringList = observer(({locations, weatherDataMap, onGraphToggleClickedObserver}) => (
-  <section className='monitoring-list'>
-    {
-      // If a location is in this.props.weatherDataMap then it has information that should be rendered.
-      locations.map((locationMetadata) => {
-        const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
-        return prefixedLocations.map((prefixedLocation: string) => {
-          const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
-            weatherDataMap.get(prefixedLocation);
-          return (
-            monitoredLocationInformation != null
-            && (monitoredLocationInformation.getMonitorRainfall() || monitoredLocationInformation.getMonitorTemperature()) 
-            && monitoredLocationInformation.weatherDataList.length > 0 
-            ? <div key={prefixedLocation}>
-                <div className='card monitoring-item-card'>
-                  <MonitoringItem 
-                    prefixedLocation={prefixedLocation}
-                    monitoredLocationInformation={monitoredLocationInformation}
-                    onGraphToggleClickedObserver={onGraphToggleClickedObserver}
-                  />
+const MonitoringList: React.ClassicComponentClass<MonitoringListProps> 
+  = observer(({locations, weatherDataMap, onGraphToggleClickedObserver}: MonitoringListProps) => (
+    <section className='monitoring-list'>
+      {
+        // If a location is in this.props.weatherDataMap then it has information that should be rendered.
+        locations.map((locationMetadata) => {
+          const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
+          return prefixedLocations.map((prefixedLocation: string) => {
+            const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
+              weatherDataMap.get(prefixedLocation);
+            return (
+              monitoredLocationInformation != null
+              && (monitoredLocationInformation.getMonitorRainfall() || monitoredLocationInformation.getMonitorTemperature()) 
+              && monitoredLocationInformation.weatherDataList.length > 0 
+              ? <div key={prefixedLocation}>
+                  <div className='card monitoring-item-card'>
+                    <MonitoringItem 
+                      prefixedLocation={prefixedLocation}
+                      monitoredLocationInformation={monitoredLocationInformation}
+                      onGraphToggleClickedObserver={onGraphToggleClickedObserver}
+                    />
+                  </div>
                 </div>
-              </div>
-            : null
-          );
-        });
-      })
-    }
-  </section>
-));
+              : null
+            );
+          });
+        })
+      }
+    </section>
+  ));
 export {MonitoringList};
 export default MonitoringList;

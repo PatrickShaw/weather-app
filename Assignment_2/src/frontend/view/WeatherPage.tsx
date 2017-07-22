@@ -30,7 +30,7 @@ const WeatherPage = ({
   onMonitoringListGraphItemClicked,
   regularServicePrefix,
   timelapseServicePrefix
-}) => (
+}: WeatherPageProps) => (
   <div className='weather-page'>
     <div className='page-app-bar'>
       <ActionBar title='Melbourne Weather' subtitle='Full Lambda'/>
