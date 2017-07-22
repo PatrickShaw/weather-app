@@ -5,7 +5,6 @@ import * as React from 'react';
 import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { observer } from 'mobx-react';
 interface MonitoringListProps {
   // The list of all locations.

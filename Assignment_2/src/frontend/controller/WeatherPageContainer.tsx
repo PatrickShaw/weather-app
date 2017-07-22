@@ -2,23 +2,14 @@ import * as React from 'react';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import {
-  FullLambdaServiceClient,
   MonitorConnection
 } from '../../lambda_client/FullLambdaServiceClient';
-import { AppState } from '../model/AppState';
+import { appState } from '../state';
+import { regularClient, timelapseClient, FullLambdaFrontendClient } from '../clients';
 import { MonitorMetadata } from '../../model/MonitorMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
-import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
+import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver'; 
 import { WeatherPage } from '../view/WeatherPage';
-
-interface WeatherPageContainerProps {
-  readonly appState: AppState;
-  readonly regularClient: FullLambdaServiceClient;
-  readonly timelapseClient: FullLambdaServiceClient;
-  readonly regularServicePrefix: string;
-  readonly timelapseServicePrefix: string;
-}
 /**
  * Decides how the current state of the frontend application is manipulated, which, in turn, causes a 
  * re-render of certain components in the DOM.
@@ -28,7 +19,7 @@ interface WeatherPageContainerProps {
  * backend API.
  */
 @observer
-class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}> {
+class WeatherPageContainer extends React.Component<{}, {}> {
   private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
   private onLocationsListTemperatureItemClicked: OnLocationItemClickedObserver;
   public componentDidMount(): void {    
@@ -39,20 +30,26 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
         // selected is the previous state, weather the button was previously selected or not.
         // If not selected before then selected will be false, we pass in !selected to make it true
         // so we render that component.
-        const originalData: MonitoredLocationInformation | undefined = this.props.appState.weatherDataMap.get(prefixedLocation);
+        const originalData: MonitoredLocationInformation | undefined = appState.weatherDataMap.get(prefixedLocation);
+        if (originalData == null) { 
+           throw new Error('There was no monitoring information.'); 
+        }  
         originalData.setMonitorRainfall(!originalData.getMonitorRainfall());
         this.onMonitorSelected(
-          this.selectServiceClient(prefixedLocation).rainfallMonitorConnection, 
+          this.selectServiceClient(prefixedLocation).client.rainfallMonitorConnection, 
           new MonitorMetadata(originalData.location),
           selected
         );
     };
     @action
     this.onLocationsListTemperatureItemClicked = (prefixedLocation: string, selected: boolean) => {
-        const originalData: MonitoredLocationInformation | undefined = this.props.appState.weatherDataMap.get(prefixedLocation);
+        const originalData: MonitoredLocationInformation | undefined = appState.weatherDataMap.get(prefixedLocation);
+        if (originalData == null) { 
+           throw new Error('There was no monitoring information.'); 
+        }  
         originalData.setMonitorTemperature(!originalData.getMonitorTemperature());
         this.onMonitorSelected(
-          this.selectServiceClient(prefixedLocation).temperatureMonitorConnection,
+          this.selectServiceClient(prefixedLocation).client.temperatureMonitorConnection,
           new MonitorMetadata(originalData.location),
           selected
         );
@@ -63,11 +60,11 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
    * Selects a service depending on what the prefix specified in the prefixedLocation was.
    */
   @action
-  private selectServiceClient(prefixedLocation: string): FullLambdaServiceClient {
-    if (prefixedLocation.startsWith(this.props.regularServicePrefix)) {
-      return this.props.regularClient;
-    } else if (prefixedLocation.startsWith(this.props.timelapseServicePrefix)) {
-      return this.props.timelapseClient;
+  private selectServiceClient(prefixedLocation: string): FullLambdaFrontendClient {
+    if (prefixedLocation.startsWith(regularClient.servicePrefix)) {
+      return regularClient;
+    } else if (prefixedLocation.startsWith(timelapseClient.servicePrefix)) {
+      return timelapseClient;
     } else {
       throw new Error(`Could not select service client from prefixed location: ${prefixedLocation}`);
     }
@@ -93,14 +90,14 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
   public render(): JSX.Element {
     // console.log(this.state.weatherDataMap);
     return (
-      this.props.appState.getConnectedToServer() ?
+      appState.getConnectedToServer() ?
       (
         <WeatherPage 
-          appCurrentState={this.props.appState}
+          appCurrentState={appState}
           onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
           onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
-          regularServicePrefix={this.props.regularServicePrefix}
-          timelapseServicePrefix={this.props.timelapseServicePrefix}
+          regularServicePrefix={regularClient.servicePrefix}
+          timelapseServicePrefix={timelapseClient.servicePrefix}
         />
       ) : 
       (

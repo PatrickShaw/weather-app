@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 
 import { LineChart } from './LineChart';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { WeatherLocationData } from '../../model/WeatherLocationData';
 
 interface MonitoringItemProps {

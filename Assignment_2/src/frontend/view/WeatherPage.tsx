@@ -1,15 +1,13 @@
 import './WeatherPage.css';
 
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { ActionBar } from './AppBar';
 import { AppState } from '../model/AppState';
 import { GoogleWeatherMap } from './weather_map/GoogleWeatherMap';
 import { LocationList } from './LocationList';
 import { MonitoringList } from './MonitoringList';
 import { OnLocationItemClickedObserver } from '../observers/OnLocationItemClickedObserver';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
-interface WeatherPageProps {
+  interface WeatherPageProps {
   // Instance variable.
   readonly onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
