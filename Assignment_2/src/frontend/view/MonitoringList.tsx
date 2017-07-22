@@ -5,7 +5,6 @@ import * as React from 'react';
 import { LocationMetadata } from '../model/LocationMetadata';
 import { MonitoredLocationInformation } from '../model/MonitoredLocationInformation';
 import { MonitoringItem } from './MonitoringItem';
-import { OnMonitoringItemClickedObserver } from '../observers/OnMonitoringItemClickedObserver';
 import { observer } from 'mobx-react';
 interface MonitoringListProps {
   // The list of all locations.
@@ -16,14 +15,13 @@ interface MonitoringListProps {
   readonly locations: LocationMetadata[];
   // The map of locations to their associated MonitoredLocationInformation.
   readonly weatherDataMap: Map<string, MonitoredLocationInformation>;
-  readonly onGraphToggleClickedObserver: OnMonitoringItemClickedObserver;
 }
 
 /**
  * A simple wrapper that creates a list of MonitorItems from a map of weather data.
  */
 const MonitoringList: React.ClassicComponentClass<MonitoringListProps> 
-  = observer(({locations, weatherDataMap, onGraphToggleClickedObserver}: MonitoringListProps) => (
+  = observer(({locations, weatherDataMap}: MonitoringListProps) => (
     <section className='monitoring-list'>
       {
         // If a location is in this.props.weatherDataMap then it has information that should be rendered.
@@ -41,7 +39,6 @@ const MonitoringList: React.ClassicComponentClass<MonitoringListProps>
                     <MonitoringItem 
                       prefixedLocation={prefixedLocation}
                       monitoredLocationInformation={monitoredLocationInformation}
-                      onGraphToggleClickedObserver={onGraphToggleClickedObserver}
                     />
                   </div>
                 </div>
