@@ -13,7 +13,6 @@ interface WeatherPageProps {
   // Instance variable.
   readonly onLocationRainfallItemClickedObserver?: OnLocationItemClickedObserver;
   readonly onLocationTemperatureItemClickedObserver?: OnLocationItemClickedObserver;
-  readonly onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
   readonly appCurrentState: AppState;
   readonly regularServicePrefix: string;
   readonly timelapseServicePrefix: string;
@@ -27,7 +26,6 @@ const WeatherPage: React.SFC<WeatherPageProps> = ({
   appCurrentState, 
   onLocationRainfallItemClickedObserver,
   onLocationTemperatureItemClickedObserver,
-  onMonitoringListGraphItemClicked,
   regularServicePrefix,
   timelapseServicePrefix
 }: WeatherPageProps) => (
@@ -67,7 +65,6 @@ const WeatherPage: React.SFC<WeatherPageProps> = ({
           <MonitoringList 
             locations={appCurrentState.sortedLocations}
             weatherDataMap={appCurrentState.weatherDataMap}
-            onGraphToggleClickedObserver={onMonitoringListGraphItemClicked}
           />
         </div>
       </div>

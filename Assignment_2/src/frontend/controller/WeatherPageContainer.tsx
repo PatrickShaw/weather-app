@@ -31,29 +31,7 @@ interface WeatherPageContainerProps {
 class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}> {
   private onLocationsListRainfallItemClicked: OnLocationItemClickedObserver;
   private onLocationsListTemperatureItemClicked: OnLocationItemClickedObserver;
-  private onMonitoringListGraphItemClicked: OnMonitoringItemClickedObserver;
-  public componentDidMount(): void {
-    // Create on click monitor listeners
-    @action
-    this.onMonitoringListGraphItemClicked = (locationKey: string) => {
-        const monitoredLocationInformation: MonitoredLocationInformation | undefined = 
-          this.props.appState.weatherDataMap.get(locationKey);
-        if (monitoredLocationInformation != null) { 
-          const newMonitoredLocationInformation: MonitoredLocationInformation = new MonitoredLocationInformation(
-            monitoredLocationInformation.location,
-            monitoredLocationInformation.serviceTitle,
-            monitoredLocationInformation.weatherDataList, 
-            monitoredLocationInformation.getMonitorRainfall(),
-            monitoredLocationInformation.getMonitorTemperature(),
-            !monitoredLocationInformation.getMonitorGraph()
-          );
-          // Update WeatherDataMap.
-          this.props.appState.weatherDataMap.set(locationKey, newMonitoredLocationInformation);
-        } else {
-          console.error(`Error: monitoredLocationInformation could not be found for ${locationKey}`);
-        }
-    };
-    
+  public componentDidMount(): void {    
     // Observer that is triggered when rainfall button is clicked for a location.
     // Either toggles it on or off.
     @action
