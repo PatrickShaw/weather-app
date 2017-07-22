@@ -23,7 +23,7 @@ interface WeatherPageProps {
  * Specifies the markup for the actual weather page itself.
  * Takes in OnLocationItemClickedObservers from parent component.
  */
-const WeatherPage = ({
+const WeatherPage: React.ClassicComponentClass<WeatherPageProps> = ({
   appCurrentState, 
   onLocationRainfallItemClickedObserver,
   onLocationTemperatureItemClickedObserver,
