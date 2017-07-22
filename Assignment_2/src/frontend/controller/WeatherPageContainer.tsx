@@ -40,47 +40,20 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
         // If not selected before then selected will be false, we pass in !selected to make it true
         // so we render that component.
         const originalData: MonitoredLocationInformation | undefined = this.props.appState.weatherDataMap.get(prefixedLocation);
-        let newData: MonitoredLocationInformation;
-        if (originalData == null) {
-           throw new Error('There was no monitoring information.');
-        } 
-        newData = new MonitoredLocationInformation(
-          originalData.location,
-          originalData.serviceTitle,
-          originalData.weatherDataList, 
-          !selected,
-          originalData.getMonitorTemperature(),
-          originalData.getMonitorGraph()
-        );
-
-        // Add new data to the state in AppState weatherMap in memory.
-        this.props.appState.weatherDataMap.set(prefixedLocation, newData);
-
+        originalData.setMonitorRainfall(!originalData.getMonitorRainfall());
         this.onMonitorSelected(
           this.selectServiceClient(prefixedLocation).rainfallMonitorConnection, 
-          new MonitorMetadata(newData.location),
+          new MonitorMetadata(originalData.location),
           selected
         );
     };
     @action
     this.onLocationsListTemperatureItemClicked = (prefixedLocation: string, selected: boolean) => {
         const originalData: MonitoredLocationInformation | undefined = this.props.appState.weatherDataMap.get(prefixedLocation);
-        let newData: MonitoredLocationInformation;
-        if (originalData == null) {
-          throw new Error('Could not find orginal monitoring information.');
-        }
-        newData = new MonitoredLocationInformation(
-          originalData.location,
-          originalData.serviceTitle,
-          originalData.weatherDataList, 
-          originalData.getMonitorRainfall(),
-          !selected,
-          originalData.getMonitorGraph()
-        );
-        this.props.appState.weatherDataMap.set(prefixedLocation, newData);
+        originalData.setMonitorTemperature(!originalData.getMonitorTemperature());
         this.onMonitorSelected(
           this.selectServiceClient(prefixedLocation).temperatureMonitorConnection,
-          new MonitorMetadata(newData.location),
+          new MonitorMetadata(originalData.location),
           selected
         );
     };
