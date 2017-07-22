@@ -99,7 +99,6 @@ class WeatherPageContainer extends React.Component<WeatherPageContainerProps, {}
           appCurrentState={this.props.appState}
           onLocationRainfallItemClickedObserver={this.onLocationsListRainfallItemClicked}
           onLocationTemperatureItemClickedObserver={this.onLocationsListTemperatureItemClicked}
-          onMonitoringListGraphItemClicked={this.onMonitoringListGraphItemClicked}
           regularServicePrefix={this.props.regularServicePrefix}
           timelapseServicePrefix={this.props.timelapseServicePrefix}
         />
