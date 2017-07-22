@@ -30,11 +30,11 @@ const LocationList: React.ClassicComponentClass<LocationListProps> = observer(({
   <section>
     {
       // Go through each item in the map and create a LocationItem html markup from it.
-      this.props.locations.map((locationMetadata: LocationMetadata, locationIndex) => {
+      locations.map((locationMetadata: LocationMetadata, locationIndex) => {
         const prefixedLocations: string[] = Array.from(locationMetadata.prefixedLocations);
         return prefixedLocations.map((prefixedLocation: string) => {
           const weatherData: MonitoredLocationInformation | undefined 
-            = this.props.weatherDataMap.get(prefixedLocation);
+            = weatherDataMap.get(prefixedLocation);
           if (weatherData == null) {
             return null;
           }
@@ -56,8 +56,8 @@ const LocationList: React.ClassicComponentClass<LocationListProps> = observer(({
               prefixedLocation={prefixedLocation}
               rainfallMonitorSelected={rainfallSelected}
               temperatureMonitorSelected={temperatureSelected}
-              onRainfallMonitorClickedObserver={this.props.onRainfallItemClickedObserver}
-              onTemperatureMonitorClickedObserver={this.props.onTemperatureItemClickedObserver}
+              onRainfallMonitorClickedObserver={onRainfallItemClickedObserver}
+              onTemperatureMonitorClickedObserver={onTemperatureItemClickedObserver}
             />
           );
         });
