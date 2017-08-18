@@ -37,6 +37,8 @@ function createWebpackBackend(entryDirectory)
                             loader: 'awesome-typescript-loader',
                             options: {
                                 configFileName: 'tsconfig.backend.json',
+                                useCache: true,
+                                cacheDirectory: '.atl-backend-cache'
                             }
                         }
                     ]

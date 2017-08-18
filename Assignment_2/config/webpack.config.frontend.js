@@ -65,6 +65,7 @@ module.exports = {
                             configFileName: 'tsconfig.frontend.json',
                             useBabel: true,
                             useCache: true,
+                            cacheDirectory: '.atl-frontend-cache'
                         }
                     }
                 ]
