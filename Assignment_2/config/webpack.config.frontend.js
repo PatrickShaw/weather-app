@@ -57,12 +57,18 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 use: [
                     {
-                        loader: 'babel-loader'
+                        loader: 'babel-loader',
+                        options: {
+                            "presets": [
+                                ["env", {"browsers": ["last 2 versions" , "ie 11", "safari >= 9"]}],
+                                "react"
+                            ]
+                        }
                     },
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            configFileName: 'tsconfig.frontend.json',
+                            configFileName: 'config/tsconfig.json',
                             useBabel: true,
                             useCache: true,
                             cacheDirectory: '.atl-frontend-cache'
