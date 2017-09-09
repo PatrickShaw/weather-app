@@ -19,7 +19,7 @@ const WeatherPage: React.ClassicComponentClass<WeatherPageProps> = observer(({
 }: WeatherPageProps) => (
   appCurrentState.getConnectedToServer() ?
   (
-      <div className='weather-page'>
+      <div className= 'weather-page'>
         <div className='page-app-bar'>
           <ActionBar title='Melbourne Weather' subtitle='Full Lambda'/>
         </div>

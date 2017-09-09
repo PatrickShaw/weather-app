@@ -54,6 +54,7 @@
     "socket.io-client": "^2.0.3"
   },
   "devDependencies": {
+    "autoprefixer": "^7.1.2",
     "awesome-typescript-loader": "^3.2.3",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",

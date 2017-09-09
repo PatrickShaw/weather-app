@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "build",
-    "module": "commonjs",
+    "module": "es6",
     "target": "es6",
     "lib":["esnext", "dom"],
     "jsx": "react",
@@ -28,7 +28,5 @@
     "webpack",
     "jest"
   ],
-  "types": [
-    "typePatches"
-  ]
+  "types": []
 }

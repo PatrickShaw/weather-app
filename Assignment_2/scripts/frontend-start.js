@@ -20,6 +20,7 @@ var compiler = webpack(
     console.log(chalk.green('Webpack configuration complete'));
   }
 );
+
 var server = new WebpackDevServer(
   compiler,
   {
@@ -38,7 +39,9 @@ var server = new WebpackDevServer(
     'clientLogLevel': 'none'
   }
 );
+
 console.log(chalk.cyan('Hosting server...'));
+
 server.listen(port, (err) => {
   if(err) {
     console.error(chalk.red('An error occurred when hosting the server...'))
