@@ -1,6 +1,0 @@
-{
-  "presets": [
-    ["env", {"browsers": ["last 2 versions" , "ie 10", "safari >= 7"]}],
-    "react"
-  ]
-}

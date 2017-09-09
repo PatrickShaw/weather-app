@@ -20,7 +20,8 @@ module.exports = {
     },  
     name: 'Frontend Server',
     entry: ['babel-polyfill', paths.appIndexJs],
-    devtool: 'source-map',
+    devtool: 'source-map',  
+    target: 'web',
     module: {
         rules: [
             // TSLint gives us suggestions on how to keep the app more consistant and correct with 
@@ -57,14 +58,21 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 use: [
                     {
-                        loader: 'babel-loader'
+                        loader: 'babel-loader',
+                        options: {
+                            "presets": [
+                                ["env", {"browsers": ["last 2 versions" , "ie 11", "safari >= 9"]}],
+                                "react"
+                            ]
+                        }
                     },
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            configFileName: 'tsconfig.frontend.json',
+                            configFileName: 'config/tsconfig.debug.json',
                             useBabel: true,
                             useCache: true,
+                            cacheDirectory: '.atl-frontend-cache'
                         }
                     }
                 ]

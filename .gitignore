@@ -10,9 +10,13 @@ npm-debug.log
 */npm-debug.log
 */npm-debug.log.*
 Assignment_2/build/*
+yarn-error.log
 
 Assignment_2/backend-build/backend-compiled-debug\.js\.map
 
 Assignment_2/backend-build/backend-compiled-debug\.js
 
 Assignment_2/backend-build/
+
+Assignment_2/.atl-backend-cache
+Assignment_2/.atl-frontend-cache

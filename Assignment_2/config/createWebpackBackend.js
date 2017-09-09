@@ -1,4 +1,4 @@
-const {CheckerPlugin} = require('awesome-typescript-loader');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const WebpackShellPlugin = require('webpack-shell-plugin');
@@ -11,7 +11,7 @@ function createWebpackBackend(entryDirectory)
             filename: 'backend-compiled-debug.js'
         },
         resolve: {
-            extensions: ['.ts', 'tsx', '.js', '.jsx']
+            extensions: ['.ts', '.tsx', '.js', '.jsx']
         },
         bail: true,
         target: 'node',
@@ -36,7 +36,9 @@ function createWebpackBackend(entryDirectory)
                         {   
                             loader: 'awesome-typescript-loader',
                             options: {
-                                configFileName: 'tsconfig.backend.json',
+                                configFileName: 'config/tsconfig.debug.json',
+                                useCache: true,
+                                cacheDirectory: '.atl-backend-cache'
                             }
                         }
                     ]
