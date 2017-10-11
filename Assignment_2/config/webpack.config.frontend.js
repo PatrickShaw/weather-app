@@ -69,7 +69,6 @@ module.exports = {
                     {   
                         loader: 'awesome-typescript-loader',
                         options: {
-                            configFileName: 'config/tsconfig.debug.json',
                             useBabel: true,
                             useCache: true,
                             cacheDirectory: '.atl-frontend-cache'
