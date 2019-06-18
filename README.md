@@ -93,7 +93,7 @@ It also has a google map which can be used to toggle location pins for a weather
 
 Location pins represent the intensity of rainfall, with greater rainfall resulting in a deep blue and less rainfall in a light blue pin. If rainfall is not selected it defaults to red. If rainfall in not a valid number it defaults to grey. 
 
-Around each marker is a circle representing the intensity of temperature, the hotter it is the more red the circle. Likewise if temperature is not selected it defaults to a greyish-blue and if temperature is not a valid number it defaults to gery.
+Around each marker is a circle representing the intensity of temperature, the hotter it is the more red the circle. Likewise if temperature is not selected it defaults to a greyish-blue and if temperature is not a valid number it defaults to grey.
 
 Hovering over the pins displays more information about the area.
 
