@@ -108,7 +108,7 @@ Hovering over the pins displays more information about the area.
 ## Technology stack
 ### Languages & syntax choices
 #### TypeScript
-<img src="https://d1xwtr0qwr70yv.cloudfront.net/assets/tech/typescript-475eac4492db9bf211eed586f3d76c2d.svg" width ="200" />
+<img src="https://www.flaticon.com/svg/static/icons/svg/919/919832.svg" width ="200" />
 A superset of JavaScript that allows the use of static typing, interfaces and classes. Developed by Microsoft. 
 
 ##### Differences to Java
